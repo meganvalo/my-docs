@@ -1,5 +1,5 @@
 // Offline cache for MyDocs. Bump CACHE when you change files to force a refresh.
-const CACHE = 'mydocs-v1';
+const CACHE = 'mydocs-v2';
 const ASSETS = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
