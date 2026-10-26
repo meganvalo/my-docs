@@ -283,6 +283,37 @@
     #editor { max-width:none !important; padding:0 !important; }
   }
 
+
+  /* Modern Google Docs-like text color palette and device-aware dark mode. */
+  #top { display:flex; align-items:center; }
+  #docsBtn { order:0; flex:0 0 auto; }
+  #title { order:1; }
+  #saveHint { order:2; }
+  #menuBtn { order:3; flex:0 0 auto; margin-left:4px; }
+  #top button { color:var(--text) !important; }
+  #top button:hover { background:var(--hover) !important; }
+  #top, #scroll, #status, #main { background:var(--bg) !important; color:var(--text); }
+  #editor { background:var(--panel) !important; color:var(--text) !important; }
+  #title { background:transparent; color:var(--text) !important; }
+  #saveHint, #status { color:var(--muted) !important; }
+  .textColorControl { position:relative; display:inline-flex; align-items:center; }
+  #colorBtn { min-width:34px; height:34px; border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:3px 8px; }
+  .colorGlyph { font-size:18px; font-weight:700; line-height:19px; }
+  .colorUnderline { display:block; width:17px; height:4px; background:#202124; border-radius:2px; }
+  .colorPalette { position:absolute; z-index:55; top:40px; left:0; width:232px; padding:12px; border:1px solid var(--line); border-radius:12px; background:var(--panel); color:var(--text); box-shadow:0 8px 24px rgba(0,0,0,.18); }
+  .colorPalette[hidden] { display:none !important; }
+  .colorPaletteTitle { font-size:13px; font-weight:600; margin-bottom:10px; }
+  .colorSwatches { display:grid; grid-template-columns:repeat(6, 1fr); gap:8px; }
+  .colorSwatches button { width:25px; height:25px; padding:0; border:2px solid var(--panel); border-radius:50%; background:var(--swatch); box-shadow:0 0 0 1px var(--line); cursor:pointer; }
+  .colorSwatches button:hover { transform:scale(1.1); box-shadow:0 0 0 2px var(--accent); }
+  .customColorLabel { display:flex; align-items:center; justify-content:space-between; margin-top:12px; font-size:12px; color:var(--muted); }
+  .customColorLabel input { width:32px !important; height:28px !important; padding:1px !important; border:1px solid var(--line) !important; border-radius:6px !important; }
+  .autoThemeBtn { display:flex !important; align-items:center; justify-content:space-between; gap:10px; width:100%; margin-top:12px; padding:10px 12px !important; border:1px solid var(--line) !important; border-radius:10px !important; background:var(--panel) !important; color:var(--text) !important; text-align:left; font-size:14px; }
+  #autoThemeState { color:var(--muted); font-size:12px; }
+  #autoThemeBtn[aria-pressed="true"] { border-color:var(--accent) !important; background:var(--hover) !important; }
+  :root[data-theme="night"] #editor, :root[data-theme="cocoa"] #editor { background:var(--panel) !important; color:var(--text) !important; }
+  @media (prefers-reduced-motion: reduce) { #sidebar, #optionsPanel { transition:none !important; } }
+
 </style>
 </head>
 <body>
@@ -300,10 +331,10 @@
 <div id="drawerShade" aria-hidden="true"></div>
 <section id="main">
   <div id="top">
-    <button id="menuBtn" title="Open formatting and document options" aria-label="Open options">☰</button>
-    <button id="docsBtn" title="Documents" aria-label="Open documents">▤</button>
+    <button id="docsBtn" title="Documents" aria-label="Open documents">☰</button>
     <input id="title" placeholder="Untitled document" aria-label="Document title">
     <span id="saveHint" aria-live="polite">All changes saved</span>
+    <button id="menuBtn" title="Open formatting and document options" aria-label="Open options">⋮</button>
   </div>
 
   <aside id="optionsPanel" aria-label="Document options">
@@ -326,7 +357,14 @@
     <button data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
     <button data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
     <button data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
-    <input type="color" id="color" value="#2f6fed" title="Text color">
+    <div class="textColorControl">
+      <button type="button" id="colorBtn" title="Text color" aria-label="Choose text color" aria-expanded="false"><span class="colorGlyph">A</span><span class="colorUnderline"></span></button>
+      <div id="colorPalette" class="colorPalette" hidden aria-label="Text color palette">
+        <div class="colorPaletteTitle">Text color</div><div class="colorSwatches">
+          <button type="button" data-color="#202124" style="--swatch:#202124" aria-label="Black" title="Black"></button><button type="button" data-color="#5f6368" style="--swatch:#5f6368" aria-label="Dark gray" title="Dark gray"></button><button type="button" data-color="#ffffff" style="--swatch:#ffffff" aria-label="White" title="White"></button><button type="button" data-color="#d93025" style="--swatch:#d93025" aria-label="Red" title="Red"></button><button type="button" data-color="#e8710a" style="--swatch:#e8710a" aria-label="Orange" title="Orange"></button><button type="button" data-color="#f9ab00" style="--swatch:#f9ab00" aria-label="Yellow" title="Yellow"></button><button type="button" data-color="#188038" style="--swatch:#188038" aria-label="Green" title="Green"></button><button type="button" data-color="#12a594" style="--swatch:#12a594" aria-label="Teal" title="Teal"></button><button type="button" data-color="#1a73e8" style="--swatch:#1a73e8" aria-label="Blue" title="Blue"></button><button type="button" data-color="#673ab7" style="--swatch:#673ab7" aria-label="Purple" title="Purple"></button><button type="button" data-color="#a142f4" style="--swatch:#a142f4" aria-label="Violet" title="Violet"></button><button type="button" data-color="#d01884" style="--swatch:#d01884" aria-label="Pink" title="Pink"></button>
+        </div><label class="customColorLabel">Custom color <input type="color" id="customColor" value="#202124" title="Choose custom text color"></label>
+      </div>
+    </div>
     <span class="sep"></span>
     <button data-cmd="insertUnorderedList" title="Bullet list">• List</button>
     <button data-cmd="insertOrderedList" title="Numbered list">1. List</button>
@@ -362,7 +400,10 @@
       <button data-t="orange" title="Citrus Orange" aria-label="Citrus Orange"></button>
       <button data-t="cocoa" title="Dark Cocoa" aria-label="Dark Cocoa"></button>
       <button data-t="sage" title="Sage Olive" aria-label="Sage Olive"></button>
-    </div></div><p class="panelNote">Choose a theme to change the look of your workspace.</p></div>
+    </div></div>
+      <button type="button" id="autoThemeBtn" class="autoThemeBtn" aria-pressed="false">☾ Match device appearance <span id="autoThemeState">Off</span></button>
+      <p class="panelNote">Choose a theme or automatically follow your device’s light and dark appearance.</p>
+    </div>
   </aside>
 
   <div id="scroll">
@@ -471,7 +512,15 @@
     b.addEventListener('click', () => exec(b.dataset.cmd));
   });
   $('block').addEventListener('change', e => { exec('formatBlock', e.target.value === 'p' ? 'p' : e.target.value); });
-  $('color').addEventListener('input', e => exec('foreColor', e.target.value));
+  const colorPalette = $('colorPalette'), colorBtn = $('colorBtn');
+  colorBtn.addEventListener('click', () => { colorPalette.hidden = !colorPalette.hidden; colorBtn.setAttribute('aria-expanded', String(!colorPalette.hidden)); });
+  document.querySelectorAll('[data-color]').forEach(b => b.addEventListener('mousedown', e => e.preventDefault()));
+  document.querySelectorAll('[data-color]').forEach(b => b.addEventListener('click', () => {
+    exec('foreColor', b.dataset.color); colorPalette.hidden = true; colorBtn.setAttribute('aria-expanded', 'false');
+    document.querySelector('.colorUnderline').style.background = b.dataset.color;
+  }));
+  $('customColor').addEventListener('input', e => { exec('foreColor', e.target.value); document.querySelector('.colorUnderline').style.background = e.target.value; });
+  document.addEventListener('pointerdown', e => { if (!e.target.closest('.textColorControl')) { colorPalette.hidden = true; colorBtn.setAttribute('aria-expanded', 'false'); } });
 
   function addLink() {
     const url = prompt('Link URL:', 'https://');
@@ -632,17 +681,25 @@
 
   const THEMES = ['white', 'caramel', 'seaglass', 'night', 'orange', 'cocoa', 'sage'];
   const THEME_COLORS = { white: '#ffffff', caramel: '#b98258', seaglass: '#8fbab2', night: '#1b1917', orange: '#dc6d18', cocoa: '#2b1a12', sage: '#b1aa81' };
-  function setTheme(t) {
-    if (t === 'shell') t = 'white';
-    if (!THEMES.includes(t)) t = 'white';
+  const AUTO_THEME = 'mydocs.autoTheme';
+  const deviceDark = matchMedia('(prefers-color-scheme: dark)');
+  let autoTheme = false; try { autoTheme = localStorage.getItem(AUTO_THEME) === 'true'; } catch (e) {}
+  function setTheme(t, save = true) {
+    if (t === 'shell') t = 'white'; if (!THEMES.includes(t)) t = 'white';
     document.documentElement.dataset.theme = t;
     const mc = document.querySelector('meta[name=theme-color]'); if (mc) mc.content = THEME_COLORS[t];
     document.querySelectorAll('#themes button, #themesPanel button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
-    try { localStorage.setItem(THEME, t); } catch (e) {}
+    if (save) { try { localStorage.setItem(THEME, t); } catch (e) {} }
   }
+  function applyDeviceTheme() { setTheme(deviceDark.matches ? 'night' : 'white', false); }
+  function updateAutoThemeUI() { $('autoThemeBtn').setAttribute('aria-pressed', String(autoTheme)); $('autoThemeState').textContent = autoTheme ? 'On' : 'Off'; }
   let savedTheme = null; try { savedTheme = localStorage.getItem(THEME); } catch (e) {}
-  setTheme(savedTheme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'white'));
-  document.querySelectorAll('#themesPanel button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
+  if (autoTheme) applyDeviceTheme(); else setTheme(savedTheme || 'white');
+  updateAutoThemeUI();
+  $('autoThemeBtn').addEventListener('click', () => { autoTheme = !autoTheme; try { localStorage.setItem(AUTO_THEME, String(autoTheme)); } catch (e) {} if (autoTheme) applyDeviceTheme(); updateAutoThemeUI(); });
+  if (deviceDark.addEventListener) deviceDark.addEventListener('change', () => { if (autoTheme) applyDeviceTheme(); });
+  else if (deviceDark.addListener) deviceDark.addListener(() => { if (autoTheme) applyDeviceTheme(); });
+  document.querySelectorAll('#themesPanel button').forEach(b => b.onclick = () => { autoTheme = false; try { localStorage.setItem(AUTO_THEME, 'false'); } catch (e) {} updateAutoThemeUI(); setTheme(b.dataset.t); });
 
   // ---------- offline / installable app ----------
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
