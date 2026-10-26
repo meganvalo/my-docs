@@ -101,7 +101,7 @@
   ::selection { background: var(--sel); }
 
   #sidebar { border: none; border-radius: 22px; box-shadow: 0 10px 34px rgba(60,35,15,.14); overflow: hidden; }
-  @media (min-width: 761px) { #sidebar { width: 280px; } }
+
   #sidebar header { padding: 16px 14px 10px; }
   #sidebar header strong { font-size: 21px; font-weight: 800; letter-spacing: -.03em; }
   #search { border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px; background: var(--hover); outline: none; }
@@ -119,9 +119,9 @@
   #themes [data-t="caramel"] { background: #b98258; }
   #themes [data-t="seaglass"] { background: #8fbab2; }
   #themes [data-t="night"] { background: #262320; }
-  #themes [data-t="orange"], #themesPanel [data-t="orange"] { background:#dc6d18; }
-  #themes [data-t="cocoa"], #themesPanel [data-t="cocoa"] { background:#2b1a12; }
-  #themes [data-t="sage"], #themesPanel [data-t="sage"] { background:#b1aa81; }
+  #themesPanel [data-t="orange"] { background:#dc6d18; }
+  #themesPanel [data-t="cocoa"] { background:#2b1a12; }
+  #themesPanel [data-t="sage"] { background:#b1aa81; }
 
 
   #main { gap: 10px; }
@@ -190,7 +190,12 @@
 
   /* Focus-first, Google Docs-inspired workspace */
   body { padding: 0; gap: 0; background: var(--bg); }
-  #sidebar { border-radius: 0; box-shadow: none; border-right: 1px solid var(--line); }
+  /* Document-first layout: the document list is a drawer on every screen size. */
+  #sidebar { position: fixed; z-index: 32; inset: 0 auto 0 0; width: min(320px, 88vw); max-width: 320px; border-radius: 0; box-shadow: 4px 0 24px rgba(0,0,0,.14); border-right: 1px solid var(--line); transform: translateX(-105%); transition: transform .22s ease; }
+  #sidebar.open { transform: translateX(0); }
+  #sidebar header { flex-wrap: wrap; }
+  #sidebar header strong { flex: 1; }
+  #closeDocs { font-size: 20px; padding: 5px 9px; }
   #main { gap: 0; position: relative; min-height: 0; }
   #top { min-height: 58px; border-radius: 0; box-shadow: none; border-bottom: 1px solid var(--line); padding: 8px 18px; gap: 10px; }
   #top button { border: 0; border-radius: 8px; font-size: 19px; padding: 7px 10px; }
@@ -217,9 +222,9 @@
   #themesPanel [data-t="caramel"] { background:#b98258; }
   #themesPanel [data-t="seaglass"] { background:#8fbab2; }
   #themesPanel [data-t="night"] { background:#262320; }
-  #themes [data-t="orange"], #themesPanel [data-t="orange"] { background:#dc6d18; }
-  #themes [data-t="cocoa"], #themesPanel [data-t="cocoa"] { background:#2b1a12; }
-  #themes [data-t="sage"], #themesPanel [data-t="sage"] { background:#b1aa81; }
+  #themesPanel [data-t="orange"] { background:#dc6d18; }
+  #themesPanel [data-t="cocoa"] { background:#2b1a12; }
+  #themesPanel [data-t="sage"] { background:#b1aa81; }
 
   .panelNote { color:var(--muted); font-size:12px; }
   @media (max-width:760px) {
@@ -233,6 +238,49 @@
   }
   @media print { #optionsPanel, #drawerShade, #docsBtn { display:none !important; } }
 
+
+
+  /* Focus-first, Google Docs-inspired layout revision */
+  html, body { width:100%; height:100%; margin:0 !important; padding:0 !important; }
+  body { display:flex; gap:0 !important; overflow:hidden; background:#fff !important; }
+  #main { width:100%; min-width:0; height:100dvh; min-height:0; gap:0 !important; background:#fff !important; }
+  #top { flex:0 0 auto; min-height:58px; box-sizing:border-box; background:#fff !important; border:0 !important; border-bottom:1px solid #e7e7e7 !important; border-radius:0 !important; box-shadow:none !important; padding:7px 18px !important; gap:8px !important; }
+  #top button { border:0 !important; background:transparent !important; border-radius:8px !important; padding:8px 11px !important; font-size:20px !important; color:#5f6368 !important; }
+  #top button:hover { background:#f1f3f4 !important; }
+  #title { flex:1 1 auto; min-width:0; max-width:none; font-size:18px !important; font-weight:500 !important; letter-spacing:0 !important; color:#202124 !important; }
+  #saveHint { font-size:12px !important; font-weight:400; color:#777 !important; white-space:nowrap; }
+  #scroll { flex:1 1 auto; min-height:0; overflow:auto; box-sizing:border-box; padding:42px 24px 56px !important; background:#fff !important; }
+  #editor { width:100%; max-width:760px !important; min-height:calc(100% - 4px); box-sizing:border-box; margin:0 auto !important; padding:18px 0 80px !important; background:#fff !important; color:#202124 !important; border:0 !important; border-radius:0 !important; box-shadow:none !important; outline:none; font-family:Arial, sans-serif !important; font-size:16px !important; line-height:1.6 !important; }
+  #editor:focus { outline:none; }
+  #editor h1 { font-size:30px; font-weight:400; letter-spacing:0; }
+  #editor h2 { font-size:23px; font-weight:400; letter-spacing:0; }
+  #status { flex:0 0 auto; min-height:26px; padding:3px 20px; box-sizing:border-box; background:#fff !important; color:#777 !important; border:0 !important; font-size:12px; }
+  /* The document list is a true off-canvas drawer and is closed at startup. */
+  #sidebar { display:flex !important; position:fixed !important; z-index:31 !important; inset:0 auto 0 0 !important; width:min(320px,86vw) !important; height:100dvh !important; box-sizing:border-box; transform:translateX(-105%) !important; transition:transform .22s ease !important; border:0 !important; border-right:1px solid #dadce0 !important; border-radius:0 !important; box-shadow:none !important; overflow:auto !important; background:var(--panel) !important; }
+  #sidebar.open { transform:translateX(0) !important; box-shadow:0 4px 24px rgba(0,0,0,.18) !important; }
+  #sidebar header { border-radius:0 !important; box-shadow:none !important; padding:16px !important; }
+  #closeDocs { display:inline-block !important; }
+  #themes { display:none !important; }
+  #optionsPanel { z-index:40 !important; border-radius:0 !important; box-shadow:-8px 0 24px rgba(0,0,0,.12) !important; }
+  #drawerShade { z-index:39 !important; }
+  #toolbar { display:flex; flex-wrap:wrap; background:transparent !important; border:0 !important; border-radius:0 !important; box-shadow:none !important; padding:12px 0 0 !important; }
+  #empty { max-width:760px; margin:0 auto; padding:18px 0; color:#777; }
+  @media (max-width:760px) {
+    #top { min-height:54px; padding:5px 8px !important; gap:3px !important; }
+    #top button { padding:7px 8px !important; }
+    #title { font-size:16px !important; }
+    #saveHint { max-width:90px; overflow:hidden; text-overflow:ellipsis; }
+    #scroll { padding:24px 22px 38px !important; }
+    #editor { max-width:none !important; padding:12px 0 60px !important; font-size:16px !important; }
+    #status { padding:4px 12px; }
+  }
+  @media print {
+    body, #main, #scroll { display:block !important; height:auto !important; overflow:visible !important; background:#fff !important; }
+    #sidebar, #top, #optionsPanel, #drawerShade, #status { display:none !important; }
+    #scroll { padding:0 !important; }
+    #editor { max-width:none !important; padding:0 !important; }
+  }
+
 </style>
 </head>
 <body>
@@ -240,15 +288,7 @@
 <aside id="sidebar">
   <header>
     <strong>MyDocs</strong>
-    <div id="themes">
-      <button data-t="white" title="Pure White"></button>
-      <button data-t="caramel" title="Salted Caramel"></button>
-      <button data-t="seaglass" title="Sea Glass"></button>
-      <button data-t="night" title="Night"></button>
-      <button data-t="orange" title="Citrus Orange"></button>
-      <button data-t="cocoa" title="Dark Cocoa"></button>
-      <button data-t="sage" title="Sage Olive"></button>
-    </div>
+    <button id="closeDocs" title="Close document list" aria-label="Close document list">✕</button>
     <button id="newBtn" title="New document (Alt+N)">+ New</button>
   </header>
   <input id="search" placeholder="Search documents…" type="search">
@@ -312,7 +352,15 @@
       <button id="delBtn" title="Delete this document">Delete document</button>
       <input id="restoreFile" type="file" accept=".json" hidden>
     </div>
-    <div class="panelSection"><div class="panelLabel">Appearance</div><div class="themeRow"><span>Theme</span><div id="themesPanel"></div></div><p class="panelNote">Choose a theme to change the look of your workspace.</p></div>
+    <div class="panelSection"><div class="panelLabel">Appearance</div><div class="themeRow"><span>Theme</span><div id="themesPanel">
+      <button data-t="white" title="Pure White" aria-label="Pure White"></button>
+      <button data-t="caramel" title="Salted Caramel" aria-label="Salted Caramel"></button>
+      <button data-t="seaglass" title="Sea Glass" aria-label="Sea Glass"></button>
+      <button data-t="night" title="Night" aria-label="Night"></button>
+      <button data-t="orange" title="Citrus Orange" aria-label="Citrus Orange"></button>
+      <button data-t="cocoa" title="Dark Cocoa" aria-label="Dark Cocoa"></button>
+      <button data-t="sage" title="Sage Olive" aria-label="Sage Olive"></button>
+    </div></div><p class="panelNote">Choose a theme to change the look of your workspace.</p></div>
   </aside>
 
   <div id="scroll">
@@ -574,10 +622,10 @@
   $('menuBtn').onclick = () => { optionsPanel.classList.contains('open') ? closeDrawers() : openOptions(); };
   $('closeOptions').onclick = closeDrawers;
   drawerShade.onclick = closeDrawers;
-  $('docsBtn').onclick = () => { closeDrawers(); $('sidebar').classList.toggle('open'); };
+  $('docsBtn').onclick = () => { optionsPanel.classList.remove('open'); drawerShade.classList.remove('open'); $('sidebar').classList.toggle('open'); };
+  $('closeDocs').onclick = () => $('sidebar').classList.remove('open');
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawers(); });
-  // Keep the theme selector available in the options drawer without changing the theme logic.
-  $('themesPanel').innerHTML = $('themes').innerHTML;
+  // Theme choices live only in the options drawer to keep the writing workspace uncluttered.
   $('themesPanel').querySelectorAll('button').forEach(b => { b.onclick = () => { setTheme(b.dataset.t); $('themesPanel').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.t === b.dataset.t)); }; });
 
   const THEMES = ['white', 'caramel', 'seaglass', 'night', 'orange', 'cocoa', 'sage'];
@@ -592,7 +640,7 @@
   }
   let savedTheme = null; try { savedTheme = localStorage.getItem(THEME); } catch (e) {}
   setTheme(savedTheme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'white'));
-  document.querySelectorAll('#themes button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
+  document.querySelectorAll('#themesPanel button').forEach(b => b.onclick = () => setTheme(b.dataset.t));
 
   // ---------- offline / installable app ----------
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
