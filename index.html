@@ -56,7 +56,8 @@
 
   #main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
   #top { background: var(--panel); border-bottom: 1px solid var(--line); padding: 8px 14px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
-  #menuBtn { display: none; }
+  #menuBtn { display: inline-block; }
+  #docsBtn { display: inline-block; }
   #title { flex: 1 1 200px; min-width: 120px; font-size: 18px; font-weight: 600; border: none; background: none; outline: none; padding: 4px 6px; }
   #toolbar { background: var(--panel); border-bottom: 1px solid var(--line); padding: 6px 14px; display: flex; flex-wrap: wrap; gap: 2px; align-items: center; }
   #toolbar .sep { width: 1px; height: 22px; background: var(--line); margin: 0 6px; }
@@ -178,6 +179,48 @@
     :root[data-theme] #editor { border: none; box-shadow: none; }
     body { padding: 0; }
   }
+
+  /* Focus-first, Google Docs-inspired workspace */
+  body { padding: 0; gap: 0; background: var(--bg); }
+  #sidebar { border-radius: 0; box-shadow: none; border-right: 1px solid var(--line); }
+  #main { gap: 0; position: relative; min-height: 0; }
+  #top { min-height: 58px; border-radius: 0; box-shadow: none; border-bottom: 1px solid var(--line); padding: 8px 18px; gap: 10px; }
+  #top button { border: 0; border-radius: 8px; font-size: 19px; padding: 7px 10px; }
+  #title { font-size: 18px; font-weight: 500; letter-spacing: 0; }
+  #saveHint { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  #toolbar { display: flex; flex-wrap: wrap; border: 0; border-radius: 0; box-shadow: none; padding: 8px 0 0; background: transparent; }
+  #toolbar button { border-radius: 7px; }
+  #scroll { padding: 30px 24px 60px; background: var(--bg); }
+  #editor { max-width: 850px; min-height: calc(100% - 8px); border: 1px solid var(--line); border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,.06); padding: 72px 80px; background: var(--panel); }
+  #optionsPanel { position: fixed; z-index: 30; top: 0; right: 0; bottom: 0; width: min(390px, 92vw); background: var(--panel); border-left: 1px solid var(--line); box-shadow: -8px 0 28px rgba(0,0,0,.12); transform: translateX(105%); transition: transform .22s ease; overflow-y: auto; padding: 0 18px 28px; }
+  #optionsPanel.open { transform: translateX(0); }
+  #drawerShade { display: none; position: fixed; z-index: 29; inset: 0; background: rgba(0,0,0,.42); }
+  #drawerShade.open { display: block; }
+  .panelHead { display:flex; align-items:center; justify-content:space-between; padding:20px 0; border-bottom:1px solid var(--line); font-size:18px; }
+  .panelSection { padding:18px 0; border-bottom:1px solid var(--line); }
+  .panelLabel { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.08em; font-weight:700; }
+  #optionsPanel .panelSection > button { display:block; width:100%; text-align:left; padding:11px 10px; border-radius:8px; margin-top:3px; }
+  #optionsPanel .panelSection > button:hover { background:var(--hover); }
+  .themeRow { display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+  #themesPanel { display:flex; gap:10px; }
+  #themesPanel button { width:24px; height:24px; padding:0; border-radius:50%; border:2px solid var(--panel); box-shadow:0 0 0 1px var(--line); }
+  #themesPanel button.on { box-shadow:0 0 0 2px var(--accent); }
+  #themesPanel [data-t="white"] { background:#fff; }
+  #themesPanel [data-t="caramel"] { background:#b98258; }
+  #themesPanel [data-t="seaglass"] { background:#8fbab2; }
+  #themesPanel [data-t="night"] { background:#262320; }
+  .panelNote { color:var(--muted); font-size:12px; }
+  @media (max-width:760px) {
+    body { padding:0; }
+    #sidebar { border-radius:0; }
+    #top { padding:8px 10px; gap:4px; }
+    #title { min-width:0; font-size:17px; }
+    #saveHint { display:none; }
+    #scroll { padding:14px 8px 36px; }
+    #editor { padding:34px 22px; border-radius:2px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  }
+  @media print { #optionsPanel, #drawerShade, #docsBtn { display:none !important; } }
+
 </style>
 </head>
 <body>
@@ -197,19 +240,18 @@
   <div id="list"></div>
 </aside>
 
+<div id="drawerShade" aria-hidden="true"></div>
 <section id="main">
   <div id="top">
-    <button id="menuBtn" title="Documents">☰</button>
-    <input id="title" placeholder="Untitled document">
-    <button id="exportHtml">Export .html</button>
-    <button id="exportMd">Export .md</button>
-    <button id="printBtn">Print / PDF</button>
-    <button id="backupBtn" title="Download all documents as JSON">Backup all</button>
-    <button id="restoreBtn" title="Restore from a backup file">Restore</button>
-    <button id="delBtn" title="Delete this document">🗑</button>
-    <input id="restoreFile" type="file" accept=".json" hidden>
+    <button id="menuBtn" title="Open formatting and document options" aria-label="Open options">☰</button>
+    <button id="docsBtn" title="Documents" aria-label="Open documents">▤</button>
+    <input id="title" placeholder="Untitled document" aria-label="Document title">
+    <span id="saveHint" aria-live="polite">All changes saved</span>
   </div>
 
+  <aside id="optionsPanel" aria-label="Document options">
+    <div class="panelHead"><strong>Document options</strong><button id="closeOptions" aria-label="Close options">✕</button></div>
+    <div class="panelSection"><div class="panelLabel">Formatting</div>
   <div id="toolbar">
     <button data-cmd="undo" title="Undo (Ctrl+Z)">↶</button>
     <button data-cmd="redo" title="Redo (Ctrl+Shift+Z)">↷</button>
@@ -245,6 +287,18 @@
     <button data-cmd="removeFormat" title="Clear formatting">Tx</button>
     <input id="imgFile" type="file" accept="image/*" hidden>
   </div>
+    </div>
+    <div class="panelSection"><div class="panelLabel">Share and export</div>
+      <button id="exportHtml">Export as HTML</button>
+      <button id="exportMd">Export as Markdown</button>
+      <button id="printBtn">Print / Save as PDF</button>
+      <button id="backupBtn" title="Download all documents as JSON">Back up all documents</button>
+      <button id="restoreBtn" title="Restore from a backup file">Restore from backup</button>
+      <button id="delBtn" title="Delete this document">Delete document</button>
+      <input id="restoreFile" type="file" accept=".json" hidden>
+    </div>
+    <div class="panelSection"><div class="panelLabel">Appearance</div><div class="themeRow"><span>Theme</span><div id="themesPanel"></div></div><p class="panelNote">Choose a theme to change the look of your workspace.</p></div>
+  </aside>
 
   <div id="scroll">
     <div id="editor" contenteditable="true" spellcheck="true"></div>
@@ -421,7 +475,49 @@
     flush();
     const t = (titleEl.value || 'Untitled').replace(/</g, '&lt;');
     download(fname('html'),
-      '<!doctype html><html><head><meta charset="utf-8"><title>' + t + '</title><style>body{max-width:760px;margin:40px auto;padding:0 16px;font:16px/1.65 system-ui,sans-serif}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px 10px}blockquote{border-left:3px solid #ccc;margin-left:0;padding-left:14px;color:#666}pre{background:#f4f4f4;padding:10px}img{max-width:100%}</style></head><body>' + editor.innerHTML + '</body></html>',
+      '<!doctype html><html><head><meta charset="utf-8"><title>' + t + '</title><style>body{max-width:760px;margin:40px auto;padding:0 16px;font:16px/1.65 system-ui,sans-serif}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px 10px}blockquote{border-left:3px solid #ccc;margin-left:0;padding-left:14px;color:#666}pre{background:#f4f4f4;padding:10px}img{max-width:100%}
+  /* Focus-first, Google Docs-inspired workspace */
+  body { padding: 0; gap: 0; background: var(--bg); }
+  #sidebar { border-radius: 0; box-shadow: none; border-right: 1px solid var(--line); }
+  #main { gap: 0; position: relative; min-height: 0; }
+  #top { min-height: 58px; border-radius: 0; box-shadow: none; border-bottom: 1px solid var(--line); padding: 8px 18px; gap: 10px; }
+  #top button { border: 0; border-radius: 8px; font-size: 19px; padding: 7px 10px; }
+  #title { font-size: 18px; font-weight: 500; letter-spacing: 0; }
+  #saveHint { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  #toolbar { display: flex; flex-wrap: wrap; border: 0; border-radius: 0; box-shadow: none; padding: 8px 0 0; background: transparent; }
+  #toolbar button { border-radius: 7px; }
+  #scroll { padding: 30px 24px 60px; background: var(--bg); }
+  #editor { max-width: 850px; min-height: calc(100% - 8px); border: 1px solid var(--line); border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,.06); padding: 72px 80px; background: var(--panel); }
+  #optionsPanel { position: fixed; z-index: 30; top: 0; right: 0; bottom: 0; width: min(390px, 92vw); background: var(--panel); border-left: 1px solid var(--line); box-shadow: -8px 0 28px rgba(0,0,0,.12); transform: translateX(105%); transition: transform .22s ease; overflow-y: auto; padding: 0 18px 28px; }
+  #optionsPanel.open { transform: translateX(0); }
+  #drawerShade { display: none; position: fixed; z-index: 29; inset: 0; background: rgba(0,0,0,.42); }
+  #drawerShade.open { display: block; }
+  .panelHead { display:flex; align-items:center; justify-content:space-between; padding:20px 0; border-bottom:1px solid var(--line); font-size:18px; }
+  .panelSection { padding:18px 0; border-bottom:1px solid var(--line); }
+  .panelLabel { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.08em; font-weight:700; }
+  #optionsPanel .panelSection > button { display:block; width:100%; text-align:left; padding:11px 10px; border-radius:8px; margin-top:3px; }
+  #optionsPanel .panelSection > button:hover { background:var(--hover); }
+  .themeRow { display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+  #themesPanel { display:flex; gap:10px; }
+  #themesPanel button { width:24px; height:24px; padding:0; border-radius:50%; border:2px solid var(--panel); box-shadow:0 0 0 1px var(--line); }
+  #themesPanel button.on { box-shadow:0 0 0 2px var(--accent); }
+  #themesPanel [data-t="white"] { background:#fff; }
+  #themesPanel [data-t="caramel"] { background:#b98258; }
+  #themesPanel [data-t="seaglass"] { background:#8fbab2; }
+  #themesPanel [data-t="night"] { background:#262320; }
+  .panelNote { color:var(--muted); font-size:12px; }
+  @media (max-width:760px) {
+    body { padding:0; }
+    #sidebar { border-radius:0; }
+    #top { padding:8px 10px; gap:4px; }
+    #title { min-width:0; font-size:17px; }
+    #saveHint { display:none; }
+    #scroll { padding:14px 8px 36px; }
+    #editor { padding:34px 22px; border-radius:2px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  }
+  @media print { #optionsPanel, #drawerShade, #docsBtn { display:none !important; } }
+
+</style></head><body>' + editor.innerHTML + '</body></html>',
       'text/html');
   };
 
@@ -500,7 +596,17 @@
   $('newBtn').onclick = newDoc;
   $('delBtn').onclick = deleteDoc;
   $('search').addEventListener('input', renderList);
-  $('menuBtn').onclick = () => $('sidebar').classList.toggle('open');
+  const optionsPanel = $('optionsPanel'), drawerShade = $('drawerShade');
+  function closeDrawers() { optionsPanel.classList.remove('open'); drawerShade.classList.remove('open'); $('sidebar').classList.remove('open'); }
+  function openOptions() { optionsPanel.classList.add('open'); drawerShade.classList.add('open'); }
+  $('menuBtn').onclick = () => { optionsPanel.classList.contains('open') ? closeDrawers() : openOptions(); };
+  $('closeOptions').onclick = closeDrawers;
+  drawerShade.onclick = closeDrawers;
+  $('docsBtn').onclick = () => { closeDrawers(); $('sidebar').classList.toggle('open'); };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawers(); });
+  // Keep the theme selector available in the options drawer without changing the theme logic.
+  $('themesPanel').innerHTML = $('themes').innerHTML;
+  $('themesPanel').querySelectorAll('button').forEach(b => { b.onclick = () => { setTheme(b.dataset.t); $('themesPanel').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.t === b.dataset.t)); }; });
 
   const THEMES = ['white', 'caramel', 'seaglass', 'night'];
   const THEME_COLORS = { white: '#ffffff', caramel: '#b98258', seaglass: '#8fbab2', night: '#1b1917' };
@@ -509,7 +615,7 @@
     if (!THEMES.includes(t)) t = 'white';
     document.documentElement.dataset.theme = t;
     const mc = document.querySelector('meta[name=theme-color]'); if (mc) mc.content = THEME_COLORS[t];
-    document.querySelectorAll('#themes button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+    document.querySelectorAll('#themes button, #themesPanel button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
     try { localStorage.setItem(THEME, t); } catch (e) {}
   }
   let savedTheme = null; try { savedTheme = localStorage.getItem(THEME); } catch (e) {}
