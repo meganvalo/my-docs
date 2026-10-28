@@ -12,3 +12,9 @@ Latest update: data-safety release.
 - Restoring a backup validates each entry and never overwrites: a document that differs from the one already here is added as a "(restored copy)".
 - Deleting a document moves it to Trash (30 days) with an Undo toast; restore or delete forever from the Trash button in the sidebar.
 - Images are downscaled (max 1600 px) on insert; the browser is asked to keep storage persistent.
+
+Follow-up update:
+- Pasting from Google Docs or Word keeps bold, italic, underline and strikethrough (inline styles become real formatting, and Docs' "normal weight" wrapper no longer turns everything bold).
+- Table tools in the formatting panel: add or delete a row or column, or the whole table. They are enabled when the cursor is inside a table, and Undo/Redo work with them.
+- Accessibility: named buttons, toggle states, labelled editor and toolbar; closed drawers are removed from the tab order, focus moves into a drawer when it opens and returns to its button when it closes.
+- "+ New" now closes the document drawer. The leftover nested mydocs-app.zip was removed: delete it from your repository too.

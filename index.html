@@ -331,6 +331,12 @@
   #toast button { color: inherit; font-weight: 700; text-decoration: underline; padding: 2px 6px; }
   #toast button:hover { background: rgba(127,127,127,.25); }
   @media print { #toast, #trashBar { display: none !important; } }
+
+  /* ---------- table tools ---------- */
+  .tableTools { display: inline-flex; flex-wrap: wrap; gap: 2px; }
+  .tableTools button { font-size: 13px; padding: 4px 8px; }
+  button:disabled { opacity: .4; cursor: default; }
+  button:disabled:hover { background: none; }
 </style>
 </head>
 <body class="loading">
@@ -399,6 +405,8 @@
     <button id="hrBtn" title="Horizontal line">―</button>
     <button data-cmd="removeFormat" title="Clear formatting">Tx</button>
     <input id="imgFile" type="file" accept="image/*" hidden>
+    <span class="sep"></span>
+    <span class="tableTools" role="group" aria-label="Table tools"><button type="button" id="tblRowAdd" title="Add row below" disabled>+ Row</button><button type="button" id="tblRowDel" title="Delete row" disabled>− Row</button><button type="button" id="tblColAdd" title="Add column to the right" disabled>+ Col</button><button type="button" id="tblColDel" title="Delete column" disabled>− Col</button><button type="button" id="tblDel" title="Delete table" disabled>✕ Table</button></span>
   </div>
     </div>
     <div class="panelSection"><div class="panelLabel">Share and export</div>
@@ -483,6 +491,29 @@
     }
   }
 
+  // Pasted formatting often lives in inline styles (Google Docs / Word spans). Styles are stripped on paste,
+  // so convert bold / italic / underline / strike into real tags first, and unwrap Docs' <b style="font-weight:normal"> wrapper.
+  function styleProp(el, prop) {
+    const m = new RegExp('(?:^|;)\\s*' + prop + '\\s*:\\s*([^;]+)', 'i').exec(el.getAttribute('style') || '');
+    return m ? m[1].trim().toLowerCase() : '';
+  }
+  const isBoldVal = v => v === 'bold' || v === 'bolder' || (/^\d+$/.test(v) && +v >= 600);
+  function resetsFormat(el, tag) {
+    if (tag === 'b' || tag === 'strong') { const w = styleProp(el, 'font-weight'); return !!w && !isBoldVal(w); }
+    if (tag === 'i' || tag === 'em') return styleProp(el, 'font-style') === 'normal';
+    return false;
+  }
+  function styleToTags(el, tag) {
+    if (!el.firstChild || !el.hasAttribute('style')) return;
+    const wraps = [];
+    if (!/^(h[1-6]|b|strong)$/.test(tag) && isBoldVal(styleProp(el, 'font-weight'))) wraps.push('b');
+    if (!/^(i|em)$/.test(tag) && styleProp(el, 'font-style') === 'italic') wraps.push('i');
+    const deco = styleProp(el, 'text-decoration') + ' ' + styleProp(el, 'text-decoration-line');
+    if (/underline/.test(deco) && tag !== 'u' && tag !== 'a' && !el.closest('a')) wraps.push('u');
+    if (/line-through/.test(deco) && !/^(s|strike|del)$/.test(tag)) wraps.push('s');
+    wraps.forEach(w => { const n = el.ownerDocument.createElement(w); while (el.firstChild) n.appendChild(el.firstChild); el.appendChild(n); });
+  }
+
   // keepStyle:false (used for paste) drops all inline styles, as before.
   function sanitizeHtml(html, opts) {
     const keepStyle = !(opts && opts.keepStyle === false);
@@ -496,6 +527,7 @@
         if (DROP_TAGS.has(tag)) { parent.removeChild(node); continue; }
         walk(node);
         if (!ALLOWED_TAGS.has(tag)) { unwrap(parent, node); continue; }
+        if (!keepStyle) { if (resetsFormat(node, tag)) { unwrap(parent, node); continue; } styleToTags(node, tag); }
         cleanAttrs(node, tag, keepStyle);
         if (tag === 'span' && !node.attributes.length) unwrap(parent, node);
       }
@@ -720,7 +752,9 @@
     flush();
     const d = { id: uid(), title: '', html: '<p><br></p>', updated: Date.now(), deleted: 0, rev: 0 };
     state.docs.unshift(d); state.current = d.id; trashView = false;
-    saveDoc(d); setCurrentMeta(); render(); editor.focus();
+    saveDoc(d); setCurrentMeta(); render();
+    $('sidebar').classList.remove('open');
+    editor.focus();
     titleEl.focus();
   }
 
@@ -867,6 +901,59 @@
     exec('insertHTML', h + '</table><p><br></p>');
   };
 
+  // ---------- table tools (edits go through insertHTML so Undo/Redo keep working) ----------
+  const tblBtns = ['tblRowAdd', 'tblRowDel', 'tblColAdd', 'tblColDel', 'tblDel'].map($);
+  function tableCtx() {
+    const s = getSelection(); if (!s.rangeCount || !editor.contains(s.anchorNode)) return null;
+    const n = s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentElement;
+    const cell = n && n.closest('td,th'), table = cell && cell.closest('table');
+    return cell && table && editor.contains(table) ? { cell, row: cell.parentElement, table } : null;
+  }
+  function syncTableTools() { const on = !!tableCtx(); tblBtns.forEach(b => { b.disabled = !on; }); }
+  const newCell = tag => { const c = document.createElement(tag || 'td'); c.innerHTML = '<br>'; return c; };
+  const colCount = t => Math.max(1, ...[...t.rows].map(r => r.cells.length));
+  const mark = cell => { if (cell) cell.setAttribute('data-tf', '1'); };
+  const TABLE_OPS = {
+    rowAdd(t, ri, ci) {
+      const src = t.rows[ri], nr = src.cloneNode(false), n = src.cells.length;
+      for (let i = 0; i < n; i++) nr.appendChild(newCell());
+      const body = t.tBodies[0];
+      if (src.parentElement.tagName === 'THEAD' && body) body.insertBefore(nr, body.firstChild); else src.after(nr);
+      mark(nr.cells[Math.min(ci, n - 1)]);
+    },
+    rowDel(t, ri, ci) {
+      if (t.rows.length <= 1) return 'table';
+      t.rows[ri].remove();
+      const r = t.rows[Math.min(ri, t.rows.length - 1)]; mark(r.cells[Math.min(ci, r.cells.length - 1)]);
+    },
+    colAdd(t, ri, ci) {
+      [...t.rows].forEach(r => { const c = r.cells[ci], nc = newCell(c ? c.tagName.toLowerCase() : 'td'); c ? c.after(nc) : r.appendChild(nc); });
+      mark(t.rows[ri].cells[Math.min(ci + 1, t.rows[ri].cells.length - 1)]);
+    },
+    colDel(t, ri, ci) {
+      if (colCount(t) <= 1) return 'table';
+      [...t.rows].forEach(r => { if (r.cells[ci]) r.cells[ci].remove(); if (!r.cells.length) r.remove(); });
+      if (!t.rows.length) return 'table';
+      const r = t.rows[Math.min(ri, t.rows.length - 1)]; mark(r.cells[Math.min(ci, r.cells.length - 1)]);
+    },
+    del() { return 'table'; }
+  };
+  function editTable(op) {
+    const ctx = tableCtx(); if (!ctx) return;
+    const clone = ctx.table.cloneNode(true);
+    const res = TABLE_OPS[op](clone, ctx.row.rowIndex, ctx.cell.cellIndex);
+    editor.focus();
+    const s = getSelection(), r = document.createRange(); r.selectNode(ctx.table); s.removeAllRanges(); s.addRange(r);
+    document.execCommand('insertHTML', false, res === 'table' ? '<p><br></p>' : clone.outerHTML);
+    const t = editor.querySelector('[data-tf]');
+    if (t) { t.removeAttribute('data-tf'); const rr = document.createRange(); rr.setStart(t, 0); rr.collapse(true); s.removeAllRanges(); s.addRange(rr); }
+    queueSave(); syncToolbar();
+  }
+  [['tblRowAdd', 'rowAdd'], ['tblRowDel', 'rowDel'], ['tblColAdd', 'colAdd'], ['tblColDel', 'colDel'], ['tblDel', 'del']].forEach(([id, op]) => {
+    $(id).addEventListener('mousedown', e => e.preventDefault());   // keep the caret in the cell
+    $(id).addEventListener('click', () => editTable(op));
+  });
+
   // ---------- images (downscaled on insert so documents stay small) ----------
   const readDataUrl = blob => new Promise((res, rej) => { const rd = new FileReader(); rd.onload = () => res(rd.result); rd.onerror = () => rej(rd.error); rd.readAsDataURL(blob); });
   async function prepareImage(file) {
@@ -896,13 +983,14 @@
     document.querySelectorAll('[data-cmd]').forEach(b => {
       if (['bold','italic','underline','strikeThrough','insertUnorderedList','insertOrderedList','justifyLeft','justifyCenter','justifyRight'].includes(b.dataset.cmd)) {
         let on = false; try { on = document.queryCommandState(b.dataset.cmd); } catch (e) {}
-        b.classList.toggle('active', on);
+        b.classList.toggle('active', on); b.setAttribute('aria-pressed', String(on));
       }
     });
     let blk = ''; try { blk = (document.queryCommandValue('formatBlock') || '').toLowerCase().replace(/[<>]/g, ''); } catch (e) {}
     $('block').value = ['h1','h2','h3','blockquote','pre'].includes(blk) ? blk : 'p';
+    syncTableTools();
   }
-  document.addEventListener('selectionchange', () => { if (document.activeElement === editor) syncToolbar(); });
+  document.addEventListener('selectionchange', () => { const s = getSelection(); if (document.activeElement === editor || (s.rangeCount && editor.contains(s.anchorNode))) syncToolbar(); });
 
   // Paste: same allowlist as everywhere else, with inline styles stripped
   editor.addEventListener('paste', e => {
@@ -1035,13 +1123,41 @@
   $('search').addEventListener('input', renderList);
   const optionsPanel = $('optionsPanel'), drawerShade = $('drawerShade');
   function closeDrawers() { optionsPanel.classList.remove('open'); drawerShade.classList.remove('open'); $('sidebar').classList.remove('open'); }
-  function openOptions() { optionsPanel.classList.add('open'); drawerShade.classList.add('open'); }
+  function openOptions() { optionsPanel.classList.add('open'); drawerShade.classList.add('open'); syncToolbar(); }
   $('menuBtn').onclick = () => { optionsPanel.classList.contains('open') ? closeDrawers() : openOptions(); };
   $('closeOptions').onclick = closeDrawers;
   drawerShade.onclick = closeDrawers;
   $('docsBtn').onclick = () => { optionsPanel.classList.remove('open'); drawerShade.classList.remove('open'); $('sidebar').classList.toggle('open'); };
   $('closeDocs').onclick = () => $('sidebar').classList.remove('open');
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawers(); });
+
+  // ---------- accessibility ----------
+  document.querySelectorAll('#toolbar button, #sidebar button, #top button').forEach(b => {   // glyph-only buttons get a real name
+    const letters = (b.textContent.match(/[A-Za-z]/g) || []).length;
+    if (b.title && !b.getAttribute('aria-label') && (letters < 4 || b.dataset.cmd)) b.setAttribute('aria-label', b.title.replace(/\s*\([^)]*\)\s*$/, ''));
+  });
+  $('toolbar').setAttribute('role', 'toolbar'); $('toolbar').setAttribute('aria-label', 'Formatting');
+  $('block').setAttribute('aria-label', 'Paragraph style'); $('search').setAttribute('aria-label', 'Search documents');
+  editor.setAttribute('role', 'textbox'); editor.setAttribute('aria-multiline', 'true'); editor.setAttribute('aria-label', 'Document body');
+  // Closed drawers are off-screen: keep them out of the tab order and the accessibility tree,
+  // move focus in when one opens, and back to its button when it closes.
+  const drawers = [
+    { el: $('sidebar'), opener: $('docsBtn'), first: () => $('closeDocs'), open: null },
+    { el: optionsPanel, opener: $('menuBtn'), first: () => $('closeOptions'), open: null }
+  ];
+  function syncDrawers() {
+    drawers.forEach(d => {
+      const open = d.el.classList.contains('open'), wasInside = d.el.contains(document.activeElement);
+      d.el.inert = !open; d.el.setAttribute('aria-hidden', String(!open)); d.opener.setAttribute('aria-expanded', String(open));
+      if (d.open !== null && d.open !== open) {
+        if (open) requestAnimationFrame(() => d.first().focus({ preventScroll: true }));
+        else if (wasInside) d.opener.focus({ preventScroll: true });
+      }
+      d.open = open;
+    });
+  }
+  drawers.forEach(d => new MutationObserver(syncDrawers).observe(d.el, { attributes: true, attributeFilter: ['class'] }));
+  syncDrawers();
 
   const THEMES = ['white', 'caramel', 'seaglass', 'night', 'orange', 'cocoa', 'sage'];
   const THEME_COLORS = { white: '#ffffff', caramel: '#b98258', seaglass: '#8fbab2', night: '#1b1917', orange: '#dc6d18', cocoa: '#2b1a12', sage: '#b1aa81' };
