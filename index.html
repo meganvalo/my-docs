@@ -314,9 +314,26 @@
   :root[data-theme="night"] #editor, :root[data-theme="cocoa"] #editor { background:var(--panel) !important; color:var(--text) !important; }
   @media (prefers-reduced-motion: reduce) { #sidebar, #optionsPanel { transition:none !important; } }
 
+
+  /* ---------- loading, trash, toast ---------- */
+  body.loading #sidebar, body.loading #main { visibility: hidden; }
+  #trashBar { padding: 6px 12px 12px; border-top: 1px solid var(--line); }
+  #trashBar[hidden] { display: none; }
+  #trashBtn { width: 100%; text-align: left; color: var(--muted); }
+  #trashBtn.active { color: var(--text); }
+  .trashNote { font-size: 12px; color: var(--muted); padding: 4px 12px 8px; }
+  .trashActions { display: flex; gap: 6px; margin-top: 6px; }
+  .trashActions button { font-size: 12px; padding: 3px 10px; border: 1px solid var(--line); }
+  .trashActions button.danger { color: #c5221f; }
+  :root[data-theme="night"] .trashActions button.danger, :root[data-theme="cocoa"] .trashActions button.danger { color: #ff8a80; }
+  #toast { position: fixed; left: 50%; bottom: 52px; transform: translateX(-50%); z-index: 50; display: flex; align-items: center; gap: 14px; max-width: min(92vw, 520px); padding: 10px 16px; border-radius: 12px; background: var(--text); color: var(--panel); box-shadow: 0 8px 28px rgba(0,0,0,.3); font-size: 14px; }
+  #toast[hidden] { display: none; }
+  #toast button { color: inherit; font-weight: 700; text-decoration: underline; padding: 2px 6px; }
+  #toast button:hover { background: rgba(127,127,127,.25); }
+  @media print { #toast, #trashBar { display: none !important; } }
 </style>
 </head>
-<body>
+<body class="loading">
 
 <aside id="sidebar">
   <header>
@@ -326,6 +343,7 @@
   </header>
   <input id="search" placeholder="Search documents…" type="search">
   <div id="list"></div>
+  <div id="trashBar" hidden><button id="trashBtn" type="button" aria-pressed="false">🗑 Trash <span id="trashCount"></span></button></div>
 </aside>
 
 <div id="drawerShade" aria-hidden="true"></div>
@@ -414,43 +432,319 @@
   <div id="status"><span id="count"></span><span id="saved"></span></div>
 </section>
 
+<div id="toast" role="status" aria-live="polite" hidden><span id="toastMsg"></span><button id="toastBtn" type="button" hidden></button></div>
+
 <script>
 (function () {
-  const KEY = 'mydocs.v1', THEME = 'mydocs.theme';
+  const KEY = 'mydocs.v1', THEME = 'mydocs.theme';   // KEY = legacy localStorage store (migrated to IndexedDB on first run)
+  const TRASH_DAYS = 30;
   const $ = id => document.getElementById(id);
   const editor = $('editor'), titleEl = $('title'), listEl = $('list');
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-  // ---------- storage (wrapped: browser storage can be blocked) ----------
-  let memory = null;
-  function load() {
-    try { return JSON.parse(localStorage.getItem(KEY)) || { docs: [], current: null }; }
-    catch (e) { return memory || { docs: [], current: null }; }
+  // ======================================================================
+  // HTML sanitiser (allowlist). Used on load, restore and paste so that
+  // stored or imported content can never run script in the app's origin.
+  // ======================================================================
+  const ALLOWED_TAGS = new Set('p div br h1 h2 h3 h4 h5 h6 b strong i em u s strike del a ul ol li blockquote pre code hr table thead tbody tfoot tr td th caption colgroup col img span font sub sup mark small'.split(' '));
+  const DROP_TAGS = new Set('script style iframe frame frameset object embed applet meta link base title head noscript template form input button select option textarea svg math audio video source track canvas dialog'.split(' '));
+  const STYLE_PROPS = new Set(['color', 'background-color', 'text-align', 'font-weight', 'font-style', 'text-decoration', 'text-decoration-line', 'margin', 'margin-left', 'margin-right', 'padding', 'padding-left', 'border', 'list-style-type']);
+  const SAFE_CSS = /^[\w\s#.,%()\-]*$/, BAD_CSS = /url\s*\(|expression|@import|javascript|behavior/i;
+  const SAFE_COLOR = /^(#[0-9a-f]{3,8}|[a-z]+|rgba?\([\d\s.,%]+\))$/i;
+  const SAFE_HREF = /^(https?:|mailto:|tel:|#)/i;
+  const SAFE_IMG = /^(data:image\/(png|jpe?g|gif|webp|bmp|avif|svg\+xml)[;,]|https?:\/\/)/i;
+
+  function cleanStyle(v) {
+    return v.split(';').map(s => {
+      const i = s.indexOf(':'); if (i < 0) return '';
+      const p = s.slice(0, i).trim().toLowerCase(), val = s.slice(i + 1).trim();
+      return STYLE_PROPS.has(p) && val && SAFE_CSS.test(val) && !BAD_CSS.test(val) ? p + ': ' + val : '';
+    }).filter(Boolean).join('; ');
   }
-  let state = load();
-  function persist() {
-    memory = state;
-    try { localStorage.setItem(KEY, JSON.stringify(state)); $('saved').textContent = 'Saved ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
-    catch (e) { $('saved').textContent = '⚠ Could not save (storage unavailable). Use Backup all.'; }
+
+  function cleanAttrs(el, tag, keepStyle) {
+    for (const a of Array.from(el.attributes)) {
+      const n = a.name.toLowerCase(), v = a.value; let ok = false, nv = v;
+      if (n === 'style') { if (keepStyle) { nv = cleanStyle(v); ok = !!nv; } }
+      else if (n === 'align') ok = /^(left|right|center|justify)$/i.test(v);
+      else if (tag === 'a' && n === 'href') { nv = v.trim(); ok = SAFE_HREF.test(nv); }
+      else if (tag === 'a' && n === 'title') ok = true;
+      else if (tag === 'img' && n === 'src') { nv = v.trim(); ok = SAFE_IMG.test(nv); }
+      else if (tag === 'img' && (n === 'alt' || n === 'title')) ok = true;
+      else if (tag === 'img' && (n === 'width' || n === 'height')) ok = /^\d{1,5}%?$/.test(v);
+      else if ((tag === 'td' || tag === 'th') && (n === 'colspan' || n === 'rowspan')) ok = /^\d{1,3}$/.test(v);
+      else if (tag === 'font' && n === 'color') { nv = v.trim(); ok = SAFE_COLOR.test(nv); }
+      else if (tag === 'ol' && n === 'start') ok = /^-?\d{1,5}$/.test(v);
+      if (!ok) el.removeAttribute(a.name); else if (nv !== v) el.setAttribute(a.name, nv);
+    }
+    if (tag === 'a') {
+      if (el.hasAttribute('href')) { el.setAttribute('rel', 'noopener noreferrer'); el.setAttribute('target', '_blank'); }
+      else el.removeAttribute('target');
+    }
   }
+
+  // keepStyle:false (used for paste) drops all inline styles, as before.
+  function sanitizeHtml(html, opts) {
+    const keepStyle = !(opts && opts.keepStyle === false);
+    const doc = new DOMParser().parseFromString(String(html == null ? '' : html), 'text/html'); // inert: no scripts run, no resources load
+    const unwrap = (parent, node) => { while (node.firstChild) parent.insertBefore(node.firstChild, node); parent.removeChild(node); };
+    (function walk(parent) {
+      for (const node of Array.from(parent.childNodes)) {
+        if (node.nodeType === 3) continue;
+        if (node.nodeType !== 1) { parent.removeChild(node); continue; }
+        const tag = node.tagName.toLowerCase();
+        if (DROP_TAGS.has(tag)) { parent.removeChild(node); continue; }
+        walk(node);
+        if (!ALLOWED_TAGS.has(tag)) { unwrap(parent, node); continue; }
+        cleanAttrs(node, tag, keepStyle);
+        if (tag === 'span' && !node.attributes.length) unwrap(parent, node);
+      }
+    })(doc.body);
+    return doc.body.innerHTML.trim() || '<p><br></p>';
+  }
+
+  // Validate + sanitise a document record coming from storage or a backup file.
+  function cleanDoc(raw) {
+    if (!raw || typeof raw !== 'object' || typeof raw.id !== 'string' || !/^[\w-]{1,64}$/.test(raw.id)) return null;
+    return {
+      id: raw.id,
+      title: typeof raw.title === 'string' ? raw.title.slice(0, 500) : '',
+      html: sanitizeHtml(typeof raw.html === 'string' ? raw.html : ''),
+      updated: Number.isFinite(raw.updated) ? raw.updated : Date.now(),
+      deleted: Number.isFinite(raw.deleted) && raw.deleted > 0 ? raw.deleted : 0,
+      rev: Number.isInteger(raw.rev) && raw.rev > 0 ? raw.rev : 0
+    };
+  }
+
+  // Plain text of a document for search. Parsed in an inert document and cached.
+  const textCache = new Map();
+  function plainText(d) {
+    let c = textCache.get(d.id);
+    if (!c || c.html !== d.html) {
+      c = { html: d.html, text: new DOMParser().parseFromString(d.html, 'text/html').body.textContent || '' };
+      textCache.set(d.id, c);
+    }
+    return c.text;
+  }
+
+  // ======================================================================
+  // Storage. IndexedDB (one record per document, optimistic revision check)
+  // with a localStorage / in-memory fallback if IndexedDB is unavailable.
+  // ======================================================================
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      if (!('indexedDB' in window)) return reject(new Error('IndexedDB unavailable'));
+      let r; try { r = indexedDB.open('mydocs', 1); } catch (e) { return reject(e); }
+      r.onupgradeneeded = () => {
+        const db = r.result;
+        if (!db.objectStoreNames.contains('docs')) db.createObjectStore('docs', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta');
+      };
+      r.onsuccess = () => resolve(r.result);
+      r.onerror = () => reject(r.error);
+      r.onblocked = () => reject(new Error('IndexedDB blocked'));
+    });
+  }
+
+  function makeIdbStore(db) {
+    const reqP = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+    const txDone = tx => new Promise((res, rej) => { tx.oncomplete = () => res(); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error || new Error('Transaction aborted')); });
+    return {
+      kind: 'idb',
+      all: () => reqP(db.transaction('docs').objectStore('docs').getAll()),
+      get: id => reqP(db.transaction('docs').objectStore('docs').get(id)),
+      // Write only if the stored revision is the one we last saw; otherwise report a conflict and write nothing.
+      put(doc, expectRev) {
+        return new Promise((resolve, reject) => {
+          const tx = db.transaction('docs', 'readwrite'), st = tx.objectStore('docs');
+          let result = null;
+          const g = st.get(doc.id);
+          g.onsuccess = () => {
+            const cur = g.result;
+            if (cur && (cur.rev | 0) !== (expectRev | 0)) { result = { conflict: cur }; return; }
+            const next = Object.assign({}, doc, { rev: (cur ? cur.rev | 0 : 0) + 1 });
+            st.put(next); result = { ok: next };
+          };
+          tx.oncomplete = () => resolve(result);
+          tx.onerror = () => reject(tx.error);
+          tx.onabort = () => reject(tx.error || new Error('Transaction aborted'));
+        });
+      },
+      del(id) { const tx = db.transaction('docs', 'readwrite'); tx.objectStore('docs').delete(id); return txDone(tx); },
+      getMeta: k => reqP(db.transaction('meta').objectStore('meta').get(k)),
+      setMeta(k, v) { const tx = db.transaction('meta', 'readwrite'); tx.objectStore('meta').put(v, k); return txDone(tx); },
+      // One-time import of the old localStorage data, atomically, never overwriting existing records.
+      migrate(docs, current) {
+        const tx = db.transaction(['docs', 'meta'], 'readwrite'), ds = tx.objectStore('docs'), ms = tx.objectStore('meta');
+        const f = ms.get('migrated');
+        f.onsuccess = () => {
+          if (f.result) return;
+          docs.forEach(d => { const r = ds.add(d); r.onerror = e => { e.preventDefault(); e.stopPropagation(); }; });
+          if (current) ms.put(current, 'current');
+          ms.put(true, 'migrated');
+        };
+        return txDone(tx);
+      }
+    };
+  }
+
+  function makeLsStore() {
+    let mem = null;
+    const read = () => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && Array.isArray(s.docs)) return s; } catch (e) {} return mem || { docs: [], current: null }; };
+    const write = s => { mem = s; localStorage.setItem(KEY, JSON.stringify(s)); };
+    return {
+      kind: 'ls',
+      all: async () => read().docs,
+      get: async id => read().docs.find(d => d.id === id),
+      async put(doc, expectRev) {
+        const s = read(), i = s.docs.findIndex(d => d.id === doc.id), cur = s.docs[i];
+        if (cur && (cur.rev | 0) !== (expectRev | 0)) return { conflict: cur };
+        const next = Object.assign({}, doc, { rev: (cur ? cur.rev | 0 : 0) + 1 });
+        if (i >= 0) s.docs[i] = next; else s.docs.unshift(next);
+        write(s); return { ok: next };
+      },
+      async del(id) { const s = read(); s.docs = s.docs.filter(d => d.id !== id); write(s); },
+      getMeta: async k => (k === 'current' ? read().current : undefined),
+      async setMeta(k, v) { if (k === 'current') { const s = read(); s.current = v; write(s); } },
+      migrate: async () => {}
+    };
+  }
+
+  // ======================================================================
+  // App state
+  // ======================================================================
+  let store = null, ready = false;
+  const state = { docs: [], current: null };
+  let timer = null, dirty = false, trashView = false, needRender = false;
+  let queue = Promise.resolve();
+  const enqueue = fn => { const run = queue.then(fn); queue = run.catch(() => {}); return run; };  // serialises all storage work
 
   const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-  const cur = () => state.docs.find(d => d.id === state.current);
+  const live = () => state.docs.filter(d => !d.deleted);
+  const byUpdated = (a, b) => b.updated - a.updated;
+  const cur = () => state.docs.find(d => d.id === state.current && !d.deleted);
+  const pickCurrent = () => { const l = live().sort(byUpdated)[0]; return l ? l.id : null; };
+
+  const bc = 'BroadcastChannel' in window ? new BroadcastChannel('mydocs') : null;
+  const announce = m => { try { bc && bc.postMessage(m); } catch (e) {} };
+
+  function setSaved() { if (timer === null) $('saved').textContent = 'Saved ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+  function setSaveError(err) {
+    const full = err && (err.name === 'QuotaExceededError' || /quota/i.test(err.message || ''));
+    $('saved').textContent = '⚠ Could not save' + (full ? ' (storage is full)' : '') + '. Use “Back up all documents”.';
+  }
+
+  let persistAsked = false;
+  function askPersist() {   // ask the browser not to evict our data under storage pressure (once, after the first real save)
+    if (persistAsked) return; persistAsked = true;
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persisted().then(p => { if (!p) navigator.storage.persist(); }).catch(() => {}); } catch (e) {}
+  }
+
+  // Save one document. Never overwrites a newer version written by another tab: on conflict
+  // both versions are kept (ours as "(conflicted copy)", or theirs if we are mid-edit).
+  function saveDoc(d) {
+    const snap = { id: d.id, title: d.title, html: d.html, updated: d.updated, deleted: d.deleted || 0 };
+    return enqueue(async () => {
+      if (!state.docs.includes(d)) return;          // permanently deleted while queued
+      const r = await store.put(snap, d.rev | 0);
+      if (r.conflict) await handleConflict(d, snap, r.conflict);
+      else { d.rev = r.ok.rev; announce({ t: 'doc', id: d.id }); setSaved(); }
+    }).catch(setSaveError);
+  }
+
+  async function handleConflict(d, snap, theirs) {
+    const editingNow = dirty && state.current === d.id;
+    const mine = !editingNow;                        // if idle, keep ours as a copy and adopt theirs; if typing, keep theirs as a copy
+    const src = mine ? snap : theirs;
+    if (!(theirs.title === snap.title && theirs.html === snap.html)) {
+      const copy = { id: uid(), title: (src.title || 'Untitled document') + (mine ? ' (conflicted copy)' : ' (version from another tab)'), html: src.html, updated: Date.now(), deleted: 0, rev: 0 };
+      const r = await store.put(copy, 0); copy.rev = r.ok.rev;
+      state.docs.push(copy); announce({ t: 'doc', id: copy.id });
+      toast('Another tab changed “' + (snap.title || 'Untitled document') + '”. Both versions were kept.');
+    }
+    if (mine) {
+      const c = cleanDoc(theirs);
+      if (c) { const changed = c.html !== d.html || c.title !== d.title; Object.assign(d, c); if (d.id === state.current && changed) needRender = true; }
+    } else d.rev = theirs.rev | 0;
+    afterRemote();
+  }
+
+  // ---- merging changes made in other tabs ----
+  function applyRemote(id, s) {
+    const l = state.docs.find(d => d.id === id), busy = dirty && state.current === id;
+    if (!s) { if (l && l.rev > 0 && !busy) { state.docs = state.docs.filter(d => d !== l); return true; } return false; }
+    const c = cleanDoc(s); if (!c) return false;
+    if (!l) { state.docs.push(c); return true; }
+    if (c.rev > l.rev && !busy) {
+      const changed = c.html !== l.html || c.title !== l.title;
+      Object.assign(l, c); if (l.id === state.current && changed) needRender = true; return true;
+    }
+    return false;
+  }
+  function afterRemote() {
+    const c = cur();
+    if (!c) { state.current = pickCurrent(); render(); }
+    else if (needRender) render();
+    needRender = false; renderList();
+  }
+  function syncFromStore() {
+    if (!ready) return;
+    enqueue(async () => {
+      const list = await store.all(), ids = new Set();
+      list.forEach(s => { ids.add(s.id); applyRemote(s.id, s); });
+      state.docs.slice().forEach(l => { if (!ids.has(l.id)) applyRemote(l.id, null); });
+      afterRemote();
+    }).catch(() => {});
+  }
+  if (bc) bc.onmessage = ev => {
+    const m = ev.data || {};
+    if (!ready) return;
+    if (!m.id) return syncFromStore();
+    enqueue(async () => { applyRemote(m.id, m.t === 'del' ? undefined : await store.get(m.id)); afterRemote(); }).catch(() => {});
+  };
+
+  // ---------- toast ----------
+  let toastTimer = null;
+  function hideToast() { $('toast').hidden = true; }
+  function toast(msg, label, fn) {
+    $('toastMsg').textContent = msg;
+    const b = $('toastBtn'); b.hidden = !label; b.textContent = label || ''; b.onclick = fn ? () => { hideToast(); fn(); } : null;
+    $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(hideToast, label ? 8000 : 6000);
+  }
 
   // ---------- documents ----------
+  function setCurrentMeta() { enqueue(() => store.setMeta('current', state.current)).catch(() => {}); }
+
   function newDoc() {
-    const d = { id: uid(), title: '', html: '<p><br></p>', updated: Date.now() };
-    state.docs.unshift(d);
-    state.current = d.id;
-    persist(); render(); editor.focus();
+    if (!ready) return;
+    flush();
+    const d = { id: uid(), title: '', html: '<p><br></p>', updated: Date.now(), deleted: 0, rev: 0 };
+    state.docs.unshift(d); state.current = d.id; trashView = false;
+    saveDoc(d); setCurrentMeta(); render(); editor.focus();
     titleEl.focus();
   }
 
-  function deleteDoc() {
+  function deleteDoc() {            // moves to Trash; Undo toast + Trash view bring it back
+    if (!ready) return;
+    flush();
     const d = cur(); if (!d) return;
-    if (!confirm('Delete "' + (d.title || 'Untitled document') + '"? This can\'t be undone.')) return;
-    state.docs = state.docs.filter(x => x.id !== d.id);
-    state.current = state.docs.length ? state.docs[0].id : null;
-    persist(); render();
+    d.deleted = Date.now(); saveDoc(d);
+    state.current = pickCurrent(); setCurrentMeta(); render();
+    toast('Moved “' + (d.title || 'Untitled document') + '” to Trash', 'Undo', () => restoreDoc(d.id, true));
+    closeDrawers();
+  }
+  function restoreDoc(id, select) {
+    const d = state.docs.find(x => x.id === id); if (!d) return;
+    flush(); d.deleted = 0; saveDoc(d);
+    if (select || !cur()) { state.current = d.id; trashView = false; setCurrentMeta(); }
+    render();
+  }
+  function purgeDoc(id) {
+    const d = state.docs.find(x => x.id === id); if (!d) return;
+    if (!confirm('Delete "' + (d.title || 'Untitled document') + '" forever? This can\'t be undone.')) return;
+    state.docs = state.docs.filter(x => x !== d); textCache.delete(id);
+    enqueue(() => store.del(id)).then(() => announce({ t: 'del', id })).catch(setSaveError);
+    renderList();
   }
 
   function render() {
@@ -463,38 +757,57 @@
       titleEl.value = d.title;
       editor.innerHTML = d.html;
       document.title = (d.title || 'Untitled') + ' – MyDocs';
-    } else { titleEl.value = ''; document.title = 'MyDocs'; }
+    } else { titleEl.value = ''; editor.innerHTML = ''; document.title = 'MyDocs'; }
+    dirty = false;
     renderList(); updateCount();
   }
 
   function renderList() {
     const q = $('search').value.trim().toLowerCase();
+    const trashed = state.docs.filter(d => d.deleted);
+    $('trashCount').textContent = trashed.length ? '(' + trashed.length + ')' : '';
+    $('trashBar').hidden = !trashed.length && !trashView;
+    $('trashBtn').classList.toggle('active', trashView);
+    $('trashBtn').setAttribute('aria-pressed', String(trashView));
     listEl.innerHTML = '';
+    if (trashView) {
+      const note = document.createElement('div'); note.className = 'trashNote';
+      note.textContent = trashed.length ? 'Items are deleted forever after ' + TRASH_DAYS + ' days.' : 'Trash is empty.';
+      listEl.appendChild(note);
+    }
     state.docs
-      .slice().sort((a, b) => b.updated - a.updated)
-      .filter(d => !q || (d.title + ' ' + stripHtml(d.html)).toLowerCase().includes(q))
+      .filter(d => trashView ? d.deleted : !d.deleted)
+      .sort(trashView ? (a, b) => b.deleted - a.deleted : byUpdated)
+      .filter(d => !q || (d.title + ' ' + plainText(d)).toLowerCase().includes(q))
       .forEach(d => {
         const el = document.createElement('div');
-        el.className = 'item' + (d.id === state.current ? ' sel' : '');
+        el.className = 'item' + (!trashView && d.id === state.current ? ' sel' : '');
         const t = document.createElement('span'); t.className = 't'; t.textContent = d.title || 'Untitled document';
-        const dt = document.createElement('span'); dt.className = 'd'; dt.textContent = new Date(d.updated).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+        const dt = document.createElement('span'); dt.className = 'd';
+        dt.textContent = new Date(trashView ? d.deleted : d.updated).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         el.append(t, dt);
-        el.onclick = () => { flush(); state.current = d.id; persist(); render(); $('sidebar').classList.remove('open'); };
+        if (trashView) {
+          const row = document.createElement('div'); row.className = 'trashActions';
+          const r = document.createElement('button'); r.textContent = 'Restore'; r.onclick = () => restoreDoc(d.id, false);
+          const x = document.createElement('button'); x.textContent = 'Delete forever'; x.className = 'danger'; x.onclick = () => purgeDoc(d.id);
+          row.append(r, x); el.appendChild(row); el.style.cursor = 'default';
+        } else {
+          el.onclick = () => { flush(); state.current = d.id; setCurrentMeta(); render(); $('sidebar').classList.remove('open'); };
+        }
         listEl.appendChild(el);
       });
   }
 
-  function stripHtml(h) { const x = document.createElement('div'); x.innerHTML = h; return x.textContent || ''; }
-
   // ---------- autosave ----------
-  let timer = null;
   function flush() {
     clearTimeout(timer); timer = null;
-    const d = cur(); if (!d) return;
-    d.html = editor.innerHTML; d.title = titleEl.value; d.updated = Date.now();
-    persist();
+    if (!ready) return;
+    const d = cur(); if (!d) { dirty = false; return; }
+    if (!dirty && d.rev > 0) return;               // nothing changed: don't bump "updated" or write
+    d.html = editor.innerHTML; d.title = titleEl.value; d.updated = Date.now(); dirty = false;
+    saveDoc(d); askPersist();
   }
-  function queueSave() { $('saved').textContent = 'Saving…'; clearTimeout(timer); timer = setTimeout(() => { flush(); renderList(); }, 500); }
+  function queueSave() { if (!ready) return; dirty = true; $('saved').textContent = 'Saving…'; clearTimeout(timer); timer = setTimeout(() => { flush(); renderList(); }, 500); }
   function updateCount() {
     const txt = editor.innerText.trim();
     const words = txt ? txt.split(/\s+/).length : 0;
@@ -503,7 +816,8 @@
   editor.addEventListener('input', () => { queueSave(); updateCount(); });
   titleEl.addEventListener('input', () => { queueSave(); document.title = (titleEl.value || 'Untitled') + ' – MyDocs'; });
   window.addEventListener('beforeunload', flush);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
+  window.addEventListener('pagehide', flush);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); else syncFromStore(); });
 
   // ---------- formatting ----------
   function exec(cmd, val) { editor.focus(); document.execCommand(cmd, false, val || null); queueSave(); syncToolbar(); }
@@ -522,9 +836,26 @@
   $('customColor').addEventListener('input', e => { exec('foreColor', e.target.value); document.querySelector('.colorUnderline').style.background = e.target.value; });
   document.addEventListener('pointerdown', e => { if (!e.target.closest('.textColorControl')) { colorPalette.hidden = true; colorBtn.setAttribute('aria-expanded', 'false'); } });
 
+  // Only http(s), mailto and tel links are allowed. "example.com" becomes https://example.com.
+  function normalizeUrl(u) {
+    u = (u || '').trim(); if (!u) return null;
+    if (SAFE_HREF.test(u)) return u;
+    if (/^(javascript|data|vbscript|file|blob):/i.test(u)) return null;
+    if (/^\/\//.test(u)) return 'https:' + u;
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(u)) return 'mailto:' + u;
+    return /^[^\s/]+\.[^\s]+$|^localhost([:/]|$)/i.test(u) ? 'https://' + u : null;
+  }
   function addLink() {
-    const url = prompt('Link URL:', 'https://');
-    if (url) exec('createLink', url);
+    const sel = getSelection();
+    if (!sel.rangeCount || !editor.contains(sel.anchorNode)) return;
+    const saved = sel.getRangeAt(0).cloneRange(), collapsed = sel.isCollapsed;
+    const raw = prompt('Link URL:', 'https://'); if (raw === null) return;
+    const url = normalizeUrl(raw);
+    if (!url) { alert('That doesn\'t look like a link I can use. Links must start with http://, https://, mailto: or tel:.'); return; }
+    editor.focus(); sel.removeAllRanges(); sel.addRange(saved);
+    if (collapsed) exec('insertHTML', '<a href="' + esc(url) + '">' + esc(url.replace(/^mailto:|^tel:/i, '')) + '</a>');
+    else exec('createLink', url);
+    editor.querySelectorAll('a[href]').forEach(a => { a.setAttribute('rel', 'noopener noreferrer'); a.setAttribute('target', '_blank'); });
   }
   $('linkBtn').onclick = addLink;
   $('hrBtn').onclick = () => exec('insertHorizontalRule');
@@ -535,12 +866,30 @@
     for (let i = 0; i < r; i++) { h += '<tr>'; for (let j = 0; j < c; j++) h += '<td><br></td>'; h += '</tr>'; }
     exec('insertHTML', h + '</table><p><br></p>');
   };
+
+  // ---------- images (downscaled on insert so documents stay small) ----------
+  const readDataUrl = blob => new Promise((res, rej) => { const rd = new FileReader(); rd.onload = () => res(rd.result); rd.onerror = () => rej(rd.error); rd.readAsDataURL(blob); });
+  async function prepareImage(file) {
+    if (!/^image\/(png|jpeg|gif|webp|bmp|avif|svg\+xml)$/i.test(file.type)) { alert('That image type isn\'t supported. Use PNG, JPEG, GIF, WebP, BMP, AVIF or SVG.'); return null; }
+    if (!/^image\/(png|jpeg)$/i.test(file.type)) return readDataUrl(file);   // leave animated/vector/other formats untouched
+    try {
+      const MAX = 1600, bmp = await createImageBitmap(file);
+      const scale = Math.min(1, MAX / Math.max(bmp.width, bmp.height));
+      if (scale === 1 && file.size < 600 * 1024) { bmp.close && bmp.close(); return readDataUrl(file); }
+      const w = Math.max(1, Math.round(bmp.width * scale)), h = Math.max(1, Math.round(bmp.height * scale));
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const png = /png$/i.test(file.type), ctx = c.getContext('2d');
+      if (!png) { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); }
+      ctx.drawImage(bmp, 0, 0, w, h); bmp.close && bmp.close();
+      const blob = await new Promise(r => c.toBlob(r, png ? 'image/png' : 'image/jpeg', 0.85));
+      return readDataUrl(blob && (scale < 1 || blob.size < file.size) ? blob : file);
+    } catch (e) { return readDataUrl(file); }
+  }
   $('imgBtn').onclick = () => $('imgFile').click();
-  $('imgFile').onchange = e => {
-    const f = e.target.files[0]; if (!f) return;
-    const rd = new FileReader();
-    rd.onload = () => exec('insertImage', rd.result);
-    rd.readAsDataURL(f); e.target.value = '';
+  $('imgFile').onchange = async e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    try { const url = await prepareImage(f); if (url) exec('insertImage', url); }
+    catch (err) { alert('Could not read that image.'); }
   };
 
   function syncToolbar() {
@@ -555,17 +904,13 @@
   }
   document.addEventListener('selectionchange', () => { if (document.activeElement === editor) syncToolbar(); });
 
-  // Paste as plain-ish HTML but strip scripts/styles for safety
+  // Paste: same allowlist as everywhere else, with inline styles stripped
   editor.addEventListener('paste', e => {
     const html = e.clipboardData.getData('text/html');
     if (!html) return;
     e.preventDefault();
-    const tmp = document.createElement('div'); tmp.innerHTML = html;
-    tmp.querySelectorAll('script,style,meta,link,iframe,object').forEach(n => n.remove());
-    tmp.querySelectorAll('*').forEach(n => {
-      [...n.attributes].forEach(a => { if (/^on/i.test(a.name) || a.name === 'style' || a.name === 'class' || a.name === 'id') n.removeAttribute(a.name); });
-    });
-    document.execCommand('insertHTML', false, tmp.innerHTML);
+    const clean = sanitizeHtml(html, { keepStyle: false });
+    if (clean !== '<p><br></p>') document.execCommand('insertHTML', false, clean);
   });
 
   // ---------- keyboard shortcuts ----------
@@ -587,14 +932,14 @@
 
   $('exportHtml').onclick = () => {
     flush();
-    const t = (titleEl.value || 'Untitled').replace(/</g, '&lt;');
+    const t = esc(titleEl.value || 'Untitled');
     const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${t}</title><style>body{max-width:760px;margin:40px auto;padding:0 16px;font:16px/1.65 system-ui,sans-serif;color:#222}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px 10px}blockquote{border-left:3px solid #ccc;margin-left:0;padding-left:14px;color:#666}pre{background:#f4f4f4;padding:10px;overflow:auto}img{max-width:100%}</style></head><body>${editor.innerHTML}</body></html>`;
     download(fname('html'), html, 'text/html');
   };
 
   function toMd(node, ctx) {
     ctx = ctx || { list: [], };
-    if (node.nodeType === 3) return node.textContent.replace(/\u00a0/g, ' ');
+    if (node.nodeType === 3) return node.textContent.replace(/ /g, ' ');
     if (node.nodeType !== 1) return '';
     const kids = () => [...node.childNodes].map(n => toMd(n, ctx)).join('');
     const tag = node.tagName.toLowerCase();
@@ -645,27 +990,48 @@
   $('printBtn').onclick = () => { flush(); window.print(); };
 
   // ---------- backup / restore ----------
-  $('backupBtn').onclick = () => { flush(); download('mydocs-backup-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify(state), 'application/json'); };
+  $('backupBtn').onclick = () => {
+    if (!ready) return; flush();
+    const docs = state.docs.map(d => ({ id: d.id, title: d.title, html: d.html, updated: d.updated, deleted: d.deleted || 0 }));
+    download('mydocs-backup-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify({ app: 'mydocs', version: 2, exported: new Date().toISOString(), current: state.current, docs }), 'application/json');
+  };
   $('restoreBtn').onclick = () => $('restoreFile').click();
   $('restoreFile').onchange = e => {
-    const f = e.target.files[0]; if (!f) return;
+    const f = e.target.files[0]; if (!f) return; e.target.value = '';
     const rd = new FileReader();
     rd.onload = () => {
-      try {
-        const data = JSON.parse(rd.result);
-        if (!data || !Array.isArray(data.docs)) throw 0;
-        const ids = new Set(state.docs.map(d => d.id));
-        let added = 0;
-        data.docs.forEach(d => { if (d && d.id && !ids.has(d.id)) { state.docs.push(d); added++; } });
-        persist(); render(); alert('Restored ' + added + ' document(s). Existing documents were kept.');
-      } catch (err) { alert('That file doesn\'t look like a MyDocs backup.'); }
+      if (!ready) return;
+      let data;
+      try { data = JSON.parse(rd.result); if (!data || !Array.isArray(data.docs)) throw 0; }
+      catch (err) { alert('That file doesn\'t look like a MyDocs backup.'); return; }
+      flush();
+      const n = { added: 0, copies: 0, same: 0, bad: 0 };
+      data.docs.forEach(raw => {
+        const d = cleanDoc(raw);
+        if (!d) { n.bad++; return; }
+        d.rev = 0;
+        const ex = state.docs.find(x => x.id === d.id);
+        if (!ex) { state.docs.push(d); saveDoc(d); n.added++; }
+        else if (ex.title === d.title && ex.html === d.html) n.same++;
+        else {   // a different version already exists: keep both, never overwrite
+          const c = Object.assign({}, d, { id: uid(), title: (d.title || 'Untitled document') + ' (restored copy)', deleted: 0, updated: Date.now() });
+          state.docs.push(c); saveDoc(c); n.copies++;
+        }
+      });
+      render();
+      alert('Restored ' + n.added + ' new document(s).' +
+        (n.copies ? '\n' + n.copies + ' differed from the version already here and were added as "(restored copy)".' : '') +
+        (n.same ? '\n' + n.same + ' were already up to date.' : '') +
+        (n.bad ? '\n' + n.bad + ' invalid entr' + (n.bad === 1 ? 'y was' : 'ies were') + ' skipped.' : '') +
+        '\nExisting documents were kept.');
     };
-    rd.readAsText(f); e.target.value = '';
+    rd.readAsText(f);
   };
 
   // ---------- misc UI ----------
   $('newBtn').onclick = newDoc;
   $('delBtn').onclick = deleteDoc;
+  $('trashBtn').onclick = () => { trashView = !trashView; renderList(); };
   $('search').addEventListener('input', renderList);
   const optionsPanel = $('optionsPanel'), drawerShade = $('drawerShade');
   function closeDrawers() { optionsPanel.classList.remove('open'); drawerShade.classList.remove('open'); $('sidebar').classList.remove('open'); }
@@ -676,8 +1042,6 @@
   $('docsBtn').onclick = () => { optionsPanel.classList.remove('open'); drawerShade.classList.remove('open'); $('sidebar').classList.toggle('open'); };
   $('closeDocs').onclick = () => $('sidebar').classList.remove('open');
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawers(); });
-  // Theme choices live only in the options drawer to keep the writing workspace uncluttered.
-  $('themesPanel').querySelectorAll('button').forEach(b => { b.onclick = () => { setTheme(b.dataset.t); $('themesPanel').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.t === b.dataset.t)); }; });
 
   const THEMES = ['white', 'caramel', 'seaglass', 'night', 'orange', 'cocoa', 'sage'];
   const THEME_COLORS = { white: '#ffffff', caramel: '#b98258', seaglass: '#8fbab2', night: '#1b1917', orange: '#dc6d18', cocoa: '#2b1a12', sage: '#b1aa81' };
@@ -688,7 +1052,7 @@
     if (t === 'shell') t = 'white'; if (!THEMES.includes(t)) t = 'white';
     document.documentElement.dataset.theme = t;
     const mc = document.querySelector('meta[name=theme-color]'); if (mc) mc.content = THEME_COLORS[t];
-    document.querySelectorAll('#themes button, #themesPanel button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+    document.querySelectorAll('#themesPanel button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
     if (save) { try { localStorage.setItem(THEME, t); } catch (e) {} }
   }
   function applyDeviceTheme() { setTheme(deviceDark.matches ? 'night' : 'white', false); }
@@ -707,14 +1071,37 @@
   }
 
   // ---------- start ----------
-  if (!state.docs.length) {
-    state.docs.push({ id: uid(), title: 'Welcome to MyDocs', updated: Date.now(),
-      html: '<h1>Welcome to MyDocs</h1><p>This is your private document editor. Everything is saved automatically in this browser.</p><ul><li>Use the toolbar or <b>Ctrl/Cmd+B</b>, <b>I</b>, <b>U</b>, <b>K</b> to format.</li><li>Add tables, images, and links from the toolbar.</li><li>Export to HTML, Markdown, or PDF (via Print) from the top bar.</li><li><b>Backup all</b> regularly: browser storage can be cleared.</li></ul><p>Click <b>+ New</b> to start a document.</p>' });
-    state.current = state.docs[0].id;
-    persist();
+  async function init() {
+    try {
+      try { store = makeIdbStore(await openDB()); } catch (e) { store = makeLsStore(); }
+      if (store.kind === 'idb') {
+        let legacy = null; try { legacy = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+        if (legacy && Array.isArray(legacy.docs) && legacy.docs.length) {
+          await store.migrate(legacy.docs.map(cleanDoc).filter(Boolean), typeof legacy.current === 'string' ? legacy.current : null);
+        }
+      }
+      const docs = await store.all(), last = await store.getMeta('current');
+      state.docs = docs.map(cleanDoc).filter(Boolean);
+      const cutoff = Date.now() - TRASH_DAYS * 864e5;       // empty Trash items older than 30 days
+      state.docs.filter(d => d.deleted && d.deleted < cutoff).forEach(d => { enqueue(() => store.del(d.id)).catch(() => {}); });
+      state.docs = state.docs.filter(d => !(d.deleted && d.deleted < cutoff));
+      state.current = state.docs.some(d => d.id === last && !d.deleted) ? last : pickCurrent();
+      ready = true;
+      if (!state.docs.length) {
+        const w = { id: uid(), title: 'Welcome to MyDocs', updated: Date.now(), deleted: 0, rev: 0,
+          html: '<h1>Welcome to MyDocs</h1><p>This is your private document editor. Everything is saved automatically in this browser.</p><ul><li>Use the toolbar or <b>Ctrl/Cmd+B</b>, <b>I</b>, <b>U</b>, <b>K</b> to format.</li><li>Add tables, images, and links from the toolbar.</li><li>Export to HTML, Markdown, or PDF (via Print) from the top bar.</li><li><b>Backup all</b> regularly: browser storage can be cleared.</li></ul><p>Click <b>+ New</b> to start a document.</p>' };
+        state.docs.push(w); state.current = w.id; saveDoc(w); setCurrentMeta();
+      }
+      render();
+    } catch (err) {
+      ready = false;   // never write anything if we couldn't read what's there
+      editor.style.display = 'none'; titleEl.disabled = true;
+      const em = $('empty'); em.style.display = 'block';
+      em.textContent = 'MyDocs could not open your saved documents (' + ((err && err.name) || 'error') + '). Nothing was changed. Reload the page, and avoid clearing site data.';
+      $('saved').textContent = '⚠ Not saving';
+    } finally { document.body.classList.remove('loading'); }
   }
-  if (!cur()) state.current = state.docs.length ? state.docs[0].id : null;
-  render();
+  init();
 })();
 </script>
 </body>
