@@ -337,6 +337,53 @@
   .tableTools button { font-size: 13px; padding: 4px 8px; }
   button:disabled { opacity: .4; cursor: default; }
   button:disabled:hover { background: none; }
+
+  /* ---------- Layout v3: page padding, spacing, organised options panel ---------- */
+  #scroll { padding: 28px 24px 56px !important; }
+  #editor { padding: 40px 56px 96px !important; line-height: 1.65; overflow-wrap: break-word; }
+  :root:not([data-theme="white"]) #editor { border-radius: 14px !important; box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 10px 28px rgba(0,0,0,.06) !important; }
+  #editor p { margin: 0 0 .75em; }
+  #editor ul, #editor ol { margin: .4em 0 .8em; padding-left: 1.6em; }
+  #editor li { margin: .15em 0; }
+  #editor table { max-width: 100%; }
+  #status { padding: 4px 20px max(4px, env(safe-area-inset-bottom)) !important; }
+
+  #toolbar { display: flex !important; flex-direction: column; flex-wrap: nowrap !important; align-items: stretch !important; gap: 18px; padding: 16px 0 4px !important; }
+  .tbGroup { display: flex; flex-direction: column; align-items: stretch; gap: 8px; width: 100%; }
+  .tbLabel { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .tbRow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  #toolbar .tbRow button, #toolbar .tbRow select { height: 42px; min-width: 42px; padding: 0 12px; border: 1px solid var(--line) !important; border-radius: 10px !important; background: var(--panel); color: var(--text); font-size: 15px; }
+  #toolbar .tbRow button:hover { background: var(--hover); }
+  #toolbar .tbRow button.active { background: var(--sel); border-color: var(--accent) !important; }
+  #toolbar .tbRow button:disabled { opacity: .4; background: var(--panel); }
+  #toolbar .tbRow select { flex: 1 1 150px; min-width: 0; }
+  #colorBtn, #hiliteBtn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3px 8px; }
+  .hiliteGlyph { font-size: 18px; font-weight: 700; line-height: 20px; background: #fff475; color: #202124; padding: 0 5px; border-radius: 4px; }
+  .tbRow.tableTools { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(58px, 1fr)); gap: 5px; }
+  #toolbar .tableTools button { font-size: 12.5px; padding: 0 3px; min-width: 0; }
+  .wideBtn { width: 100%; height: 46px; border: 1px solid var(--line) !important; border-radius: 10px !important; background: var(--panel); color: var(--text); font-weight: 600; font-size: 15px; }
+  .wideBtn:hover { background: var(--hover); }
+  .tbGroup .colorPalette { position: static !important; width: auto !important; box-shadow: none !important; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+  .tbGroup .colorSwatches { grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  .tbGroup .colorSwatches button { width: 100% !important; height: auto !important; aspect-ratio: 1; max-width: 42px; justify-self: center; }
+  .paletteAction { display: block; width: 100%; margin-top: 12px; height: 42px; border: 1px solid var(--line) !important; border-radius: 10px !important; background: var(--panel); color: var(--text); }
+  .paletteAction:hover { background: var(--hover); }
+
+  #optionsPanel .panelSection > button { padding: 13px 0 !important; min-height: 46px; border-radius: 0 !important; margin: 0 !important; }
+  #optionsPanel .panelSection > button + button { border-top: 1px solid var(--line) !important; }
+  #optionsPanel .panelLabel { margin-bottom: 4px; }
+  #optionsPanel #delBtn { color: #c5221f; }
+  :root[data-theme="night"] #optionsPanel #delBtn, :root[data-theme="cocoa"] #optionsPanel #delBtn { color: #ff8a80; }
+
+  @media (max-width: 760px) {
+    #scroll { padding: 10px 10px 24px !important; }
+    #editor { padding: 20px 18px 72px !important; font-size: 16px !important; }
+    #editor ul, #editor ol { padding-left: 1.35em; }
+    #editor table { display: block; overflow-x: auto; }
+    #top button { min-width: 40px; min-height: 40px; }
+    #status { padding: 4px 14px max(4px, env(safe-area-inset-bottom)) !important; }
+    #optionsPanel { width: min(390px, 100vw) !important; padding: 0 16px 28px !important; }
+  }
 </style>
 </head>
 <body class="loading">
@@ -365,48 +412,71 @@
     <div class="panelHead"><strong>Document options</strong><button id="closeOptions" aria-label="Close options">✕</button></div>
     <div class="panelSection"><div class="panelLabel">Formatting</div>
   <div id="toolbar">
-    <button data-cmd="undo" title="Undo (Ctrl+Z)">↶</button>
-    <button data-cmd="redo" title="Redo (Ctrl+Shift+Z)">↷</button>
-    <span class="sep"></span>
-    <select id="block" title="Paragraph style">
-      <option value="p">Normal</option>
-      <option value="h1">Heading 1</option>
-      <option value="h2">Heading 2</option>
-      <option value="h3">Heading 3</option>
-      <option value="blockquote">Quote</option>
-      <option value="pre">Code block</option>
-    </select>
-    <span class="sep"></span>
-    <button data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
-    <button data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
-    <button data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
-    <button data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
-    <div class="textColorControl">
-      <button type="button" id="colorBtn" title="Text color" aria-label="Choose text color" aria-expanded="false"><span class="colorGlyph">A</span><span class="colorUnderline"></span></button>
+    <div class="tbGroup"><div class="tbLabel">Edit &amp; style</div>
+      <div class="tbRow">
+        <button data-cmd="undo" title="Undo (Ctrl+Z)">↶</button>
+        <button data-cmd="redo" title="Redo (Ctrl+Shift+Z)">↷</button>
+        <select id="block" title="Paragraph style">
+          <option value="p">Normal</option>
+          <option value="h1">Heading 1</option>
+          <option value="h2">Heading 2</option>
+          <option value="h3">Heading 3</option>
+          <option value="blockquote">Quote</option>
+          <option value="pre">Code block</option>
+        </select>
+      </div>
+    </div>
+    <div class="tbGroup"><div class="tbLabel">Text</div>
+      <div class="tbRow">
+        <button data-cmd="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+        <button data-cmd="italic" title="Italic (Ctrl+I)"><i>I</i></button>
+        <button data-cmd="underline" title="Underline (Ctrl+U)"><u>U</u></button>
+        <button data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+        <button type="button" id="colorBtn" title="Text color" aria-label="Choose text color" aria-expanded="false"><span class="colorGlyph">A</span><span class="colorUnderline"></span></button>
+        <button type="button" id="hiliteBtn" title="Highlight color" aria-label="Highlight color" aria-expanded="false"><span class="hiliteGlyph">A</span></button>
+      </div>
       <div id="colorPalette" class="colorPalette" hidden aria-label="Text color palette">
         <div class="colorPaletteTitle">Text color</div><div class="colorSwatches">
           <button type="button" data-color="#202124" style="--swatch:#202124" aria-label="Black" title="Black"></button><button type="button" data-color="#5f6368" style="--swatch:#5f6368" aria-label="Dark gray" title="Dark gray"></button><button type="button" data-color="#ffffff" style="--swatch:#ffffff" aria-label="White" title="White"></button><button type="button" data-color="#d93025" style="--swatch:#d93025" aria-label="Red" title="Red"></button><button type="button" data-color="#e8710a" style="--swatch:#e8710a" aria-label="Orange" title="Orange"></button><button type="button" data-color="#f9ab00" style="--swatch:#f9ab00" aria-label="Yellow" title="Yellow"></button><button type="button" data-color="#188038" style="--swatch:#188038" aria-label="Green" title="Green"></button><button type="button" data-color="#12a594" style="--swatch:#12a594" aria-label="Teal" title="Teal"></button><button type="button" data-color="#1a73e8" style="--swatch:#1a73e8" aria-label="Blue" title="Blue"></button><button type="button" data-color="#673ab7" style="--swatch:#673ab7" aria-label="Purple" title="Purple"></button><button type="button" data-color="#a142f4" style="--swatch:#a142f4" aria-label="Violet" title="Violet"></button><button type="button" data-color="#d01884" style="--swatch:#d01884" aria-label="Pink" title="Pink"></button>
         </div><label class="customColorLabel">Custom color <input type="color" id="customColor" value="#202124" title="Choose custom text color"></label>
       </div>
+      <div id="hilitePalette" class="colorPalette" hidden aria-label="Highlight color palette">
+        <div class="colorPaletteTitle">Highlight color</div><div class="colorSwatches">
+          <button type="button" data-hilite="#fff475" style="--swatch:#fff475" aria-label="Yellow highlight" title="Yellow"></button><button type="button" data-hilite="#fbbc04" style="--swatch:#fbbc04" aria-label="Orange highlight" title="Orange"></button><button type="button" data-hilite="#f28b82" style="--swatch:#f28b82" aria-label="Red highlight" title="Red"></button><button type="button" data-hilite="#fdcfe8" style="--swatch:#fdcfe8" aria-label="Pink highlight" title="Pink"></button><button type="button" data-hilite="#d7aefb" style="--swatch:#d7aefb" aria-label="Purple highlight" title="Purple"></button><button type="button" data-hilite="#aecbfa" style="--swatch:#aecbfa" aria-label="Blue highlight" title="Blue"></button><button type="button" data-hilite="#cbf0f8" style="--swatch:#cbf0f8" aria-label="Sky highlight" title="Sky"></button><button type="button" data-hilite="#a7ffeb" style="--swatch:#a7ffeb" aria-label="Mint highlight" title="Mint"></button><button type="button" data-hilite="#ccff90" style="--swatch:#ccff90" aria-label="Green highlight" title="Green"></button><button type="button" data-hilite="#e6ee9c" style="--swatch:#e6ee9c" aria-label="Lime highlight" title="Lime"></button><button type="button" data-hilite="#e6c9a8" style="--swatch:#e6c9a8" aria-label="Tan highlight" title="Tan"></button><button type="button" data-hilite="#e8eaed" style="--swatch:#e8eaed" aria-label="Gray highlight" title="Gray"></button>
+        </div>
+        <button type="button" id="hiliteNone" class="paletteAction" title="Remove highlight from the selection (or from the highlighted text the cursor is in)">No highlight</button>
+      </div>
     </div>
-    <span class="sep"></span>
-    <button data-cmd="insertUnorderedList" title="Bullet list">• List</button>
-    <button data-cmd="insertOrderedList" title="Numbered list">1. List</button>
-    <button data-cmd="outdent" title="Outdent">⇤</button>
-    <button data-cmd="indent" title="Indent">⇥</button>
-    <span class="sep"></span>
-    <button data-cmd="justifyLeft" title="Align left">⯇</button>
-    <button data-cmd="justifyCenter" title="Center">≡</button>
-    <button data-cmd="justifyRight" title="Align right">⯈</button>
-    <span class="sep"></span>
-    <button id="linkBtn" title="Insert link (Ctrl+K)">🔗</button>
-    <button id="imgBtn" title="Insert image">🖼</button>
-    <button id="tableBtn" title="Insert table">▦</button>
-    <button id="hrBtn" title="Horizontal line">―</button>
-    <button data-cmd="removeFormat" title="Clear formatting">Tx</button>
-    <input id="imgFile" type="file" accept="image/*" hidden>
-    <span class="sep"></span>
-    <span class="tableTools" role="group" aria-label="Table tools"><button type="button" id="tblRowAdd" title="Add row below" disabled>+ Row</button><button type="button" id="tblRowDel" title="Delete row" disabled>− Row</button><button type="button" id="tblColAdd" title="Add column to the right" disabled>+ Col</button><button type="button" id="tblColDel" title="Delete column" disabled>− Col</button><button type="button" id="tblDel" title="Delete table" disabled>✕ Table</button></span>
+    <div class="tbGroup"><div class="tbLabel">Lists &amp; indent</div>
+      <div class="tbRow">
+        <button data-cmd="insertUnorderedList" title="Bullet list">• List</button>
+        <button data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+        <button data-cmd="outdent" title="Outdent">⇤</button>
+        <button data-cmd="indent" title="Indent">⇥</button>
+      </div>
+    </div>
+    <div class="tbGroup"><div class="tbLabel">Align</div>
+      <div class="tbRow">
+        <button data-cmd="justifyLeft" title="Align left">⯇</button>
+        <button data-cmd="justifyCenter" title="Center">≡</button>
+        <button data-cmd="justifyRight" title="Align right">⯈</button>
+      </div>
+    </div>
+    <div class="tbGroup"><div class="tbLabel">Insert</div>
+      <div class="tbRow">
+        <button id="linkBtn" title="Insert link (Ctrl+K)">🔗</button>
+        <button id="imgBtn" title="Insert image">🖼</button>
+        <button id="tableBtn" title="Insert table">▦</button>
+        <button id="hrBtn" title="Horizontal line">―</button>
+        <input id="imgFile" type="file" accept="image/*" hidden>
+      </div>
+    </div>
+    <div class="tbGroup"><div class="tbLabel">Table (cursor in a table)</div>
+      <div class="tbRow tableTools" role="group" aria-label="Table tools"><button type="button" id="tblRowAdd" title="Add row below" disabled>+ Row</button><button type="button" id="tblRowDel" title="Delete row" disabled>− Row</button><button type="button" id="tblColAdd" title="Add column to the right" disabled>+ Col</button><button type="button" id="tblColDel" title="Delete column" disabled>− Col</button><button type="button" id="tblDel" title="Delete table" disabled>✕ Table</button></div>
+    </div>
+    <div class="tbGroup">
+      <button type="button" id="clearFmtBtn" class="wideBtn" title="Clear formatting: removes bold, italic, color, highlight and stray line breaks from the selection, or from the current paragraph if nothing is selected">⌫ Clear formatting</button>
+    </div>
   </div>
     </div>
     <div class="panelSection"><div class="panelLabel">Share and export</div>
@@ -491,6 +561,38 @@
     }
   }
 
+  // ---- DOM helpers shared by the sanitiser and the formatting tools ----
+  const unwrapNode = node => { const p = node.parentNode; while (node.firstChild) p.insertBefore(node.firstChild, node); p.removeChild(node); };
+  const BLOCK_RE = /^(p|div|li|ul|ol|h[1-6]|blockquote|pre|table|thead|tbody|tfoot|tr|td|th|hr|caption)$/i;
+  const isBlockEl = n => !!n && n.nodeType === 1 && BLOCK_RE.test(n.nodeName);
+  const inPre = n => { for (let p = n.parentNode; p; p = p.parentNode) if (p.nodeName === 'PRE') return true; return false; };
+  function textNodesOf(root) {
+    const out = [], w = root.ownerDocument.createTreeWalker(root, 4 /* SHOW_TEXT */);
+    for (let n = w.nextNode(); n; n = w.nextNode()) out.push(n);
+    return out;
+  }
+  // Is this text node at the very start (dir "prev") or end ("next") of its line/block?
+  function atBlockEdge(t, dir, rootIsEdge, root) {
+    const sib = dir === 'prev' ? 'previousSibling' : 'nextSibling';
+    for (let n = t; ;) {
+      const s = n[sib];
+      if (s) return s.nodeName === 'BR' || isBlockEl(s);
+      n = n.parentNode;
+      if (!n) return true;
+      if (n === root) return !!rootIsEdge;
+      if (isBlockEl(n)) return true;
+    }
+  }
+  // Pasted text often carries source whitespace: newlines, indents, runs of non-breaking spaces. Collapse it (outside <pre>).
+  function tidyTextNodes(nodes, root, rootIsEdge) {
+    nodes.forEach(t => { if (!inPre(t)) t.data = t.data.replace(/[\s ]+/g, ' '); });
+    nodes.forEach(t => {
+      if (inPre(t)) return;
+      if (atBlockEdge(t, 'prev', rootIsEdge, root)) t.data = t.data.replace(/^ /, '');
+      if (atBlockEdge(t, 'next', rootIsEdge, root)) t.data = t.data.replace(/ $/, '');
+    });
+  }
+
   // Pasted formatting often lives in inline styles (Google Docs / Word spans). Styles are stripped on paste,
   // so convert bold / italic / underline / strike into real tags first, and unwrap Docs' <b style="font-weight:normal"> wrapper.
   function styleProp(el, prop) {
@@ -527,11 +629,18 @@
         if (DROP_TAGS.has(tag)) { parent.removeChild(node); continue; }
         walk(node);
         if (!ALLOWED_TAGS.has(tag)) { unwrap(parent, node); continue; }
-        if (!keepStyle) { if (resetsFormat(node, tag)) { unwrap(parent, node); continue; } styleToTags(node, tag); }
+        if (!keepStyle) { if (tag === 'mark' || tag === 'font' || resetsFormat(node, tag)) { unwrap(parent, node); continue; } styleToTags(node, tag); }
         cleanAttrs(node, tag, keepStyle);
         if (tag === 'span' && !node.attributes.length) unwrap(parent, node);
       }
     })(doc.body);
+    if (!keepStyle) {                // paste: highlight/colour from other sources is dropped, whitespace normalised
+      const tn = textNodesOf(doc.body); tidyTextNodes(tn, doc.body, false);
+      // browsers drop a plain space at the very edge of inserted HTML ("hello" + " and" -> "helloand"), so protect it
+      const first = tn.find(t => t.data !== ''), last = tn.slice().reverse().find(t => t.data !== '');
+      if (first && /^ /.test(first.data) && atBlockEdge(first, 'prev', true, doc.body)) first.data = '\u00a0' + first.data.slice(1);
+      if (last && / $/.test(last.data) && atBlockEdge(last, 'next', true, doc.body)) last.data = last.data.slice(0, -1) + '\u00a0';
+    }
     return doc.body.innerHTML.trim() || '<p><br></p>';
   }
 
@@ -860,15 +969,19 @@
     b.addEventListener('click', () => exec(b.dataset.cmd));
   });
   $('block').addEventListener('change', e => { exec('formatBlock', e.target.value === 'p' ? 'p' : e.target.value); });
-  const colorPalette = $('colorPalette'), colorBtn = $('colorBtn');
-  colorBtn.addEventListener('click', () => { colorPalette.hidden = !colorPalette.hidden; colorBtn.setAttribute('aria-expanded', String(!colorPalette.hidden)); });
-  document.querySelectorAll('[data-color]').forEach(b => b.addEventListener('mousedown', e => e.preventDefault()));
+  // ---------- text colour + highlight palettes ----------
+  const palettes = [{ btn: $('colorBtn'), box: $('colorPalette') }, { btn: $('hiliteBtn'), box: $('hilitePalette') }];
+  function closePalettes(except) { palettes.forEach(p => { if (p.box !== except) { p.box.hidden = true; p.btn.setAttribute('aria-expanded', 'false'); } }); }
+  palettes.forEach(p => p.btn.addEventListener('click', () => { const open = p.box.hidden; closePalettes(open ? p.box : null); p.box.hidden = !open; p.btn.setAttribute('aria-expanded', String(open)); }));
+  document.querySelectorAll('[data-color], [data-hilite], #hiliteNone, #clearFmtBtn').forEach(b => b.addEventListener('mousedown', e => e.preventDefault()));   // keep the selection
   document.querySelectorAll('[data-color]').forEach(b => b.addEventListener('click', () => {
-    exec('foreColor', b.dataset.color); colorPalette.hidden = true; colorBtn.setAttribute('aria-expanded', 'false');
-    document.querySelector('.colorUnderline').style.background = b.dataset.color;
+    exec('foreColor', b.dataset.color); closePalettes(); document.querySelector('.colorUnderline').style.background = b.dataset.color;
   }));
   $('customColor').addEventListener('input', e => { exec('foreColor', e.target.value); document.querySelector('.colorUnderline').style.background = e.target.value; });
-  document.addEventListener('pointerdown', e => { if (!e.target.closest('.textColorControl')) { colorPalette.hidden = true; colorBtn.setAttribute('aria-expanded', 'false'); } });
+  document.querySelectorAll('[data-hilite]').forEach(b => b.addEventListener('click', () => { closePalettes(); applyHighlight(b.dataset.hilite); }));
+  $('hiliteNone').addEventListener('click', () => { closePalettes(); clearHighlight(); });
+  $('clearFmtBtn').addEventListener('click', clearFormatting);
+  document.addEventListener('pointerdown', e => { if (!e.target.closest('#colorPalette, #hilitePalette, #colorBtn, #hiliteBtn')) closePalettes(); });
 
   // Only http(s), mailto and tel links are allowed. "example.com" becomes https://example.com.
   function normalizeUrl(u) {
@@ -900,6 +1013,117 @@
     for (let i = 0; i < r; i++) { h += '<tr>'; for (let j = 0; j < c; j++) h += '<td><br></td>'; h += '</tr>'; }
     exec('insertHTML', h + '</table><p><br></p>');
   };
+
+  // ---------- highlight + clear formatting ----------
+  // These edit the DOM directly, splitting partly-selected runs (e.g. un-highlighting the middle of a highlighted
+  // sentence), so each destructive action offers an Undo in the toast.
+  const FORMAT_TAGS = new Set(['B', 'STRONG', 'I', 'EM', 'U', 'S', 'STRIKE', 'DEL', 'FONT', 'SPAN', 'MARK', 'SUB', 'SUP', 'SMALL']);
+  const CHAR_STYLE = ['color', 'background', 'background-color', 'font-weight', 'font-style', 'font-size', 'font-family', 'text-decoration', 'text-decoration-line'];
+  const hasBg = el => /(^|;)\s*background(-color)?\s*:/i.test(el.getAttribute('style') || '');
+  const isHighlight = el => !isBlockEl(el) && (el.nodeName === 'MARK' || hasBg(el));
+  const isInlineFormat = el => !isBlockEl(el) && FORMAT_TAGS.has(el.nodeName);
+  function dropStyleProps(el, props) { props.forEach(p => el.style.removeProperty(p)); if (!el.getAttribute('style')) el.removeAttribute('style'); }
+  function stripHighlight(el) {
+    if (el.nodeName === 'MARK') return unwrapNode(el);
+    dropStyleProps(el, ['background', 'background-color']);
+    if (el.nodeName === 'SPAN' && !el.attributes.length) unwrapNode(el);
+  }
+  const textNodesIn = el => textNodesOf(el).filter(t => t.data !== '');
+  function editorRange() { const sel = getSelection(); return sel.rangeCount && editor.contains(sel.anchorNode) ? sel.getRangeAt(0).cloneRange() : null; }
+  function splitBoundaries(r) {          // make the range edges fall between text nodes
+    if (r.endContainer.nodeType === 3 && r.endOffset > 0 && r.endOffset < r.endContainer.length) r.endContainer.splitText(r.endOffset);
+    if (r.startContainer.nodeType === 3 && r.startOffset > 0 && r.startOffset < r.startContainer.length) { const n = r.startContainer.splitText(r.startOffset); r.setStart(n, 0); }
+  }
+  function selectedTextNodes(r) {
+    const c = r.commonAncestorContainer, root = c.nodeType === 1 ? c : c.parentNode;
+    return textNodesOf(root).filter(n => n.data !== '' && r.intersectsNode(n));
+  }
+  // Split element A into [before][A: first..last][after] so only the selected run is left inside A.
+  function splitRun(A, first, last) {
+    const keep = f => !!(f.textContent || f.querySelector('img,br,hr,table'));
+    const b = document.createRange(); b.setStart(A, 0); b.setEndBefore(first); const bf = b.extractContents();
+    const a = document.createRange(); a.setStartAfter(last); a.setEnd(A, A.childNodes.length); const af = a.extractContents();
+    if (keep(bf)) { const c = A.cloneNode(false); c.appendChild(bf); A.parentNode.insertBefore(c, A); }
+    if (keep(af)) { const c = A.cloneNode(false); c.appendChild(af); A.parentNode.insertBefore(c, A.nextSibling); }
+  }
+  // Apply strip() to every inline element matching isTarget around the selected text, splitting elements that stick out of the selection.
+  function clearInline(r, isTarget, strip) {
+    splitBoundaries(r);
+    const T = selectedTextNodes(r); if (!T.length) return null;
+    const inT = new Set(T), cands = [];
+    T.forEach(t => { for (let a = t.parentElement; a && a !== editor && editor.contains(a); a = a.parentElement) if (isTarget(a) && !cands.includes(a)) cands.push(a); });
+    cands.sort((x, y) => (x === y ? 0 : (x.compareDocumentPosition(y) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1));   // outer elements first
+    cands.forEach(a => {
+      if (!a.isConnected) return;
+      const inside = textNodesIn(a), sel = inside.filter(t => inT.has(t));
+      if (!sel.length) return;
+      if (sel.length < inside.length) splitRun(a, sel[0], sel[sel.length - 1]);
+      strip(a);
+    });
+    return { T, n: cands.length };
+  }
+  function restoreSelection(T) {
+    const sel = getSelection(), r = document.createRange();
+    r.setStartBefore(T[0]); r.setEndAfter(T[T.length - 1]); sel.removeAllRanges(); sel.addRange(r);
+  }
+  function finishEdit(msg, before) {
+    const after = editor.innerHTML;
+    queueSave(); updateCount(); syncToolbar();
+    toast(msg, 'Undo', () => {
+      if (editor.innerHTML !== after) { toast('You\'ve edited since, so use Undo (Ctrl+Z) instead.'); return; }
+      editor.innerHTML = before; queueSave(); updateCount();
+    });
+  }
+
+  function applyHighlight(color) {
+    const r = editorRange();
+    if (!r || r.collapsed) { toast('Select some text first, then pick a highlight color.'); return; }
+    const res = clearInline(r, isHighlight, stripHighlight);    // so highlights never stack on top of each other
+    if (!res) return;
+    restoreSelection(res.T);
+    editor.focus();
+    if (!document.execCommand('hiliteColor', false, color)) document.execCommand('backColor', false, color);
+    document.querySelector('.hiliteGlyph').style.background = color;
+    queueSave(); syncToolbar();
+  }
+
+  function clearHighlight() {
+    const r = editorRange();
+    if (!r) { toast('Select text first (or tap inside the highlighted text).'); return; }
+    const before = editor.innerHTML;
+    if (r.collapsed) {                  // caret inside highlighted text: clear that whole highlighted run
+      let el = r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement, found = null;
+      for (; el && el !== editor; el = el.parentElement) if (isHighlight(el)) found = el;
+      if (!found) { toast('No highlight here. Select the highlighted text first.'); return; }
+      r.selectNodeContents(found);
+    }
+    const res = clearInline(r, isHighlight, stripHighlight);
+    let changed = !!(res && res.n);
+    if (res) res.T.forEach(t => { for (let a = t.parentElement; a && a !== editor; a = a.parentElement) if (isBlockEl(a) && !/^(TD|TH|TR|TABLE)$/.test(a.nodeName) && hasBg(a)) { dropStyleProps(a, ['background', 'background-color']); changed = true; } });
+    if (!changed) { toast('No highlight in that selection.'); return; }
+    restoreSelection(res.T);
+    finishEdit('Highlight removed', before);
+  }
+
+  // Clear formatting: bold/italic/underline/strike, text colour, highlight, fonts, plus the stray line breaks and
+  // non-breaking spaces that pasted text brings along. Links, lists and headings are kept.
+  function clearFormatting() {
+    const r = editorRange();
+    if (!r) { toast('Click in your document first.'); return; }
+    const before = editor.innerHTML;
+    if (r.collapsed) {                  // nothing selected: clean the paragraph the cursor is in
+      let b = r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement;
+      while (b && b !== editor && !isBlockEl(b)) b = b.parentElement;
+      if (!b || b === editor) { toast('Select some text first.'); return; }
+      r.selectNodeContents(b);
+    }
+    const res = clearInline(r, isInlineFormat, unwrapNode);
+    if (!res) { toast('Nothing to clear here.'); return; }
+    res.T.forEach(t => { for (let p = t.parentElement; p && p !== editor; p = p.parentElement) if (isBlockEl(p) && p.hasAttribute('style')) dropStyleProps(p, CHAR_STYLE); });
+    tidyTextNodes(res.T, editor, true);
+    restoreSelection(res.T);
+    finishEdit('Formatting cleared', before);
+  }
 
   // ---------- table tools (edits go through insertHTML so Undo/Redo keep working) ----------
   const tblBtns = ['tblRowAdd', 'tblRowDel', 'tblColAdd', 'tblColDel', 'tblDel'].map($);
@@ -1122,7 +1346,7 @@
   $('trashBtn').onclick = () => { trashView = !trashView; renderList(); };
   $('search').addEventListener('input', renderList);
   const optionsPanel = $('optionsPanel'), drawerShade = $('drawerShade');
-  function closeDrawers() { optionsPanel.classList.remove('open'); drawerShade.classList.remove('open'); $('sidebar').classList.remove('open'); }
+  function closeDrawers() { closePalettes(); optionsPanel.classList.remove('open'); drawerShade.classList.remove('open'); $('sidebar').classList.remove('open'); }
   function openOptions() { optionsPanel.classList.add('open'); drawerShade.classList.add('open'); syncToolbar(); }
   $('menuBtn').onclick = () => { optionsPanel.classList.contains('open') ? closeDrawers() : openOptions(); };
   $('closeOptions').onclick = closeDrawers;

@@ -18,3 +18,9 @@ Follow-up update:
 - Table tools in the formatting panel: add or delete a row or column, or the whole table. They are enabled when the cursor is inside a table, and Undo/Redo work with them.
 - Accessibility: named buttons, toggle states, labelled editor and toolbar; closed drawers are removed from the tab order, focus moves into a drawer when it opens and returns to its button when it closes.
 - "+ New" now closes the document drawer. The leftover nested mydocs-app.zip was removed: delete it from your repository too.
+
+Highlight and phone update:
+- New highlight tool (12 colours) with a "No highlight" button. It removes highlighting from just the selected words, or from the whole highlighted run if you tap inside it, even for highlights that came from pasted text.
+- "Clear formatting" is now a full-width button in the options panel. It removes bold, italic, underline, colour, highlight and fonts, and tidies stray line breaks and non-breaking spaces from pasted text, for the selection or (with nothing selected) the current paragraph. Links, lists and headings are kept. An Undo button appears after each clear.
+- Pasting no longer brings in highlights or text colours from other sites, and pasted whitespace is normalised.
+- Phone layout: proper padding inside the page, tighter list indents, safe-area spacing at the bottom, and an organised options panel (labelled groups, aligned rows, touch-sized buttons).
