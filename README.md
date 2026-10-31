@@ -24,3 +24,13 @@ Highlight and phone update:
 - "Clear formatting" is now a full-width button in the options panel. It removes bold, italic, underline, colour, highlight and fonts, and tidies stray line breaks and non-breaking spaces from pasted text, for the selection or (with nothing selected) the current paragraph. Links, lists and headings are kept. An Undo button appears after each clear.
 - Pasting no longer brings in highlights or text colours from other sites, and pasted whitespace is normalised.
 - Phone layout: proper padding inside the page, tighter list indents, safe-area spacing at the bottom, and an organised options panel (labelled groups, aligned rows, touch-sized buttons).
+
+Tools update:
+- Find & replace (Options > Tools, or Ctrl/Cmd+Shift+F): highlights every match, next/previous, match case, replace one or all. Matches are found within a single run of formatting, so a word that is half bold is not matched.
+- Outline: lists Heading 1-3 and jumps to the one you tap.
+- Version history: older versions are saved automatically (about every 10 minutes while editing, up to 12 per document) plus "Save a version now". Preview and Restore; restoring first saves your current text as a version. History is stored in this browser only and is not included in backups. It needs IndexedDB.
+- Import .md, .txt and .html files (several at once, max 5 MB each). Each becomes a new document; imports never overwrite anything and go through the same sanitiser as paste.
+- Text size menu, and checklists (tap the box to tick; exported to Markdown as - [ ] / - [x]).
+- Tags: add comma-separated tags per document and filter by them above the document list. Tags are included in backups.
+- Encrypted backup: a passphrase-protected backup file (AES-GCM, key from PBKDF2). The passphrase is never stored: if it is lost the file cannot be opened. Restore detects encrypted files and asks for the passphrase. Needs https (GitHub Pages is).
+- Not included on purpose: encrypting the live documents in the browser, and automatic file sync.

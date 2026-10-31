@@ -384,6 +384,48 @@
     #status { padding: 4px 14px max(4px, env(safe-area-inset-bottom)) !important; }
     #optionsPanel { width: min(390px, 100vw) !important; padding: 0 16px 28px !important; }
   }
+
+  /* ---------- Tools batch: find bar, modal, tags, checklists ---------- */
+  ::highlight(find) { background: #fff475; color: #202124; }
+  ::highlight(findcur) { background: #ff9632; color: #202124; }
+  #findBar { padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--panel); display: flex; flex-direction: column; gap: 6px; }
+  #findBar[hidden] { display: none; }
+  .fbRow { display: flex; gap: 6px; align-items: center; }
+  .fbRow input[type=search], .fbRow input[type=text] { flex: 1 1 0; min-width: 0; height: 38px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 16px; }
+  .fbRow button { height: 38px; min-width: 38px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--text); }
+  .fbRow label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .fbRow button { flex: none; } .fbRow label { flex: none; display: flex; align-items: center; gap: 3px; }
+  #findCount { font-size: 12px; color: var(--muted); min-width: 56px; text-align: center; }
+  #modal { position: fixed; inset: 0; z-index: 45; background: rgba(0,0,0,.45); display: flex; align-items: flex-end; justify-content: center; }
+  #modal[hidden] { display: none; }
+  #modalBox { background: var(--bg); color: var(--text); width: min(520px, 100%); max-height: 86vh; overflow: auto; border-radius: 16px 16px 0 0; padding: 16px 18px max(18px, env(safe-area-inset-bottom)); box-shadow: 0 -8px 40px rgba(0,0,0,.3); box-sizing: border-box; }
+  @media (min-width: 700px) { #modal { align-items: center; } #modalBox { border-radius: 16px; } }
+  #modalHead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 17px; }
+  #modalBody input[type=text], #modalBody input[type=password] { width: 100%; height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text); font-size: 16px; margin: 6px 0; box-sizing: border-box; }
+  .mNote { font-size: 13.5px; color: var(--muted); margin: 8px 0; line-height: 1.5; }
+  .mErr { font-size: 13.5px; color: #c5221f; margin: 6px 0; min-height: 1em; }
+  .primaryBtn { width: 100%; height: 46px; margin-top: 10px; border: 1px solid var(--accent); border-radius: 10px; background: var(--sel); color: var(--text); font-weight: 600; font-size: 15px; }
+  .primaryBtn:disabled { opacity: .5; }
+  .chip { height: 32px; padding: 0 12px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); color: var(--text); font-size: 13px; }
+  .chip.on { background: var(--sel); border-color: var(--accent); font-weight: 600; }
+  #tagBar, .chipRow { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 12px; }
+  .item .tg { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .outline { display: flex; flex-direction: column; gap: 2px; }
+  .outlineItem { text-align: left; padding: 10px 8px; border-radius: 8px; color: var(--text); font-size: 15px; }
+  .outlineItem:hover { background: var(--hover); }
+  .outlineItem.lvl1 { font-weight: 700; } .outlineItem.lvl2 { padding-left: 22px; } .outlineItem.lvl3 { padding-left: 38px; font-size: 14px; }
+  .histRow { border-top: 1px solid var(--line); padding: 10px 0; }
+  .histTop { display: flex; flex-direction: column; gap: 2px; } .histDate { font-weight: 600; } .histMeta { font-size: 12.5px; color: var(--muted); }
+  .histActs { display: flex; gap: 8px; margin-top: 8px; }
+  .histActs button { height: 36px; padding: 0 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--text); }
+  .histPreview { margin-top: 8px; max-height: 220px; overflow: auto; padding: 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; }
+  .histPreview img { max-width: 100%; }
+  #editor ul.checklist { list-style: none; padding-left: 0; }
+  #editor ul.checklist > li { position: relative; padding-left: 2em; min-height: 1.4em; }
+  #editor ul.checklist > li::before { content: ''; position: absolute; left: .25em; top: .3em; width: 1.05em; height: 1.05em; box-sizing: border-box; border: 2px solid var(--muted); border-radius: 4px; cursor: pointer; }
+  #editor ul.checklist > li.done::before { content: '\2713'; background: var(--accent); border-color: var(--accent); color: #fff; font-size: .8em; line-height: .95em; text-align: center; }
+  #editor ul.checklist > li.done { color: var(--muted); text-decoration: line-through; }
+  @media print { #findBar, #modal { display: none !important; } }
 </style>
 </head>
 <body class="loading">
@@ -395,6 +437,7 @@
     <button id="newBtn" title="New document (Alt+N)">+ New</button>
   </header>
   <input id="search" placeholder="Search documents…" type="search">
+  <div id="tagBar" hidden></div>
   <div id="list"></div>
   <div id="trashBar" hidden><button id="trashBtn" type="button" aria-pressed="false">🗑 Trash <span id="trashCount"></span></button></div>
 </aside>
@@ -406,6 +449,11 @@
     <input id="title" placeholder="Untitled document" aria-label="Document title">
     <span id="saveHint" aria-live="polite">All changes saved</span>
     <button id="menuBtn" title="Open formatting and document options" aria-label="Open options">⋮</button>
+  </div>
+
+  <div id="findBar" hidden role="search" aria-label="Find and replace">
+    <div class="fbRow"><input id="findInput" type="search" placeholder="Find" aria-label="Find"><span id="findCount" aria-live="polite"></span><button id="findPrev" type="button" aria-label="Previous match">↑</button><button id="findNext" type="button" aria-label="Next match">↓</button><button id="findClose" type="button" aria-label="Close find and replace">✕</button></div>
+    <div class="fbRow"><input id="replaceInput" type="text" placeholder="Replace with" aria-label="Replace with"><button id="replaceOne" type="button">Replace</button><button id="replaceAll" type="button">All</button><label title="Match case"><input type="checkbox" id="findCase"> Aa</label></div>
   </div>
 
   <aside id="optionsPanel" aria-label="Document options">
@@ -434,6 +482,7 @@
         <button data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
         <button type="button" id="colorBtn" title="Text color" aria-label="Choose text color" aria-expanded="false"><span class="colorGlyph">A</span><span class="colorUnderline"></span></button>
         <button type="button" id="hiliteBtn" title="Highlight color" aria-label="Highlight color" aria-expanded="false"><span class="hiliteGlyph">A</span></button>
+        <select id="fontSize" title="Text size" aria-label="Text size"><option value="">Size</option><option value="2">Small</option><option value="3">Normal</option><option value="5">Large</option><option value="6">Extra large</option></select>
       </div>
       <div id="colorPalette" class="colorPalette" hidden aria-label="Text color palette">
         <div class="colorPaletteTitle">Text color</div><div class="colorSwatches">
@@ -451,6 +500,7 @@
       <div class="tbRow">
         <button data-cmd="insertUnorderedList" title="Bullet list">• List</button>
         <button data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+        <button type="button" id="checkBtn" title="Checklist (tap a box to tick it)">☑ Checklist</button>
         <button data-cmd="outdent" title="Outdent">⇤</button>
         <button data-cmd="indent" title="Indent">⇥</button>
       </div>
@@ -479,14 +529,23 @@
     </div>
   </div>
     </div>
+    <div class="panelSection"><div class="panelLabel">Tools</div>
+      <button id="findBtn" type="button">Find &amp; replace</button>
+      <button id="outlineBtn" type="button">Outline</button>
+      <button id="historyBtn" type="button">Version history</button>
+      <button id="tagsBtn" type="button">Tags</button>
+      <button id="importBtn" type="button">Import .md, .txt or .html</button>
+      <input id="importFile" type="file" accept=".md,.markdown,.txt,.html,.htm,text/markdown,text/plain,text/html" multiple hidden>
+    </div>
     <div class="panelSection"><div class="panelLabel">Share and export</div>
       <button id="exportHtml">Export as HTML</button>
       <button id="exportMd">Export as Markdown</button>
       <button id="printBtn">Print / Save as PDF</button>
       <button id="backupBtn" title="Download all documents as JSON">Back up all documents</button>
+      <button id="encBackupBtn" type="button" title="Download a passphrase-protected backup">Encrypted backup…</button>
       <button id="restoreBtn" title="Restore from a backup file">Restore from backup</button>
       <button id="delBtn" title="Delete this document">Delete document</button>
-      <input id="restoreFile" type="file" accept=".json" hidden>
+      <input id="restoreFile" type="file" accept=".json,application/json" hidden>
     </div>
     <div class="panelSection"><div class="panelLabel">Appearance</div><div class="themeRow"><span>Theme</span><div id="themesPanel">
       <button data-t="white" title="Pure White" aria-label="Pure White"></button>
@@ -509,6 +568,8 @@
 
   <div id="status"><span id="count"></span><span id="saved"></span></div>
 </section>
+
+<div id="modal" hidden><div id="modalBox" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div id="modalHead"><strong id="modalTitle"></strong><button id="modalClose" type="button" aria-label="Close">✕</button></div><div id="modalBody"></div></div></div>
 
 <div id="toast" role="status" aria-live="polite" hidden><span id="toastMsg"></span><button id="toastBtn" type="button" hidden></button></div>
 
@@ -553,6 +614,8 @@
       else if ((tag === 'td' || tag === 'th') && (n === 'colspan' || n === 'rowspan')) ok = /^\d{1,3}$/.test(v);
       else if (tag === 'font' && n === 'color') { nv = v.trim(); ok = SAFE_COLOR.test(nv); }
       else if (tag === 'ol' && n === 'start') ok = /^-?\d{1,5}$/.test(v);
+      else if (tag === 'font' && n === 'size') ok = /^[1-7]$/.test(v);
+      else if (n === 'class') ok = (tag === 'ul' && v === 'checklist') || (tag === 'li' && v === 'done');
       if (!ok) el.removeAttribute(a.name); else if (nv !== v) el.setAttribute(a.name, nv);
     }
     if (tag === 'a') {
@@ -645,6 +708,12 @@
   }
 
   // Validate + sanitise a document record coming from storage or a backup file.
+  function cleanTags(a) {
+    if (!Array.isArray(a)) return [];
+    const out = [];
+    a.forEach(t => { t = String(t == null ? '' : t).replace(/\s+/g, ' ').trim().toLowerCase().slice(0, 30); if (t && !out.includes(t) && out.length < 10) out.push(t); });
+    return out;
+  }
   function cleanDoc(raw) {
     if (!raw || typeof raw !== 'object' || typeof raw.id !== 'string' || !/^[\w-]{1,64}$/.test(raw.id)) return null;
     return {
@@ -653,7 +722,8 @@
       html: sanitizeHtml(typeof raw.html === 'string' ? raw.html : ''),
       updated: Number.isFinite(raw.updated) ? raw.updated : Date.now(),
       deleted: Number.isFinite(raw.deleted) && raw.deleted > 0 ? raw.deleted : 0,
-      rev: Number.isInteger(raw.rev) && raw.rev > 0 ? raw.rev : 0
+      rev: Number.isInteger(raw.rev) && raw.rev > 0 ? raw.rev : 0,
+      tags: cleanTags(raw.tags)
     };
   }
 
@@ -714,6 +784,9 @@
       del(id) { const tx = db.transaction('docs', 'readwrite'); tx.objectStore('docs').delete(id); return txDone(tx); },
       getMeta: k => reqP(db.transaction('meta').objectStore('meta').get(k)),
       setMeta(k, v) { const tx = db.transaction('meta', 'readwrite'); tx.objectStore('meta').put(v, k); return txDone(tx); },
+      getHist: id => reqP(db.transaction('meta').objectStore('meta').get('hist:' + id)).then(v => Array.isArray(v) ? v : []),
+      putHist(id, h) { const tx = db.transaction('meta', 'readwrite'); tx.objectStore('meta').put(h, 'hist:' + id); return txDone(tx); },
+      delHist(id) { const tx = db.transaction('meta', 'readwrite'); tx.objectStore('meta').delete('hist:' + id); return txDone(tx); },
       // One-time import of the old localStorage data, atomically, never overwriting existing records.
       migrate(docs, current) {
         const tx = db.transaction(['docs', 'meta'], 'readwrite'), ds = tx.objectStore('docs'), ms = tx.objectStore('meta');
@@ -747,7 +820,8 @@
       async del(id) { const s = read(); s.docs = s.docs.filter(d => d.id !== id); write(s); },
       getMeta: async k => (k === 'current' ? read().current : undefined),
       async setMeta(k, v) { if (k === 'current') { const s = read(); s.current = v; write(s); } },
-      migrate: async () => {}
+      migrate: async () => {},
+      getHist: async () => [], putHist: async () => {}, delHist: async () => {}   // history is IndexedDB-only: never risk the 5 MB localStorage
     };
   }
 
@@ -756,7 +830,8 @@
   // ======================================================================
   let store = null, ready = false;
   const state = { docs: [], current: null };
-  let timer = null, dirty = false, trashView = false, needRender = false;
+  let timer = null, dirty = false, trashView = false, needRender = false, activeTag = null;
+  const lastSaved = new Map(), HIST_MAX = 12, HIST_GAP = 10 * 60e3, HIST_BYTES = 6e6;
   let queue = Promise.resolve();
   const enqueue = fn => { const run = queue.then(fn); queue = run.catch(() => {}); return run; };  // serialises all storage work
 
@@ -784,21 +859,39 @@
   // Save one document. Never overwrites a newer version written by another tab: on conflict
   // both versions are kept (ours as "(conflicted copy)", or theirs if we are mid-edit).
   function saveDoc(d) {
-    const snap = { id: d.id, title: d.title, html: d.html, updated: d.updated, deleted: d.deleted || 0 };
+    const snap = { id: d.id, title: d.title, html: d.html, updated: d.updated, deleted: d.deleted || 0, tags: (d.tags || []).slice() };
     return enqueue(async () => {
       if (!state.docs.includes(d)) return;          // permanently deleted while queued
       const r = await store.put(snap, d.rev | 0);
       if (r.conflict) await handleConflict(d, snap, r.conflict);
-      else { d.rev = r.ok.rev; announce({ t: 'doc', id: d.id }); setSaved(); }
+      else {
+        d.rev = r.ok.rev; announce({ t: 'doc', id: d.id }); setSaved();
+        const prev = lastSaved.get(d.id); lastSaved.set(d.id, { title: snap.title, html: snap.html, updated: snap.updated });
+        if (prev && !snap.deleted) archiveVersion(d.id, prev, false).catch(() => {});
+      }
     }).catch(setSaveError);
+  }
+
+  // Version history: archive the state *before* an edit, at most every HIST_GAP, newest HIST_MAX kept.
+  function archiveVersion(id, v, force) {
+    return enqueue(async () => {
+      if (store.kind !== 'idb' || !state.docs.some(d => d.id === id)) return false;
+      if (!v.html || v.html === '<p><br></p>') return false;
+      const h = await store.getHist(id), last = h[h.length - 1];
+      if (last && last.html === v.html && last.title === v.title) return false;
+      if (!force && last && Date.now() - last.at < HIST_GAP) return false;
+      h.push({ at: Date.now(), t: v.updated || Date.now(), title: v.title || '', html: v.html });
+      while (h.length > HIST_MAX || (h.length > 1 && h.reduce((n, x) => n + x.html.length, 0) > HIST_BYTES)) h.shift();
+      await store.putHist(id, h); return true;
+    });
   }
 
   async function handleConflict(d, snap, theirs) {
     const editingNow = dirty && state.current === d.id;
     const mine = !editingNow;                        // if idle, keep ours as a copy and adopt theirs; if typing, keep theirs as a copy
     const src = mine ? snap : theirs;
-    if (!(theirs.title === snap.title && theirs.html === snap.html)) {
-      const copy = { id: uid(), title: (src.title || 'Untitled document') + (mine ? ' (conflicted copy)' : ' (version from another tab)'), html: src.html, updated: Date.now(), deleted: 0, rev: 0 };
+    if (!(theirs.title === snap.title && theirs.html === snap.html && JSON.stringify(cleanTags(theirs.tags)) === JSON.stringify(snap.tags))) {
+      const copy = { id: uid(), title: (src.title || 'Untitled document') + (mine ? ' (conflicted copy)' : ' (version from another tab)'), html: src.html, updated: Date.now(), deleted: 0, rev: 0, tags: cleanTags(src.tags) };
       const r = await store.put(copy, 0); copy.rev = r.ok.rev;
       state.docs.push(copy); announce({ t: 'doc', id: copy.id });
       toast('Another tab changed “' + (snap.title || 'Untitled document') + '”. Both versions were kept.');
@@ -859,7 +952,7 @@
   function newDoc() {
     if (!ready) return;
     flush();
-    const d = { id: uid(), title: '', html: '<p><br></p>', updated: Date.now(), deleted: 0, rev: 0 };
+    const d = { id: uid(), title: '', html: '<p><br></p>', updated: Date.now(), deleted: 0, rev: 0, tags: [] };
     state.docs.unshift(d); state.current = d.id; trashView = false;
     saveDoc(d); setCurrentMeta(); render();
     $('sidebar').classList.remove('open');
@@ -886,7 +979,7 @@
     const d = state.docs.find(x => x.id === id); if (!d) return;
     if (!confirm('Delete "' + (d.title || 'Untitled document') + '" forever? This can\'t be undone.')) return;
     state.docs = state.docs.filter(x => x !== d); textCache.delete(id);
-    enqueue(() => store.del(id)).then(() => announce({ t: 'del', id })).catch(setSaveError);
+    enqueue(() => store.del(id).then(() => store.delHist(id))).then(() => announce({ t: 'del', id })).catch(setSaveError);
     renderList();
   }
 
@@ -902,11 +995,12 @@
       document.title = (d.title || 'Untitled') + ' – MyDocs';
     } else { titleEl.value = ''; editor.innerHTML = ''; document.title = 'MyDocs'; }
     dirty = false;
-    renderList(); updateCount();
+    renderList(); updateCount(); refreshFind();
   }
 
   function renderList() {
     const q = $('search').value.trim().toLowerCase();
+    renderTagBar();
     const trashed = state.docs.filter(d => d.deleted);
     $('trashCount').textContent = trashed.length ? '(' + trashed.length + ')' : '';
     $('trashBar').hidden = !trashed.length && !trashView;
@@ -921,6 +1015,7 @@
     state.docs
       .filter(d => trashView ? d.deleted : !d.deleted)
       .sort(trashView ? (a, b) => b.deleted - a.deleted : byUpdated)
+      .filter(d => trashView || !activeTag || (d.tags || []).includes(activeTag))
       .filter(d => !q || (d.title + ' ' + plainText(d)).toLowerCase().includes(q))
       .forEach(d => {
         const el = document.createElement('div');
@@ -929,6 +1024,7 @@
         const dt = document.createElement('span'); dt.className = 'd';
         dt.textContent = new Date(trashView ? d.deleted : d.updated).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         el.append(t, dt);
+        if (!trashView && d.tags && d.tags.length) el.appendChild(mk('span', 'tg', d.tags.map(x => '#' + x).join(' ')));
         if (trashView) {
           const row = document.createElement('div'); row.className = 'trashActions';
           const r = document.createElement('button'); r.textContent = 'Restore'; r.onclick = () => restoreDoc(d.id, false);
@@ -1245,7 +1341,7 @@
   $('exportHtml').onclick = () => {
     flush();
     const t = esc(titleEl.value || 'Untitled');
-    const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${t}</title><style>body{max-width:760px;margin:40px auto;padding:0 16px;font:16px/1.65 system-ui,sans-serif;color:#222}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px 10px}blockquote{border-left:3px solid #ccc;margin-left:0;padding-left:14px;color:#666}pre{background:#f4f4f4;padding:10px;overflow:auto}img{max-width:100%}</style></head><body>${editor.innerHTML}</body></html>`;
+    const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${t}</title><style>body{max-width:760px;margin:40px auto;padding:0 16px;font:16px/1.65 system-ui,sans-serif;color:#222}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px 10px}blockquote{border-left:3px solid #ccc;margin-left:0;padding-left:14px;color:#666}pre{background:#f4f4f4;padding:10px;overflow:auto}img{max-width:100%}ul.checklist{list-style:none;padding-left:0}ul.checklist li::before{content:"\\2610  "}ul.checklist li.done::before{content:"\\2611  "}li.done{color:#777;text-decoration:line-through}</style></head><body>${editor.innerHTML}</body></html>`;
     download(fname('html'), html, 'text/html');
   };
 
@@ -1282,7 +1378,7 @@
         ctx.list.pop();
         return out + (ctx.list.length ? '' : '\n\n');
       }
-      case 'li': return kids();
+      case 'li': return (node.parentNode.classList && node.parentNode.classList.contains('checklist') ? (node.classList.contains('done') ? '[x] ' : '[ ] ') : '') + kids();
       case 'table': {
         const rows = [...node.querySelectorAll('tr')].map(tr => [...tr.children].map(c => c.textContent.trim().replace(/\|/g, '\\|')));
         if (!rows.length) return '';
@@ -1304,9 +1400,12 @@
   // ---------- backup / restore ----------
   $('backupBtn').onclick = () => {
     if (!ready) return; flush();
-    const docs = state.docs.map(d => ({ id: d.id, title: d.title, html: d.html, updated: d.updated, deleted: d.deleted || 0 }));
-    download('mydocs-backup-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify({ app: 'mydocs', version: 2, exported: new Date().toISOString(), current: state.current, docs }), 'application/json');
+    download('mydocs-backup-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify(backupPayload()), 'application/json');
   };
+  function backupPayload() {
+    const docs = state.docs.map(d => ({ id: d.id, title: d.title, html: d.html, updated: d.updated, deleted: d.deleted || 0, tags: d.tags || [] }));
+    return { app: 'mydocs', version: 2, exported: new Date().toISOString(), current: state.current, docs };
+  }
   $('restoreBtn').onclick = () => $('restoreFile').click();
   $('restoreFile').onchange = e => {
     const f = e.target.files[0]; if (!f) return; e.target.value = '';
@@ -1314,8 +1413,14 @@
     rd.onload = () => {
       if (!ready) return;
       let data;
-      try { data = JSON.parse(rd.result); if (!data || !Array.isArray(data.docs)) throw 0; }
-      catch (err) { alert('That file doesn\'t look like a MyDocs backup.'); return; }
+      try { data = JSON.parse(rd.result); } catch (err) { alert('That file doesn\'t look like a MyDocs backup.'); return; }
+      if (data && data.encrypted) { askDecrypt(data).then(x => { if (x) restoreData(x); }); return; }
+      restoreData(data);
+    };
+    rd.readAsText(f);
+  };
+  function restoreData(data) {
+      if (!data || !Array.isArray(data.docs)) { alert('That file doesn\'t look like a MyDocs backup.'); return; }
       flush();
       const n = { added: 0, copies: 0, same: 0, bad: 0 };
       data.docs.forEach(raw => {
@@ -1336,9 +1441,366 @@
         (n.same ? '\n' + n.same + ' were already up to date.' : '') +
         (n.bad ? '\n' + n.bad + ' invalid entr' + (n.bad === 1 ? 'y was' : 'ies were') + ' skipped.' : '') +
         '\nExisting documents were kept.');
-    };
-    rd.readAsText(f);
+  }
+
+  // ======================================================================
+  // Tools: modal, find & replace, outline, version history, tags, import,
+  // checklists, font size, encrypted backup. All additive: nothing here
+  // changes how existing documents are stored or merged.
+  // ======================================================================
+  const mk = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const fmtDate = t => new Date(t).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const wordsOf = html => ((new DOMParser().parseFromString(html, 'text/html').body.textContent || '').trim().split(/\s+/).filter(Boolean).length);
+
+  // ---------- modal ----------
+  const modal = $('modal'), modalBody = $('modalBody'); let modalOnClose = null;
+  function openModal(title, build, onClose) {
+    closeDrawers(); if (!modal.hidden) closeModal();
+    $('modalTitle').textContent = title; modalBody.innerHTML = ''; modalOnClose = onClose || null;
+    build(modalBody); modal.hidden = false;
+    setTimeout(() => { const f = modalBody.querySelector('input, button, select'); (f || $('modalClose')).focus({ preventScroll: true }); }, 60);
+  }
+  function closeModal() {
+    if (modal.hidden) return;
+    modal.hidden = true; modalBody.innerHTML = '';
+    const f = modalOnClose; modalOnClose = null; if (f) f();
+    try { $('menuBtn').focus({ preventScroll: true }); } catch (e) {}
+  }
+  $('modalClose').onclick = closeModal;
+  modal.addEventListener('mousedown', e => { if (e.target === modal) closeModal(); });
+  modal.addEventListener('keydown', e => {
+    if (e.key !== 'Tab') return;
+    const f = [...modal.querySelectorAll('button, input, select, textarea')].filter(x => !x.disabled && x.offsetParent !== null);
+    if (!f.length) return;
+    const a = f[0], z = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
+    else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+  });
+
+  // ---------- find & replace ----------
+  const findBar = $('findBar'), findIn = $('findInput'), repIn = $('replaceInput'), findCount = $('findCount');
+  const HL = window.CSS && CSS.highlights && typeof Highlight !== 'undefined';
+  let matches = [], mi = -1, findTimer = null;
+  function collectMatches() {
+    matches = [];
+    const q = findIn.value;
+    if (q && !findBar.hidden) {
+      const cs = $('findCase').checked, needle = cs ? q : q.toLowerCase();
+      textNodesOf(editor).forEach(t => {
+        const s = cs ? t.data : t.data.toLowerCase(); if (s.length !== t.data.length) return;
+        for (let i = s.indexOf(needle); i >= 0; i = s.indexOf(needle, i + needle.length)) {
+          const r = document.createRange(); r.setStart(t, i); r.setEnd(t, i + q.length); matches.push(r);
+        }
+      });
+    }
+    if (mi >= matches.length) mi = matches.length - 1;
+    if (mi < 0 && matches.length) mi = 0;
+    paintFind();
+  }
+  function paintFind() {
+    if (HL) {
+      CSS.highlights.delete('find'); CSS.highlights.delete('findcur');
+      if (matches.length) { CSS.highlights.set('find', new Highlight(...matches)); if (matches[mi]) CSS.highlights.set('findcur', new Highlight(matches[mi])); }
+    }
+    findCount.textContent = !findIn.value ? '' : matches.length ? (mi + 1) + ' of ' + matches.length : 'No matches';
+  }
+  function goMatch(i, scroll) {
+    if (!matches.length) return;
+    mi = (i + matches.length) % matches.length; paintFind();
+    const el = matches[mi].startContainer.parentElement; if (el && scroll !== false) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+  function scheduleFind() { clearTimeout(findTimer); findTimer = setTimeout(() => { collectMatches(); }, 150); }
+  function refreshFind() { if (findBar.hidden) { if (HL) { CSS.highlights.delete('find'); CSS.highlights.delete('findcur'); } return; } mi = -1; collectMatches(); }
+  function openFind() {
+    if (!ready || !cur()) return; closeDrawers(); findBar.hidden = false;
+    const s = getSelection(); if (s.rangeCount && !s.isCollapsed && editor.contains(s.anchorNode) && s.toString().length < 100) findIn.value = s.toString();
+    findIn.focus(); findIn.select(); mi = -1; collectMatches(); if (matches.length) goMatch(0);
+  }
+  function closeFind() { findBar.hidden = true; refreshFind(); findIn.blur(); }
+  function replaceRange(r, text) {
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r); editor.focus();
+    if (text === '') document.execCommand('delete'); else document.execCommand('insertText', false, text);
+  }
+  function replaceOne() {
+    collectMatches(); if (!matches.length) return;
+    const at = mi < 0 ? 0 : mi; replaceRange(matches[at], repIn.value);
+    mi = at; collectMatches(); if (matches.length) goMatch(mi >= matches.length ? 0 : mi);
+  }
+  function replaceAll() {
+    collectMatches(); const n = matches.length; if (!n) return;
+    const list = matches.slice(); for (let i = n - 1; i >= 0; i--) replaceRange(list[i], repIn.value);
+    mi = -1; collectMatches(); queueSave(); toast('Replaced ' + n + (n === 1 ? ' match' : ' matches') + '. Ctrl+Z undoes one at a time.');
+  }
+  findIn.addEventListener('input', () => { mi = -1; scheduleFind(); });
+  $('findCase').addEventListener('change', () => { mi = -1; collectMatches(); });
+  findIn.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); goMatch(mi + (e.shiftKey ? -1 : 1)); } });
+  repIn.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); replaceOne(); } });
+  $('findNext').onclick = () => goMatch(mi + 1);
+  $('findPrev').onclick = () => goMatch(mi - 1);
+  $('replaceOne').onclick = replaceOne; $('replaceAll').onclick = replaceAll; $('findClose').onclick = closeFind;
+  $('findBtn').onclick = openFind;
+  editor.addEventListener('input', () => { if (!findBar.hidden) scheduleFind(); });
+
+  // ---------- outline ----------
+  $('outlineBtn').onclick = () => {
+    if (!ready || !cur()) return;
+    const heads = [...editor.querySelectorAll('h1, h2, h3')];
+    openModal('Outline', body => {
+      if (!heads.length) { body.append(mk('p', 'mNote', 'No headings yet. Use the paragraph style menu to make a Heading 1, 2 or 3 and they will appear here.')); return; }
+      const list = mk('div', 'outline');
+      heads.forEach(h => {
+        const b = mk('button', 'outlineItem lvl' + h.tagName[1], h.textContent.trim() || '(empty heading)'); b.type = 'button';
+        b.onclick = () => { closeModal(); h.scrollIntoView({ block: 'start', behavior: 'smooth' }); };
+        list.append(b);
+      });
+      body.append(list);
+    });
   };
+
+  // ---------- version history (stored in the existing "meta" store; IndexedDB only) ----------
+  async function restoreVersion(d, v) {
+    if (state.current !== d.id || !state.docs.includes(d)) return;
+    flush(); await archiveVersion(d.id, { title: d.title, html: d.html, updated: d.updated }, true);
+    d.html = sanitizeHtml(v.html); d.title = typeof v.title === 'string' ? v.title.slice(0, 500) : ''; d.updated = Date.now(); dirty = false;
+    saveDoc(d); render(); closeModal(); toast('Restored the version from ' + fmtDate(v.t) + '. The previous text is kept in history.');
+  }
+  $('historyBtn').onclick = async () => {
+    if (!ready || !cur()) return; flush();
+    const d = cur();
+    if (store.kind !== 'idb') { alert('Version history needs the browser\'s IndexedDB storage, which isn\'t available here.'); return; }
+    let h = []; try { h = await enqueue(() => store.getHist(d.id)); } catch (e) {}
+    openModal('Version history', body => {
+      const save = mk('button', 'primaryBtn', 'Save a version now'); save.type = 'button';
+      save.onclick = async () => { const ok = await archiveVersion(d.id, { title: d.title, html: d.html, updated: d.updated }, true).catch(() => false); closeModal(); toast(ok ? 'Version saved.' : 'Nothing new to save: this is already the latest version.'); };
+      body.append(mk('p', 'mNote', 'Older versions are saved automatically while you edit (about every 10 minutes). Restoring one never loses your current text: it is saved as a version first.'), save);
+      if (!h.length) { body.append(mk('p', 'mNote', 'No earlier versions yet.')); return; }
+      h.slice().reverse().forEach(v => {
+        const row = mk('div', 'histRow'), top = mk('div', 'histTop');
+        top.append(mk('span', 'histDate', fmtDate(v.t)), mk('span', 'histMeta', (v.title || 'Untitled document') + ' · ' + wordsOf(v.html || '') + ' words'));
+        const prev = mk('div', 'histPreview'); prev.hidden = true;
+        const acts = mk('div', 'histActs'), pb = mk('button', null, 'Preview'), rb = mk('button', null, 'Restore'); pb.type = rb.type = 'button';
+        pb.onclick = () => { if (prev.hidden && !prev.firstChild) prev.innerHTML = sanitizeHtml(v.html || ''); prev.hidden = !prev.hidden; pb.textContent = prev.hidden ? 'Preview' : 'Hide'; };
+        rb.onclick = () => restoreVersion(d, v);
+        acts.append(pb, rb); row.append(top, acts, prev); body.append(row);
+      });
+    });
+  };
+
+  // ---------- tags ----------
+  function allTags() {
+    const m = new Map();
+    live().forEach(d => (d.tags || []).forEach(t => m.set(t, (m.get(t) || 0) + 1)));
+    return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  }
+  function renderTagBar() {
+    const bar = $('tagBar'), tags = allTags();
+    if (activeTag && !tags.some(x => x[0] === activeTag)) activeTag = null;
+    bar.hidden = !tags.length || trashView; bar.innerHTML = '';
+    if (bar.hidden) return;
+    const chip = (label, val) => {
+      const b = mk('button', 'chip' + (activeTag === val ? ' on' : ''), label); b.type = 'button';
+      b.setAttribute('aria-pressed', String(activeTag === val)); b.onclick = () => { activeTag = val; renderList(); }; bar.append(b);
+    };
+    chip('All', null); tags.forEach(x => chip(x[0] + ' · ' + x[1], x[0]));
+  }
+  $('tagsBtn').onclick = () => {
+    if (!ready || !cur()) return; flush(); const d = cur();
+    openModal('Tags', body => {
+      const inp = mk('input'); inp.type = 'text'; inp.value = (d.tags || []).join(', '); inp.placeholder = 'work, ideas, travel'; inp.setAttribute('aria-label', 'Tags, separated by commas');
+      body.append(mk('p', 'mNote', 'Separate tags with commas. Use the tag chips above the document list to filter.'), inp);
+      const known = allTags();
+      if (known.length) {
+        const row = mk('div', 'chipRow');
+        known.forEach(x => { const b = mk('button', 'chip', x[0]); b.type = 'button'; b.onclick = () => { const l = cleanTags(inp.value.split(',')); if (!l.includes(x[0])) l.push(x[0]); inp.value = l.join(', '); }; row.append(b); });
+        body.append(mk('p', 'mNote', 'Tap to add an existing tag:'), row);
+      }
+      const save = mk('button', 'primaryBtn', 'Save tags'); save.type = 'button';
+      save.onclick = () => { d.tags = cleanTags(inp.value.split(',')); saveDoc(d); closeModal(); renderList(); };
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); save.click(); } });
+      body.append(save);
+    });
+  };
+
+  // ---------- font size + checklists ----------
+  $('fontSize').addEventListener('change', e => { const v = e.target.value; e.target.value = ''; if (v) exec('fontSize', v); });
+  $('checkBtn').addEventListener('mousedown', e => e.preventDefault());
+  const upEl = (n, tag) => { for (; n && n !== editor; n = n.parentNode) if (n.nodeType === 1 && n.nodeName === tag) return n; return null; };
+  $('checkBtn').addEventListener('click', () => {
+    editor.focus(); const sel = getSelection();
+    if (!sel.rangeCount || !editor.contains(sel.anchorNode)) return;
+    let li = upEl(sel.anchorNode, 'LI'), ul = li && li.parentNode;
+    if (!ul || ul.nodeName !== 'UL') {                       // not in a bullet list yet: make one first
+      document.execCommand('insertUnorderedList');
+      li = upEl(getSelection().anchorNode, 'LI'); ul = li && li.parentNode;
+      if (!ul || ul.nodeName !== 'UL') return;
+      ul.classList.add('checklist');
+    } else if (ul.classList.contains('checklist')) {
+      ul.removeAttribute('class'); ul.querySelectorAll('li.done').forEach(x => x.removeAttribute('class'));
+    } else ul.classList.add('checklist');
+    queueSave();
+  });
+  editor.addEventListener('click', e => {
+    const li = e.target.closest && e.target.closest('li'); if (!li || !li.parentNode.classList || !li.parentNode.classList.contains('checklist')) return;
+    if (e.clientX - li.getBoundingClientRect().left > 30) return;
+    li.classList.toggle('done'); if (!li.getAttribute('class')) li.removeAttribute('class'); queueSave();
+  });
+
+  // ---------- import (.md, .txt, .html) ----------
+  function mdInline(src) {
+    const stash = []; const keep = h => { stash.push(h); return '\u0000' + (stash.length - 1) + '\u0000'; };
+    let s = esc(src);
+    s = s.replace(/`([^`]+)`/g, (m, c) => keep('<code>' + c + '</code>'));
+    s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;[^)]*&quot;)?\)/g, (m, alt, u) => /^(https?:\/\/|data:image\/)/i.test(u) ? keep('<img src="' + u + '" alt="' + alt + '">') : alt);
+    s = s.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+&quot;[^)]*&quot;)?\)/g, (m, t, u) => { const url = normalizeUrl(u); return url ? keep('<a href="' + url + '">') + t + keep('</a>') : t; });
+    s = s.replace(/\*\*([^*]+)\*\*|__([^_]+)__/g, (m, a, b) => '<b>' + (a || b) + '</b>');
+    s = s.replace(/~~([^~]+)~~/g, '<s>$1</s>');
+    s = s.replace(/\*([^*\s][^*]*)\*|(^|[^\w])_([^_\s][^_]*)_(?!\w)/g, (m, a, pre, b) => a ? '<i>' + a + '</i>' : pre + '<i>' + b + '</i>');
+    return s.replace(/\u0000(\d+)\u0000/g, (m, i) => stash[+i]);
+  }
+  const MD_HR = /^\s{0,3}([-*_])(\s*\1){2,}\s*$/, MD_HEAD = /^\s{0,3}(#{1,6})\s+(.*?)\s*#*\s*$/, MD_LIST = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/, MD_FENCE = /^\s{0,3}(```|~~~)/;
+  const MD_SEP = /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?\s*$/;
+  const mdCells = l => l.trim().replace(/^\|/, '').replace(/\|$/, '').split(/(?<!\\)\|/).map(c => c.trim().replace(/\\\|/g, '|'));
+  function mdToHtml(text) {
+    const L = text.replace(/\r\n?/g, '\n').split('\n'); let i = 0, out = '';
+    const startsBlock = (l, nx) => MD_HEAD.test(l) || MD_FENCE.test(l) || MD_HR.test(l) || /^\s{0,3}>/.test(l) || MD_LIST.test(l) || (l.includes('|') && nx !== undefined && MD_SEP.test(nx) && nx.includes('-'));
+    while (i < L.length) {
+      const l = L[i];
+      if (!l.trim()) { i++; continue; }
+      let m;
+      if ((m = MD_FENCE.exec(l))) { const code = []; i++; while (i < L.length && !L[i].trim().startsWith(m[1])) code.push(L[i++]); i++; out += '<pre>' + esc(code.join('\n')) + '</pre>'; continue; }
+      if (MD_HR.test(l)) { out += '<hr>'; i++; continue; }
+      if ((m = MD_HEAD.exec(l))) { out += '<h' + m[1].length + '>' + mdInline(m[2]) + '</h' + m[1].length + '>'; i++; continue; }
+      if (/^\s{0,3}>/.test(l)) { const q = []; while (i < L.length && /^\s{0,3}>/.test(L[i])) q.push(L[i++].replace(/^\s{0,3}>\s?/, '')); out += '<blockquote>' + mdToHtml(q.join('\n')) + '</blockquote>'; continue; }
+      if (l.includes('|') && i + 1 < L.length && MD_SEP.test(L[i + 1]) && L[i + 1].includes('-')) {
+        const head = mdCells(l); i += 2; const rows = [];
+        while (i < L.length && L[i].trim() && L[i].includes('|')) rows.push(mdCells(L[i++]));
+        out += '<table><tbody><tr>' + head.map(c => '<th>' + mdInline(c) + '</th>').join('') + '</tr>' +
+          rows.map(r => '<tr>' + head.map((_, k) => '<td>' + mdInline(r[k] || '') + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+        continue;
+      }
+      if (MD_LIST.test(l)) {
+        const stack = []; let h = '';
+        while (i < L.length && (m = MD_LIST.exec(L[i]))) {
+          const indent = m[1].replace(/\t/g, '    ').length, tag = /\d/.test(m[2][0]) ? 'ol' : 'ul';
+          let body = m[3], task = null; const t = /^\[( |x|X)\]\s+(.*)$/.exec(body); if (t) { task = t[1] !== ' '; body = t[2]; }
+          while (stack.length && indent < stack[stack.length - 1].indent) h += '</li></' + stack.pop().tag + '>';
+          const top = stack[stack.length - 1], liCls = task ? ' class="done"' : '';
+          if (!top || indent > top.indent) { h += '<' + tag + (t ? ' class="checklist"' : '') + '><li' + liCls + '>'; stack.push({ indent, tag }); }
+          else h += '</li><li' + liCls + '>';
+          h += mdInline(body); i++;
+        }
+        while (stack.length) h += '</li></' + stack.pop().tag + '>';
+        out += h; continue;
+      }
+      const para = [l]; i++;
+      while (i < L.length && L[i].trim() && !startsBlock(L[i], L[i + 1])) para.push(L[i++]);
+      out += '<p>' + para.map((x, k) => mdInline(x.replace(/\s+$/, '')) + (k < para.length - 1 ? (/ {2,}$|\\$/.test(para[k]) ? '<br>' : ' ') : '')).join('') + '</p>';
+    }
+    return out;
+  }
+  function importText(name, text) {
+    const ext = (name.match(/\.([^.]+)$/) || [, ''])[1].toLowerCase();
+    let title = name.replace(/\.[^.]+$/, ''), html;
+    if (ext === 'html' || ext === 'htm') {
+      const pd = new DOMParser().parseFromString(text, 'text/html'); if (pd.title && pd.title.trim()) title = pd.title.trim();
+      html = sanitizeHtml(text, { keepStyle: false });
+    } else if (ext === 'md' || ext === 'markdown') {
+      let src = text; const h1 = /^\s*#\s+(.+?)\s*#*\s*(?:\n|$)/.exec(src); if (h1) { title = h1[1].trim(); src = src.slice(h1[0].length); }
+      html = sanitizeHtml(mdToHtml(src));
+    } else {
+      html = sanitizeHtml(text.replace(/\r\n?/g, '\n').split(/\n{2,}/).map(p => p.trim() ? '<p>' + esc(p.trim()).replace(/\n/g, '<br>') + '</p>' : '').join(''));
+    }
+    return { title: title.slice(0, 200), html };
+  }
+  $('importBtn').onclick = () => $('importFile').click();
+  $('importFile').onchange = async e => {
+    const files = [...e.target.files]; e.target.value = ''; if (!files.length || !ready) return;
+    flush(); let n = 0, skipped = 0, last = null;
+    for (const f of files) {
+      if (f.size > 5e6) { skipped++; continue; }
+      try {
+        const r = importText(f.name, await f.text());
+        const d = { id: uid(), title: r.title, html: r.html, updated: Date.now(), deleted: 0, rev: 0, tags: [] };
+        state.docs.push(d); saveDoc(d); n++; last = d;
+      } catch (err) { skipped++; }
+    }
+    if (last) { state.current = last.id; trashView = false; setCurrentMeta(); render(); }
+    closeDrawers();
+    toast(n ? 'Imported ' + n + ' document' + (n === 1 ? '' : 's') + (skipped ? ' (' + skipped + ' skipped: too large or unreadable)' : '') + '.' : 'Nothing imported: files must be under 5 MB.');
+  };
+
+  // ---------- encrypted backup (WebCrypto: PBKDF2 -> AES-GCM). The passphrase is never stored. ----------
+  const B64 = {
+    enc(u8) { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); },
+    dec(s) { return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
+  };
+  const hasCrypto = () => !!(window.crypto && crypto.subtle);
+  async function deriveKey(pass, salt, iter) {
+    const km = await crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: iter, hash: 'SHA-256' }, km, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  }
+  async function encryptJson(obj, pass) {
+    const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)), iter = 300000;
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await deriveKey(pass, salt, iter), new TextEncoder().encode(JSON.stringify(obj)));
+    return { app: 'mydocs', encrypted: true, version: 1, kdf: 'PBKDF2-SHA256', iter, salt: B64.enc(salt), iv: B64.enc(iv), data: B64.enc(new Uint8Array(ct)) };
+  }
+  async function decryptJson(env, pass) {
+    if (!hasCrypto()) throw new Error('nocrypto');
+    const salt = B64.dec(String(env.salt)), iv = B64.dec(String(env.iv)), iter = env.iter | 0;
+    if (salt.length !== 16 || iv.length !== 12 || iter < 100000 || iter > 2000000) throw new Error('bad');     // untrusted file: bound the work it can ask for
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, await deriveKey(pass, salt, iter), B64.dec(String(env.data)));
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+  function askDecrypt(env) {
+    return new Promise(resolve => {
+      let done = false; const finish = v => { if (!done) { done = true; resolve(v); } };
+      openModal('Encrypted backup', body => {
+        const inp = mk('input'); inp.type = 'password'; inp.autocomplete = 'off'; inp.setAttribute('aria-label', 'Passphrase');
+        const err = mk('p', 'mErr', ''); err.setAttribute('role', 'alert');
+        const go = mk('button', 'primaryBtn', 'Decrypt and restore'); go.type = 'button';
+        go.onclick = async () => {
+          go.disabled = true; err.textContent = '';
+          try { finish(await decryptJson(env, inp.value)); closeModal(); }
+          catch (e) { err.textContent = e && e.message === 'nocrypto' ? 'Encryption isn\'t available in this browser (it needs a secure https connection).' : 'Wrong passphrase, or the file is damaged.'; go.disabled = false; }
+        };
+        inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go.click(); } });
+        body.append(mk('p', 'mNote', 'This backup is encrypted. Enter the passphrase you chose when you made it.'), inp, err, go);
+      }, () => finish(null));
+    });
+  }
+  $('encBackupBtn').onclick = () => {
+    if (!ready) return;
+    if (!hasCrypto()) { alert('Encryption isn\'t available in this browser (it needs a secure https connection).'); return; }
+    flush();
+    openModal('Encrypted backup', body => {
+      const a = mk('input'), b = mk('input'); a.type = b.type = 'password'; a.autocomplete = b.autocomplete = 'new-password';
+      a.placeholder = 'Passphrase (8+ characters)'; b.placeholder = 'Type it again'; a.setAttribute('aria-label', 'Passphrase'); b.setAttribute('aria-label', 'Repeat passphrase');
+      const err = mk('p', 'mErr', ''); err.setAttribute('role', 'alert');
+      const go = mk('button', 'primaryBtn', 'Create encrypted backup'); go.type = 'button';
+      go.onclick = async () => {
+        if (a.value.length < 8) { err.textContent = 'Use at least 8 characters.'; return; }
+        if (a.value !== b.value) { err.textContent = 'The two passphrases don\'t match.'; return; }
+        go.disabled = true; go.textContent = 'Encrypting…'; err.textContent = '';
+        try {
+          const env = await encryptJson(backupPayload(), a.value);
+          download('mydocs-backup-' + new Date().toISOString().slice(0, 10) + '.encrypted.json', JSON.stringify(env), 'application/json');
+          closeModal(); toast('Encrypted backup downloaded.');
+        } catch (e) { err.textContent = 'Could not encrypt the backup.'; go.disabled = false; go.textContent = 'Create encrypted backup'; }
+      };
+      b.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go.click(); } });
+      body.append(mk('p', 'mNote', 'The backup file is locked with your passphrase. MyDocs never stores it, so if you forget it the file cannot be opened by anyone, including us. Your documents in this browser stay as they are.'), a, b, err, go);
+    });
+  };
+
+  // ---------- shortcuts + Escape ----------
+  document.addEventListener('keydown', e => {
+    const mod = e.ctrlKey || e.metaKey;
+    if (mod && e.shiftKey && e.code === 'KeyF') { e.preventDefault(); openFind(); }
+    if (e.key === 'Escape') {
+      if (!modal.hidden) closeModal();
+      else if (!findBar.hidden && findBar.contains(document.activeElement)) closeFind();
+    }
+  });
 
   // ---------- misc UI ----------
   $('newBtn').onclick = newDoc;
@@ -1423,8 +1885,9 @@
       const docs = await store.all(), last = await store.getMeta('current');
       state.docs = docs.map(cleanDoc).filter(Boolean);
       const cutoff = Date.now() - TRASH_DAYS * 864e5;       // empty Trash items older than 30 days
-      state.docs.filter(d => d.deleted && d.deleted < cutoff).forEach(d => { enqueue(() => store.del(d.id)).catch(() => {}); });
+      state.docs.filter(d => d.deleted && d.deleted < cutoff).forEach(d => { enqueue(() => store.del(d.id).then(() => store.delHist(d.id))).catch(() => {}); });
       state.docs = state.docs.filter(d => !(d.deleted && d.deleted < cutoff));
+      state.docs.forEach(d => lastSaved.set(d.id, { title: d.title, html: d.html, updated: d.updated }));
       state.current = state.docs.some(d => d.id === last && !d.deleted) ? last : pickCurrent();
       ready = true;
       if (!state.docs.length) {
