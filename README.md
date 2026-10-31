@@ -34,3 +34,8 @@ Tools update:
 - Tags: add comma-separated tags per document and filter by them above the document list. Tags are included in backups.
 - Encrypted backup: a passphrase-protected backup file (AES-GCM, key from PBKDF2). The passphrase is never stored: if it is lost the file cannot be opened. Restore detects encrypted files and asks for the passphrase. Needs https (GitHub Pages is).
 - Not included on purpose: encrypting the live documents in the browser, and automatic file sync.
+
+Quick bar and icon update:
+- A quick formatting bar (undo, bold, italic, underline, bulleted list, numbered list, checklist, link, and a "more" button that opens the full options) stays at the bottom of the screen, and rides above the keyboard on phones, so you don't have to open the options panel for everyday formatting.
+- The text area no longer has a card, border, shadow or coloured frame: the text sits directly on the page in every theme.
+- Emoji icons were replaced with one consistent set of line icons. The list buttons are now icon-only (bullets and numbered).

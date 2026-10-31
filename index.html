@@ -380,7 +380,7 @@
     #editor { padding: 20px 18px 72px !important; font-size: 16px !important; }
     #editor ul, #editor ol { padding-left: 1.35em; }
     #editor table { display: block; overflow-x: auto; }
-    #top button { min-width: 40px; min-height: 40px; }
+    #top button { display:inline-flex; align-items:center; justify-content:center; min-width: 40px; min-height: 40px; }
     #status { padding: 4px 14px max(4px, env(safe-area-inset-bottom)) !important; }
     #optionsPanel { width: min(390px, 100vw) !important; padding: 0 16px 28px !important; }
   }
@@ -426,6 +426,25 @@
   #editor ul.checklist > li.done::before { content: '\2713'; background: var(--accent); border-color: var(--accent); color: #fff; font-size: .8em; line-height: .95em; text-align: center; }
   #editor ul.checklist > li.done { color: var(--muted); text-decoration: line-through; }
   @media print { #findBar, #modal { display: none !important; } }
+
+  /* ---------- Icons, quick bar, borderless editor ---------- */
+  .ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; pointer-events: none; }
+  .ic .f { fill: currentColor; stroke: none; }
+  .ic text.n { font: 700 7.5px/1 system-ui, sans-serif; }
+  #toolbar .tbRow button, .wideBtn, #quickBar button, #trashBtn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+  .trashIc { display: inline-flex; vertical-align: middle; } .trashIc .ic { width: 16px; height: 16px; }
+  :root[data-theme] #editor { background: var(--bg) !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; outline: none !important; }
+  #scroll { padding-bottom: 64px !important; scroll-padding-bottom: 72px; }
+  #quickBar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; gap: 0; padding: 6px 6px; background: var(--panel); border-top: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  #quickBar::-webkit-scrollbar { display: none; }
+  #quickBar[hidden] { display: none; }
+  #quickBar button { flex: none; width: 38px; height: 42px; border-radius: 10px; color: var(--text); font-size: 17px; }
+  #quickBar button:hover { background: var(--hover); }
+  #quickBar button.active { background: var(--sel); box-shadow: inset 0 0 0 1px var(--accent); }
+  .qsep { flex: none; width: 1px; height: 22px; background: var(--line); margin: 0 3px; }
+  @media (min-width: 761px) { #quickBar { left: 50%; right: auto; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 32px); bottom: 34px !important; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.14); } }
+  @media (max-width: 760px) { #scroll { padding: 6px 0 64px !important; } }
+  @media print { #quickBar { display: none !important; } }
 </style>
 </head>
 <body class="loading">
@@ -439,16 +458,16 @@
   <input id="search" placeholder="Search documents…" type="search">
   <div id="tagBar" hidden></div>
   <div id="list"></div>
-  <div id="trashBar" hidden><button id="trashBtn" type="button" aria-pressed="false">🗑 Trash <span id="trashCount"></span></button></div>
+  <div id="trashBar" hidden><button id="trashBtn" type="button" aria-pressed="false"><span class="trashIc"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 1.8h6a2 2 0 0 0 2-1.8L18 7M9 7V4.5h6V7"/></svg></span> Trash <span id="trashCount"></span></button></div>
 </aside>
 
 <div id="drawerShade" aria-hidden="true"></div>
 <section id="main">
   <div id="top">
-    <button id="docsBtn" title="Documents" aria-label="Open documents">☰</button>
+    <button id="docsBtn" title="Documents" aria-label="Open documents"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
     <input id="title" placeholder="Untitled document" aria-label="Document title">
     <span id="saveHint" aria-live="polite">All changes saved</span>
-    <button id="menuBtn" title="Open formatting and document options" aria-label="Open options">⋮</button>
+    <button id="menuBtn" title="Open formatting and document options" aria-label="Open options"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5.5" r="1.5" class="f"/><circle cx="12" cy="12" r="1.5" class="f"/><circle cx="12" cy="18.5" r="1.5" class="f"/></svg></button>
   </div>
 
   <div id="findBar" hidden role="search" aria-label="Find and replace">
@@ -462,8 +481,8 @@
   <div id="toolbar">
     <div class="tbGroup"><div class="tbLabel">Edit &amp; style</div>
       <div class="tbRow">
-        <button data-cmd="undo" title="Undo (Ctrl+Z)">↶</button>
-        <button data-cmd="redo" title="Redo (Ctrl+Shift+Z)">↷</button>
+        <button data-cmd="undo" title="Undo (Ctrl+Z)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+        <button data-cmd="redo" title="Redo (Ctrl+Shift+Z)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
         <select id="block" title="Paragraph style">
           <option value="p">Normal</option>
           <option value="h1">Heading 1</option>
@@ -498,26 +517,26 @@
     </div>
     <div class="tbGroup"><div class="tbLabel">Lists &amp; indent</div>
       <div class="tbRow">
-        <button data-cmd="insertUnorderedList" title="Bullet list">• List</button>
-        <button data-cmd="insertOrderedList" title="Numbered list">1. List</button>
-        <button type="button" id="checkBtn" title="Checklist (tap a box to tick it)">☑ Checklist</button>
-        <button data-cmd="outdent" title="Outdent">⇤</button>
-        <button data-cmd="indent" title="Indent">⇥</button>
+        <button data-cmd="insertUnorderedList" title="Bulleted list"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="4.5" cy="6" r="1.3" class="f"/><circle cx="4.5" cy="12" r="1.3" class="f"/><circle cx="4.5" cy="18" r="1.3" class="f"/><path d="M10 6h11M10 12h11M10 18h11"/></svg></button>
+        <button data-cmd="insertOrderedList" title="Numbered list"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><text x="2" y="8.2" class="f n">1</text><text x="2" y="14.2" class="f n">2</text><text x="2" y="20.2" class="f n">3</text><path d="M10 6h11M10 12h11M10 18h11"/></svg></button>
+        <button type="button" id="checkBtn" title="Checklist (tap a box to tick it)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="5.5" height="5.5" rx="1.2"/><path d="m3.8 16.2 1.6 1.6 3-3.2"/><path d="M12 6.5h9M12 17h9"/></svg></button>
+        <button data-cmd="outdent" title="Outdent"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18M11 10h10M11 14h10M3 19h18"/><path d="m7 9-3 3 3 3"/></svg></button>
+        <button data-cmd="indent" title="Indent"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18M11 10h10M11 14h10M3 19h18"/><path d="m4 9 3 3-3 3"/></svg></button>
       </div>
     </div>
     <div class="tbGroup"><div class="tbLabel">Align</div>
       <div class="tbRow">
-        <button data-cmd="justifyLeft" title="Align left">⯇</button>
-        <button data-cmd="justifyCenter" title="Center">≡</button>
-        <button data-cmd="justifyRight" title="Align right">⯈</button>
+        <button data-cmd="justifyLeft" title="Align left"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 10h12M3 14h18M3 18h12"/></svg></button>
+        <button data-cmd="justifyCenter" title="Center"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M6 10h12M3 14h18M6 18h12"/></svg></button>
+        <button data-cmd="justifyRight" title="Align right"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M9 10h12M3 14h18M9 18h12"/></svg></button>
       </div>
     </div>
     <div class="tbGroup"><div class="tbLabel">Insert</div>
       <div class="tbRow">
-        <button id="linkBtn" title="Insert link (Ctrl+K)">🔗</button>
-        <button id="imgBtn" title="Insert image">🖼</button>
-        <button id="tableBtn" title="Insert table">▦</button>
-        <button id="hrBtn" title="Horizontal line">―</button>
+        <button id="linkBtn" title="Insert link (Ctrl+K)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
+        <button id="imgBtn" title="Insert image"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m21 16-5-5-9 8.5"/></svg></button>
+        <button id="tableBtn" title="Insert table"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M3 9.5h18M3 14.5h18M9 4.5v15M15 4.5v15"/></svg></button>
+        <button id="hrBtn" title="Horizontal line"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4M10 12h4M17 12h4"/></svg></button>
         <input id="imgFile" type="file" accept="image/*" hidden>
       </div>
     </div>
@@ -525,7 +544,7 @@
       <div class="tbRow tableTools" role="group" aria-label="Table tools"><button type="button" id="tblRowAdd" title="Add row below" disabled>+ Row</button><button type="button" id="tblRowDel" title="Delete row" disabled>− Row</button><button type="button" id="tblColAdd" title="Add column to the right" disabled>+ Col</button><button type="button" id="tblColDel" title="Delete column" disabled>− Col</button><button type="button" id="tblDel" title="Delete table" disabled>✕ Table</button></div>
     </div>
     <div class="tbGroup">
-      <button type="button" id="clearFmtBtn" class="wideBtn" title="Clear formatting: removes bold, italic, color, highlight and stray line breaks from the selection, or from the current paragraph if nothing is selected">⌫ Clear formatting</button>
+      <button type="button" id="clearFmtBtn" class="wideBtn" title="Clear formatting: removes bold, italic, color, highlight and stray line breaks from the selection, or from the current paragraph if nothing is selected"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6V4.5h12V6M10 4.5V15M7 15h6"/><path d="m15.5 14.5 5 5m0-5-5 5"/></svg> Clear formatting</button>
     </div>
   </div>
     </div>
@@ -565,6 +584,8 @@
     <div id="editor" contenteditable="true" spellcheck="true"></div>
     <div id="empty">No documents yet. Click <b>+ New</b> to start one.</div>
   </div>
+
+  <div id="quickBar" role="toolbar" aria-label="Quick formatting" hidden><button type="button" data-cmd="undo" title="Undo" aria-label="Undo"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><span class="qsep"></span><button type="button" data-cmd="bold" title="Bold" aria-label="Bold"><b>B</b></button><button type="button" data-cmd="italic" title="Italic" aria-label="Italic"><i>I</i></button><button type="button" data-cmd="underline" title="Underline" aria-label="Underline"><u>U</u></button><span class="qsep"></span><button type="button" data-cmd="insertUnorderedList" title="Bulleted list" aria-label="Bulleted list"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="4.5" cy="6" r="1.3" class="f"/><circle cx="4.5" cy="12" r="1.3" class="f"/><circle cx="4.5" cy="18" r="1.3" class="f"/><path d="M10 6h11M10 12h11M10 18h11"/></svg></button><button type="button" data-cmd="insertOrderedList" title="Numbered list" aria-label="Numbered list"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><text x="2" y="8.2" class="f n">1</text><text x="2" y="14.2" class="f n">2</text><text x="2" y="20.2" class="f n">3</text><path d="M10 6h11M10 12h11M10 18h11"/></svg></button><button type="button" data-proxy="checkBtn" title="Checklist" aria-label="Checklist"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="5.5" height="5.5" rx="1.2"/><path d="m3.8 16.2 1.6 1.6 3-3.2"/><path d="M12 6.5h9M12 17h9"/></svg></button><span class="qsep"></span><button type="button" data-proxy="linkBtn" title="Insert link" aria-label="Insert link"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button><button type="button" id="quickMore" title="More formatting options" aria-label="More formatting options"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.4" class="f"/><circle cx="12" cy="12" r="1.4" class="f"/><circle cx="19" cy="12" r="1.4" class="f"/></svg></button></div>
 
   <div id="status"><span id="count"></span><span id="saved"></span></div>
 </section>
@@ -986,7 +1007,7 @@
   function render() {
     const d = cur();
     const has = !!d;
-    editor.style.display = has ? '' : 'none';
+    editor.style.display = has ? '' : 'none'; $('quickBar').hidden = !has; placeQuickBar();
     $('empty').style.display = has ? 'none' : 'block';
     titleEl.disabled = !has;
     if (has) {
@@ -1791,6 +1812,20 @@
       body.append(mk('p', 'mNote', 'The backup file is locked with your passphrase. MyDocs never stores it, so if you forget it the file cannot be opened by anyone, including us. Your documents in this browser stay as they are.'), a, b, err, go);
     });
   };
+
+
+  // ---------- quick formatting bar: stays above the keyboard while typing ----------
+  const quickBar = $('quickBar'), statusEl = $('status'), vv = window.visualViewport;
+  function placeQuickBar() {
+    if (quickBar.hidden) return;
+    const kb = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
+    quickBar.style.bottom = (kb > 80 ? kb : (matchMedia('(min-width: 761px)').matches ? 34 : statusEl.offsetHeight)) + 'px';
+  }
+  if (vv) { vv.addEventListener('resize', placeQuickBar); vv.addEventListener('scroll', placeQuickBar); }
+  window.addEventListener('resize', placeQuickBar);
+  quickBar.querySelectorAll('button').forEach(b => b.addEventListener('mousedown', e => e.preventDefault()));   // keep selection + keyboard
+  quickBar.querySelectorAll('[data-proxy]').forEach(b => b.addEventListener('click', () => $(b.dataset.proxy).click()));
+  $('quickMore').addEventListener('click', openOptions);
 
   // ---------- shortcuts + Escape ----------
   document.addEventListener('keydown', e => {
