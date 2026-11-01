@@ -445,6 +445,70 @@
   @media (min-width: 761px) { #quickBar { left: 50%; right: auto; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 32px); bottom: 34px !important; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.14); } }
   @media (max-width: 760px) { #scroll { padding: 6px 0 64px !important; } }
   @media print { #quickBar { display: none !important; } }
+
+  /* ---------- Docs-like: styles, page view, menu bar, folders, font controls ---------- */
+  #editor p.title { font-size: 26pt; line-height: 1.2; font-weight: 400; margin: 0 0 .15em; }
+  #editor p.subtitle { font-size: 15pt; line-height: 1.3; color: var(--muted); margin: 0 0 .8em; }
+  .fontCtl { display: flex; align-items: center; gap: 6px; flex: 1 1 100%; min-width: 0; }
+  .fontCtl .fontFam { flex: 1 1 auto; min-width: 0; }
+  #toolbar .tbRow .fontCtl .sizeBtn { min-width: 38px; width: 38px; padding: 0; font-size: 18px; }
+  #toolbar .tbRow .sizeIn, #quickBar .sizeIn { width: 48px; height: 42px; text-align: center; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text); font-size: 15px; box-sizing: border-box; }
+  #toolbar .tbRow #lineSpacing { flex: 1 1 100%; }
+  .deskOnly { display: none !important; }
+  @media (min-width: 761px) { .fontCtl.deskOnly { display: flex !important; flex: none; } .qsep.deskOnly { display: block !important; } }
+  #quickBar .fontCtl { gap: 2px; }
+  #quickBar .fontFam { height: 34px; width: 132px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--text); font-size: 13px; padding: 0 4px; }
+  #quickBar .sizeBtn { width: 28px; height: 34px; font-size: 17px; }
+  #quickBar .sizeIn { width: 38px; height: 34px; border-radius: 8px; font-size: 13px; }
+  #starBtn.on, .starMini.on { color: #e8a400 !important; }
+  #starBtn.on svg path, .starMini.on svg path { fill: currentColor; }
+  #starBtn:disabled { opacity: .35; }
+  #viewTabs { display: flex; gap: 6px; padding: 8px 12px 0; }
+  #viewTabs[hidden] { display: none; }
+  .item { position: relative; padding-right: 42px !important; }
+  .item.inFolder { margin-left: 16px; }
+  .starMini { position: absolute; right: 6px; top: 7px; width: 30px; height: 30px; border-radius: 8px; color: var(--muted); display: inline-flex; align-items: center; justify-content: center; opacity: .6; }
+  .starMini:hover { opacity: 1; background: var(--hover); }
+  .starMini .ic { width: 17px; height: 17px; }
+  .folderHead { display: flex; align-items: center; gap: 7px; width: calc(100% - 8px); margin: 8px 4px 2px; padding: 8px 10px; border-radius: 10px; font-weight: 600; font-size: 13.5px; color: var(--text); text-align: left; }
+  .folderHead:hover { background: var(--hover); }
+  .folderHead .fc, .folderHead .ff { display: inline-flex; }
+  .folderHead .fc svg { width: 14px; height: 14px; transition: transform .15s; } .folderHead.open .fc svg { transform: rotate(90deg); }
+  .folderHead .ff svg { width: 17px; height: 17px; }
+  .folderHead .fn { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fcount { font-size: 12px; color: var(--muted); }
+  .plainBtn { display: block; width: 100%; height: 42px; margin-top: 6px; border-radius: 10px; color: var(--muted); }
+  .plainBtn:hover { background: var(--hover); }
+  #menuBar { display: none; }
+  @media (min-width: 761px) {
+    #menuBar { display: flex; gap: 2px; padding: 2px 12px; border-bottom: 1px solid var(--line); background: var(--bg); position: relative; z-index: 26; }
+  }
+  .mb { position: relative; }
+  .mTitle { height: 30px; padding: 0 10px; border-radius: 6px; font-size: 13.5px; color: var(--text); }
+  .mTitle:hover, .mTitle[aria-expanded="true"] { background: var(--hover); }
+  .mDrop { position: absolute; top: 100%; left: 0; min-width: 270px; max-height: calc(100vh - 120px); overflow-y: auto; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.2); padding: 6px 0; z-index: 40; }
+  .mDrop[hidden] { display: none; }
+  .mItem { display: flex; align-items: center; width: 100%; padding: 7px 14px 7px 8px; font-size: 13.5px; text-align: left; color: var(--text); }
+  .mItem:hover, .mItem:focus { background: var(--hover); outline: none; }
+  .mChk { width: 20px; flex: none; text-align: center; font-size: 12px; }
+  .mLbl { flex: 1; } .mKey { color: var(--muted); font-size: 12px; margin-left: 28px; }
+  .mSep { height: 1px; background: var(--line); margin: 6px 0; }
+  .mHead { font-size: 11px; color: var(--muted); padding: 6px 14px 2px 28px; text-transform: uppercase; letter-spacing: .06em; }
+
+  @media screen {
+    body.pageView #scroll { background: #e9ebee !important; background: color-mix(in srgb, var(--bg) 86%, #000) !important; }
+    :root[data-theme] body.pageView #editor { background: #fff !important; color: #202124 !important; width: 100%; max-width: 816px !important; min-height: 1056px; margin: 18px auto 40px !important; padding: 96px !important; box-sizing: border-box; border-radius: 2px !important; line-height: 1.5 !important; box-shadow: 0 1px 3px rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15) !important; }
+    body.pageView #editor blockquote, body.pageView #editor pre, body.pageView #editor code, body.pageView #editor td, body.pageView #editor th { color: #202124 !important; }
+    body.pageView #editor pre, body.pageView #editor code, body.pageView #editor blockquote { background: #f1f3f4 !important; }
+    body.pageView #editor p.subtitle { color: #666 !important; }
+    @media (min-width: 761px) { :root[data-theme] body.pageView #editor { background-image: repeating-linear-gradient(to bottom, #fff 0, #fff calc(1056px - 2px), #d5d8dc calc(1056px - 2px), #d5d8dc 1056px) !important; } }
+    @media (max-width: 760px) { :root[data-theme] body.pageView #editor { padding: 26px 20px 60px !important; margin: 8px auto 24px !important; min-height: 70vh; } body.pageView #scroll { padding: 4px 6px 64px !important; } }
+  }
+  @media print {
+    :root[data-theme] #editor { background: #fff !important; color: #000 !important; box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: none !important; min-height: 0 !important; background-image: none !important; }
+    body, #main, #scroll { background: #fff !important; }
+    #menuBar, #viewTabs { display: none !important; }
+  }
 </style>
 </head>
 <body class="loading">
@@ -456,6 +520,7 @@
     <button id="newBtn" title="New document (Alt+N)">+ New</button>
   </header>
   <input id="search" placeholder="Search documents…" type="search">
+  <div id="viewTabs"></div>
   <div id="tagBar" hidden></div>
   <div id="list"></div>
   <div id="trashBar" hidden><button id="trashBtn" type="button" aria-pressed="false"><span class="trashIc"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6"/><path d="M6 7l1 12a2 2 0 0 0 2 1.8h6a2 2 0 0 0 2-1.8L18 7M9 7V4.5h6V7"/></svg></span> Trash <span id="trashCount"></span></button></div>
@@ -467,8 +532,11 @@
     <button id="docsBtn" title="Documents" aria-label="Open documents"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
     <input id="title" placeholder="Untitled document" aria-label="Document title">
     <span id="saveHint" aria-live="polite">All changes saved</span>
+    <button id="starBtn" type="button" title="Star this document" aria-label="Star this document" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg></button>
     <button id="menuBtn" title="Open formatting and document options" aria-label="Open options"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5.5" r="1.5" class="f"/><circle cx="12" cy="12" r="1.5" class="f"/><circle cx="12" cy="18.5" r="1.5" class="f"/></svg></button>
   </div>
+
+  <nav id="menuBar" aria-label="Menu"></nav>
 
   <div id="findBar" hidden role="search" aria-label="Find and replace">
     <div class="fbRow"><input id="findInput" type="search" placeholder="Find" aria-label="Find"><span id="findCount" aria-live="polite"></span><button id="findPrev" type="button" aria-label="Previous match">↑</button><button id="findNext" type="button" aria-label="Next match">↓</button><button id="findClose" type="button" aria-label="Close find and replace">✕</button></div>
@@ -485,6 +553,8 @@
         <button data-cmd="redo" title="Redo (Ctrl+Shift+Z)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
         <select id="block" title="Paragraph style">
           <option value="p">Normal</option>
+          <option value="title">Title</option>
+          <option value="subtitle">Subtitle</option>
           <option value="h1">Heading 1</option>
           <option value="h2">Heading 2</option>
           <option value="h3">Heading 3</option>
@@ -501,7 +571,7 @@
         <button data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
         <button type="button" id="colorBtn" title="Text color" aria-label="Choose text color" aria-expanded="false"><span class="colorGlyph">A</span><span class="colorUnderline"></span></button>
         <button type="button" id="hiliteBtn" title="Highlight color" aria-label="Highlight color" aria-expanded="false"><span class="hiliteGlyph">A</span></button>
-        <select id="fontSize" title="Text size" aria-label="Text size"><option value="">Size</option><option value="2">Small</option><option value="3">Normal</option><option value="5">Large</option><option value="6">Extra large</option></select>
+        <div class="fontCtl"></div>
       </div>
       <div id="colorPalette" class="colorPalette" hidden aria-label="Text color palette">
         <div class="colorPaletteTitle">Text color</div><div class="colorSwatches">
@@ -531,6 +601,13 @@
         <button data-cmd="justifyRight" title="Align right"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M9 10h12M3 14h18M9 18h12"/></svg></button>
       </div>
     </div>
+    <div class="tbGroup"><div class="tbLabel">Line &amp; paragraph spacing</div>
+      <div class="tbRow">
+        <select id="lineSpacing" title="Line spacing" aria-label="Line spacing"><option value="">Line spacing: default</option><option value="1">Single</option><option value="1.15">1.15</option><option value="1.5">1.5</option><option value="2">Double</option></select>
+        <button type="button" id="spaceBefore" aria-pressed="false" title="Add space before paragraph">Space before</button>
+        <button type="button" id="spaceAfter" aria-pressed="false" title="Add space after paragraph">Space after</button>
+      </div>
+    </div>
     <div class="tbGroup"><div class="tbLabel">Insert</div>
       <div class="tbRow">
         <button id="linkBtn" title="Insert link (Ctrl+K)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button>
@@ -553,10 +630,13 @@
       <button id="outlineBtn" type="button">Outline</button>
       <button id="historyBtn" type="button">Version history</button>
       <button id="tagsBtn" type="button">Tags</button>
+      <button id="folderBtn" type="button">Folder…</button>
       <button id="importBtn" type="button">Import .md, .txt or .html</button>
       <input id="importFile" type="file" accept=".md,.markdown,.txt,.html,.htm,text/markdown,text/plain,text/html" multiple hidden>
     </div>
     <div class="panelSection"><div class="panelLabel">Share and export</div>
+      <button id="exportDocx" type="button">Download as Word (.docx)</button>
+      <button id="exportPdf" type="button">Download as PDF (.pdf)</button>
       <button id="exportHtml">Export as HTML</button>
       <button id="exportMd">Export as Markdown</button>
       <button id="printBtn">Print / Save as PDF</button>
@@ -576,6 +656,8 @@
       <button data-t="sage" title="Sage Olive" aria-label="Sage Olive"></button>
     </div></div>
       <button type="button" id="autoThemeBtn" class="autoThemeBtn" aria-pressed="false">☾ Match device appearance <span id="autoThemeState">Off</span></button>
+      <button type="button" id="pageViewBtn" class="autoThemeBtn" aria-pressed="false">Page view <span id="pageViewState">Off</span></button>
+      <button type="button" id="pageNumBtn" class="autoThemeBtn" aria-pressed="true">Page numbers in print and exports <span id="pageNumState">On</span></button>
       <p class="panelNote">Choose a theme or automatically follow your device’s light and dark appearance.</p>
     </div>
   </aside>
@@ -585,7 +667,7 @@
     <div id="empty">No documents yet. Click <b>+ New</b> to start one.</div>
   </div>
 
-  <div id="quickBar" role="toolbar" aria-label="Quick formatting" hidden><button type="button" data-cmd="undo" title="Undo" aria-label="Undo"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><span class="qsep"></span><button type="button" data-cmd="bold" title="Bold" aria-label="Bold"><b>B</b></button><button type="button" data-cmd="italic" title="Italic" aria-label="Italic"><i>I</i></button><button type="button" data-cmd="underline" title="Underline" aria-label="Underline"><u>U</u></button><span class="qsep"></span><button type="button" data-cmd="insertUnorderedList" title="Bulleted list" aria-label="Bulleted list"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="4.5" cy="6" r="1.3" class="f"/><circle cx="4.5" cy="12" r="1.3" class="f"/><circle cx="4.5" cy="18" r="1.3" class="f"/><path d="M10 6h11M10 12h11M10 18h11"/></svg></button><button type="button" data-cmd="insertOrderedList" title="Numbered list" aria-label="Numbered list"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><text x="2" y="8.2" class="f n">1</text><text x="2" y="14.2" class="f n">2</text><text x="2" y="20.2" class="f n">3</text><path d="M10 6h11M10 12h11M10 18h11"/></svg></button><button type="button" data-proxy="checkBtn" title="Checklist" aria-label="Checklist"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="5.5" height="5.5" rx="1.2"/><path d="m3.8 16.2 1.6 1.6 3-3.2"/><path d="M12 6.5h9M12 17h9"/></svg></button><span class="qsep"></span><button type="button" data-proxy="linkBtn" title="Insert link" aria-label="Insert link"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button><button type="button" id="quickMore" title="More formatting options" aria-label="More formatting options"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.4" class="f"/><circle cx="12" cy="12" r="1.4" class="f"/><circle cx="19" cy="12" r="1.4" class="f"/></svg></button></div>
+  <div id="quickBar" role="toolbar" aria-label="Quick formatting" hidden><button type="button" data-cmd="undo" title="Undo" aria-label="Undo"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><span class="qsep"></span><div class="fontCtl deskOnly"></div><span class="qsep deskOnly"></span><button type="button" data-cmd="bold" title="Bold" aria-label="Bold"><b>B</b></button><button type="button" data-cmd="italic" title="Italic" aria-label="Italic"><i>I</i></button><button type="button" data-cmd="underline" title="Underline" aria-label="Underline"><u>U</u></button><span class="qsep"></span><button type="button" data-cmd="insertUnorderedList" title="Bulleted list" aria-label="Bulleted list"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="4.5" cy="6" r="1.3" class="f"/><circle cx="4.5" cy="12" r="1.3" class="f"/><circle cx="4.5" cy="18" r="1.3" class="f"/><path d="M10 6h11M10 12h11M10 18h11"/></svg></button><button type="button" data-cmd="insertOrderedList" title="Numbered list" aria-label="Numbered list"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><text x="2" y="8.2" class="f n">1</text><text x="2" y="14.2" class="f n">2</text><text x="2" y="20.2" class="f n">3</text><path d="M10 6h11M10 12h11M10 18h11"/></svg></button><button type="button" data-proxy="checkBtn" title="Checklist" aria-label="Checklist"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="5.5" height="5.5" rx="1.2"/><path d="m3.8 16.2 1.6 1.6 3-3.2"/><path d="M12 6.5h9M12 17h9"/></svg></button><span class="qsep"></span><button type="button" data-proxy="linkBtn" title="Insert link" aria-label="Insert link"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg></button><button type="button" id="quickMore" title="More formatting options" aria-label="More formatting options"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.4" class="f"/><circle cx="12" cy="12" r="1.4" class="f"/><circle cx="19" cy="12" r="1.4" class="f"/></svg></button></div>
 
   <div id="status"><span id="count"></span><span id="saved"></span></div>
 </section>
@@ -608,17 +690,26 @@
   // ======================================================================
   const ALLOWED_TAGS = new Set('p div br h1 h2 h3 h4 h5 h6 b strong i em u s strike del a ul ol li blockquote pre code hr table thead tbody tfoot tr td th caption colgroup col img span font sub sup mark small'.split(' '));
   const DROP_TAGS = new Set('script style iframe frame frameset object embed applet meta link base title head noscript template form input button select option textarea svg math audio video source track canvas dialog'.split(' '));
-  const STYLE_PROPS = new Set(['color', 'background-color', 'text-align', 'font-weight', 'font-style', 'text-decoration', 'text-decoration-line', 'margin', 'margin-left', 'margin-right', 'padding', 'padding-left', 'border', 'list-style-type']);
+  const STYLE_PROPS = new Set(['color', 'background-color', 'text-align', 'font-weight', 'font-style', 'text-decoration', 'text-decoration-line', 'margin', 'margin-left', 'margin-right', 'padding', 'padding-left', 'border', 'list-style-type', 'font-size', 'font-family', 'line-height', 'margin-top', 'margin-bottom']);
   const SAFE_CSS = /^[\w\s#.,%()\-]*$/, BAD_CSS = /url\s*\(|expression|@import|javascript|behavior/i;
   const SAFE_COLOR = /^(#[0-9a-f]{3,8}|[a-z]+|rgba?\([\d\s.,%]+\))$/i;
   const SAFE_HREF = /^(https?:|mailto:|tel:|#)/i;
   const SAFE_IMG = /^(data:image\/(png|jpe?g|gif|webp|bmp|avif|svg\+xml)[;,]|https?:\/\/)/i;
 
+  const FONT_ALLOW = ['arial', 'verdana', 'trebuchet ms', 'georgia', 'times new roman', 'courier new'];
+  function styleValueOk(p, val) {
+    if (p === 'font-size') return /^\d{1,3}(\.\d{1,2})?(pt|px)$/.test(val) && parseFloat(val) >= 1 && parseFloat(val) <= 400;
+    if (p === 'line-height') return /^\d(\.\d{1,2})?$/.test(val) || /^\d{2,3}%$/.test(val);
+    if (p === 'margin-top' || p === 'margin-bottom') return /^\d{1,3}(\.\d{1,2})?(pt|px|em)$/.test(val);
+    if (p === 'font-family') return FONT_ALLOW.includes(val.split(',')[0].trim().toLowerCase());
+    return true;
+  }
   function cleanStyle(v) {
     return v.split(';').map(s => {
       const i = s.indexOf(':'); if (i < 0) return '';
-      const p = s.slice(0, i).trim().toLowerCase(), val = s.slice(i + 1).trim();
-      return STYLE_PROPS.has(p) && val && SAFE_CSS.test(val) && !BAD_CSS.test(val) ? p + ': ' + val : '';
+      const p = s.slice(0, i).trim().toLowerCase(); let val = s.slice(i + 1).trim();
+      if (p === 'font-family') val = val.replace(/["']/g, '');
+      return STYLE_PROPS.has(p) && val && SAFE_CSS.test(val) && !BAD_CSS.test(val) && styleValueOk(p, val) ? p + ': ' + val : '';
     }).filter(Boolean).join('; ');
   }
 
@@ -636,7 +727,7 @@
       else if (tag === 'font' && n === 'color') { nv = v.trim(); ok = SAFE_COLOR.test(nv); }
       else if (tag === 'ol' && n === 'start') ok = /^-?\d{1,5}$/.test(v);
       else if (tag === 'font' && n === 'size') ok = /^[1-7]$/.test(v);
-      else if (n === 'class') ok = (tag === 'ul' && v === 'checklist') || (tag === 'li' && v === 'done');
+      else if (n === 'class') ok = (tag === 'ul' && v === 'checklist') || (tag === 'li' && v === 'done') || (tag === 'p' && (v === 'title' || v === 'subtitle'));
       if (!ok) el.removeAttribute(a.name); else if (nv !== v) el.setAttribute(a.name, nv);
     }
     if (tag === 'a') {
@@ -744,7 +835,9 @@
       updated: Number.isFinite(raw.updated) ? raw.updated : Date.now(),
       deleted: Number.isFinite(raw.deleted) && raw.deleted > 0 ? raw.deleted : 0,
       rev: Number.isInteger(raw.rev) && raw.rev > 0 ? raw.rev : 0,
-      tags: cleanTags(raw.tags)
+      tags: cleanTags(raw.tags),
+      folder: typeof raw.folder === 'string' ? raw.folder.replace(/\s+/g, ' ').trim().slice(0, 40) : '',
+      starred: raw.starred === true
     };
   }
 
@@ -880,7 +973,7 @@
   // Save one document. Never overwrites a newer version written by another tab: on conflict
   // both versions are kept (ours as "(conflicted copy)", or theirs if we are mid-edit).
   function saveDoc(d) {
-    const snap = { id: d.id, title: d.title, html: d.html, updated: d.updated, deleted: d.deleted || 0, tags: (d.tags || []).slice() };
+    const snap = { id: d.id, title: d.title, html: d.html, updated: d.updated, deleted: d.deleted || 0, tags: (d.tags || []).slice(), folder: d.folder || '', starred: !!d.starred };
     return enqueue(async () => {
       if (!state.docs.includes(d)) return;          // permanently deleted while queued
       const r = await store.put(snap, d.rev | 0);
@@ -911,8 +1004,8 @@
     const editingNow = dirty && state.current === d.id;
     const mine = !editingNow;                        // if idle, keep ours as a copy and adopt theirs; if typing, keep theirs as a copy
     const src = mine ? snap : theirs;
-    if (!(theirs.title === snap.title && theirs.html === snap.html && JSON.stringify(cleanTags(theirs.tags)) === JSON.stringify(snap.tags))) {
-      const copy = { id: uid(), title: (src.title || 'Untitled document') + (mine ? ' (conflicted copy)' : ' (version from another tab)'), html: src.html, updated: Date.now(), deleted: 0, rev: 0, tags: cleanTags(src.tags) };
+    if (!(theirs.title === snap.title && theirs.html === snap.html && JSON.stringify(cleanTags(theirs.tags)) === JSON.stringify(snap.tags) && (theirs.folder || '') === snap.folder && !!theirs.starred === snap.starred)) {
+      const copy = { id: uid(), title: (src.title || 'Untitled document') + (mine ? ' (conflicted copy)' : ' (version from another tab)'), html: src.html, updated: Date.now(), deleted: 0, rev: 0, tags: cleanTags(src.tags), folder: src.folder || '', starred: false };
       const r = await store.put(copy, 0); copy.rev = r.ok.rev;
       state.docs.push(copy); announce({ t: 'doc', id: copy.id });
       toast('Another tab changed “' + (snap.title || 'Untitled document') + '”. Both versions were kept.');
@@ -1016,46 +1109,7 @@
       document.title = (d.title || 'Untitled') + ' – MyDocs';
     } else { titleEl.value = ''; editor.innerHTML = ''; document.title = 'MyDocs'; }
     dirty = false;
-    renderList(); updateCount(); refreshFind();
-  }
-
-  function renderList() {
-    const q = $('search').value.trim().toLowerCase();
-    renderTagBar();
-    const trashed = state.docs.filter(d => d.deleted);
-    $('trashCount').textContent = trashed.length ? '(' + trashed.length + ')' : '';
-    $('trashBar').hidden = !trashed.length && !trashView;
-    $('trashBtn').classList.toggle('active', trashView);
-    $('trashBtn').setAttribute('aria-pressed', String(trashView));
-    listEl.innerHTML = '';
-    if (trashView) {
-      const note = document.createElement('div'); note.className = 'trashNote';
-      note.textContent = trashed.length ? 'Items are deleted forever after ' + TRASH_DAYS + ' days.' : 'Trash is empty.';
-      listEl.appendChild(note);
-    }
-    state.docs
-      .filter(d => trashView ? d.deleted : !d.deleted)
-      .sort(trashView ? (a, b) => b.deleted - a.deleted : byUpdated)
-      .filter(d => trashView || !activeTag || (d.tags || []).includes(activeTag))
-      .filter(d => !q || (d.title + ' ' + plainText(d)).toLowerCase().includes(q))
-      .forEach(d => {
-        const el = document.createElement('div');
-        el.className = 'item' + (!trashView && d.id === state.current ? ' sel' : '');
-        const t = document.createElement('span'); t.className = 't'; t.textContent = d.title || 'Untitled document';
-        const dt = document.createElement('span'); dt.className = 'd';
-        dt.textContent = new Date(trashView ? d.deleted : d.updated).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-        el.append(t, dt);
-        if (!trashView && d.tags && d.tags.length) el.appendChild(mk('span', 'tg', d.tags.map(x => '#' + x).join(' ')));
-        if (trashView) {
-          const row = document.createElement('div'); row.className = 'trashActions';
-          const r = document.createElement('button'); r.textContent = 'Restore'; r.onclick = () => restoreDoc(d.id, false);
-          const x = document.createElement('button'); x.textContent = 'Delete forever'; x.className = 'danger'; x.onclick = () => purgeDoc(d.id);
-          row.append(r, x); el.appendChild(row); el.style.cursor = 'default';
-        } else {
-          el.onclick = () => { flush(); state.current = d.id; setCurrentMeta(); render(); $('sidebar').classList.remove('open'); };
-        }
-        listEl.appendChild(el);
-      });
+    renderList(); updateCount(); refreshFind(); syncDocUi();
   }
 
   // ---------- autosave ----------
@@ -1085,7 +1139,6 @@
     b.addEventListener('mousedown', e => e.preventDefault()); // keep selection
     b.addEventListener('click', () => exec(b.dataset.cmd));
   });
-  $('block').addEventListener('change', e => { exec('formatBlock', e.target.value === 'p' ? 'p' : e.target.value); });
   // ---------- text colour + highlight palettes ----------
   const palettes = [{ btn: $('colorBtn'), box: $('colorPalette') }, { btn: $('hiliteBtn'), box: $('hilitePalette') }];
   function closePalettes(except) { palettes.forEach(p => { if (p.box !== except) { p.box.hidden = true; p.btn.setAttribute('aria-expanded', 'false'); } }); }
@@ -1329,7 +1382,7 @@
     });
     let blk = ''; try { blk = (document.queryCommandValue('formatBlock') || '').toLowerCase().replace(/[<>]/g, ''); } catch (e) {}
     $('block').value = ['h1','h2','h3','blockquote','pre'].includes(blk) ? blk : 'p';
-    syncTableTools();
+    syncTableTools(); syncFontUi(); syncBlockUi();
   }
   document.addEventListener('selectionchange', () => { const s = getSelection(); if (document.activeElement === editor || (s.rangeCount && editor.contains(s.anchorNode))) syncToolbar(); });
 
@@ -1362,7 +1415,7 @@
   $('exportHtml').onclick = () => {
     flush();
     const t = esc(titleEl.value || 'Untitled');
-    const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${t}</title><style>body{max-width:760px;margin:40px auto;padding:0 16px;font:16px/1.65 system-ui,sans-serif;color:#222}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px 10px}blockquote{border-left:3px solid #ccc;margin-left:0;padding-left:14px;color:#666}pre{background:#f4f4f4;padding:10px;overflow:auto}img{max-width:100%}ul.checklist{list-style:none;padding-left:0}ul.checklist li::before{content:"\\2610  "}ul.checklist li.done::before{content:"\\2611  "}li.done{color:#777;text-decoration:line-through}</style></head><body>${editor.innerHTML}</body></html>`;
+    const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${t}</title><style>body{max-width:760px;margin:40px auto;padding:0 16px;font:16px/1.65 system-ui,sans-serif;color:#222}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px 10px}blockquote{border-left:3px solid #ccc;margin-left:0;padding-left:14px;color:#666}pre{background:#f4f4f4;padding:10px;overflow:auto}img{max-width:100%}p.title{font-size:2.2em;margin:0 0 .2em}p.subtitle{font-size:1.25em;color:#666}ul.checklist{list-style:none;padding-left:0}ul.checklist li::before{content:"\\2610  "}ul.checklist li.done::before{content:"\\2611  "}li.done{color:#777;text-decoration:line-through}</style></head><body>${editor.innerHTML}</body></html>`;
     download(fname('html'), html, 'text/html');
   };
 
@@ -1376,7 +1429,7 @@
       case 'h1': return '\n# ' + kids().trim() + '\n\n';
       case 'h2': return '\n## ' + kids().trim() + '\n\n';
       case 'h3': return '\n### ' + kids().trim() + '\n\n';
-      case 'p': case 'div': { const k = kids(); return k.trim() ? k + '\n\n' : '\n'; }
+      case 'p': case 'div': { const k = kids(), c = node.classList; return k.trim() ? (c.contains('title') ? '\n# ' + k.trim() + '\n\n' : c.contains('subtitle') ? '*' + k.trim() + '*\n\n' : k + '\n\n') : '\n'; }
       case 'br': return '\n';
       case 'b': case 'strong': return '**' + kids() + '**';
       case 'i': case 'em': return '*' + kids() + '*';
@@ -1424,7 +1477,7 @@
     download('mydocs-backup-' + new Date().toISOString().slice(0, 10) + '.json', JSON.stringify(backupPayload()), 'application/json');
   };
   function backupPayload() {
-    const docs = state.docs.map(d => ({ id: d.id, title: d.title, html: d.html, updated: d.updated, deleted: d.deleted || 0, tags: d.tags || [] }));
+    const docs = state.docs.map(d => ({ id: d.id, title: d.title, html: d.html, updated: d.updated, deleted: d.deleted || 0, tags: d.tags || [], folder: d.folder || '', starred: !!d.starred }));
     return { app: 'mydocs', version: 2, exported: new Date().toISOString(), current: state.current, docs };
   }
   $('restoreBtn').onclick = () => $('restoreFile').click();
@@ -1643,7 +1696,6 @@
   };
 
   // ---------- font size + checklists ----------
-  $('fontSize').addEventListener('change', e => { const v = e.target.value; e.target.value = ''; if (v) exec('fontSize', v); });
   $('checkBtn').addEventListener('mousedown', e => e.preventDefault());
   const upEl = (n, tag) => { for (; n && n !== editor; n = n.parentNode) if (n.nodeType === 1 && n.nodeName === tag) return n; return null; };
   $('checkBtn').addEventListener('click', () => {
@@ -1836,6 +1888,943 @@
       else if (!findBar.hidden && findBar.contains(document.activeElement)) closeFind();
     }
   });
+
+  // ======================================================================
+  // Docs-style features: preferences, font + size, paragraph styles, spacing,
+  // page view, page numbers, folders / star / recent, and the desktop menu bar.
+  // ======================================================================
+  const PREF = {
+    get(k, d) { try { const v = localStorage.getItem('mydocs.' + k); return v === null ? d : v; } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem('mydocs.' + k, v); } catch (e) {} }
+  };
+  let pageView = PREF.get('pageView', 'false') === 'true', pageNums = PREF.get('pageNumbers', 'true') === 'true';
+  const pageNumStyle = document.createElement('style'); document.head.appendChild(pageNumStyle);
+  function applyPrefs() {
+    document.body.classList.toggle('pageView', pageView);
+    pageNumStyle.textContent = pageNums ? '@page { @bottom-center { content: counter(page); font: 10pt Arial, sans-serif; color: #666; } }' : '';
+    $('pageViewBtn').setAttribute('aria-pressed', String(pageView)); $('pageViewState').textContent = pageView ? 'On' : 'Off';
+    $('pageNumBtn').setAttribute('aria-pressed', String(pageNums)); $('pageNumState').textContent = pageNums ? 'On' : 'Off';
+  }
+  const togglePageView = () => { pageView = !pageView; PREF.set('pageView', String(pageView)); applyPrefs(); };
+  const togglePageNums = () => { pageNums = !pageNums; PREF.set('pageNumbers', String(pageNums)); applyPrefs(); };
+  $('pageViewBtn').onclick = togglePageView; $('pageNumBtn').onclick = togglePageNums;
+  applyPrefs();
+
+  // ---------- keep the editor selection while using inputs / selects ----------
+  let savedRange = null, pendingSize = 12;
+  document.addEventListener('selectionchange', () => {
+    const s = getSelection();
+    if (s.rangeCount && editor.contains(s.anchorNode) && editor.contains(s.focusNode)) savedRange = s.getRangeAt(0).cloneRange();
+  });
+  function restoreSaved() {
+    editor.focus({ preventScroll: true });
+    if (!savedRange || !editor.contains(savedRange.startContainer) || !editor.contains(savedRange.endContainer)) return;
+    const s = getSelection(); s.removeAllRanges(); s.addRange(savedRange);
+  }
+
+  // ---------- font family + size ----------
+  const FONT_LIST = ['Arial', 'Verdana', 'Trebuchet MS', 'Georgia', 'Times New Roman', 'Courier New'];
+  const SIZE_STEPS = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 60, 72, 96];
+  function anchorEl() {
+    const s = getSelection(); let n = s.rangeCount && editor.contains(s.anchorNode) ? s.anchorNode : (savedRange && editor.contains(savedRange.startContainer) ? savedRange.startContainer : null);
+    return n ? (n.nodeType === 1 ? n : n.parentElement) : null;
+  }
+  const currentSizePt = () => { const el = anchorEl(); return el ? Math.round(parseFloat(getComputedStyle(el).fontSize) * 0.75) : null; };
+  function normalizeSizes() { editor.querySelectorAll('[style*="xxx-large"]').forEach(el => { el.style.fontSize = pendingSize + 'pt'; }); }
+  editor.addEventListener('input', () => { if (editor.querySelector('[style*="xxx-large"]')) normalizeSizes(); });
+  function applySize(pt) {
+    pt = Math.max(6, Math.min(200, Math.round(pt))); if (!isFinite(pt)) return;
+    restoreSaved(); pendingSize = pt;
+    document.execCommand('styleWithCSS', false, true);
+    document.execCommand('fontSize', false, '7');
+    document.execCommand('styleWithCSS', false, false);
+    normalizeSizes(); queueSave(); syncFontUi();
+  }
+  function stepSize(dir) {
+    const c = currentSizePt() || 12; let n = null;
+    if (dir > 0) n = SIZE_STEPS.find(s => s > c); else n = [...SIZE_STEPS].reverse().find(s => s < c);
+    applySize(n || c + dir);
+  }
+  function applyFont(name) {
+    restoreSaved();
+    if (!name) {                                          // "Default font": remove font-family from the selection
+      const r = editorRange(); if (!r || r.collapsed) return;
+      const res = clearInline(r, el => el.nodeName === 'SPAN' && /font-family/.test(el.getAttribute('style') || ''), el => { dropStyleProps(el, ['font-family']); if (el.nodeName === 'SPAN' && !el.attributes.length) unwrapNode(el); });
+      if (res) restoreSelection(res.T);
+    } else {
+      document.execCommand('styleWithCSS', false, true); document.execCommand('fontName', false, name); document.execCommand('styleWithCSS', false, false);
+    }
+    queueSave(); syncFontUi();
+  }
+  function syncFontUi() {
+    const el = anchorEl(); if (!el) return;
+    const cs = getComputedStyle(el), fam = cs.fontFamily.split(',')[0].replace(/["']/g, '').trim(), match = FONT_LIST.find(f => f.toLowerCase() === fam.toLowerCase()) || '';
+    const own = (() => { for (let e = el; e && e !== editor; e = e.parentElement) if (/font-family/.test(e.getAttribute('style') || '')) return true; return false; })();
+    const pt = Math.round(parseFloat(cs.fontSize) * 0.75);
+    document.querySelectorAll('.fontFam').forEach(s => { s.value = own ? match : ''; });
+    document.querySelectorAll('.sizeIn').forEach(i => { if (document.activeElement !== i) i.value = pt; });
+  }
+  function makeFontControls(host) {
+    const sel = mk('select', 'fontFam'); sel.title = 'Font'; sel.setAttribute('aria-label', 'Font');
+    sel.innerHTML = '<option value="">Default font</option>' + FONT_LIST.map(f => '<option value="' + f + '">' + f + '</option>').join('');
+    const dn = mk('button', 'sizeBtn', '−'), up = mk('button', 'sizeBtn', '+'), inp = mk('input', 'sizeIn');
+    dn.type = up.type = 'button'; dn.title = 'Decrease font size'; up.title = 'Increase font size';
+    dn.setAttribute('aria-label', 'Decrease font size'); up.setAttribute('aria-label', 'Increase font size');
+    inp.type = 'text'; inp.inputMode = 'numeric'; inp.size = 3; inp.value = '12'; inp.title = 'Font size (pt)'; inp.setAttribute('aria-label', 'Font size in points');
+    [dn, up].forEach(b => b.addEventListener('mousedown', e => e.preventDefault()));
+    sel.onchange = () => applyFont(sel.value);
+    dn.onclick = () => stepSize(-1); up.onclick = () => stepSize(1);
+    const go = () => { const v = parseFloat(inp.value); if (isFinite(v)) applySize(v); };
+    inp.addEventListener('change', go);
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); editor.focus(); } });
+    host.append(sel, dn, inp, up);
+  }
+  document.querySelectorAll('.fontCtl').forEach(makeFontControls);
+
+  // ---------- paragraph styles (Title, Subtitle, headings), line + paragraph spacing ----------
+  const BLOCK_SEL = 'p,h1,h2,h3,h4,h5,h6,blockquote,pre,div,li';
+  function blocksInSelection() {
+    const r = editorRange(); if (!r) return [];
+    return [...editor.querySelectorAll(BLOCK_SEL)].filter(b => {
+      if (!r.intersectsNode(b) || b.querySelector(BLOCK_SEL + ',table')) return false;
+      if (!r.collapsed && b.contains(r.endContainer) && !b.contains(r.startContainer)) {   // a selection that ends at the very start of a block doesn't include it
+        const t = document.createRange(); t.setStart(b, 0); t.setEnd(r.endContainer, r.endOffset); if (t.toString() === '' && !t.cloneContents().querySelector('img')) return false;
+      }
+      return true;
+    });
+  }
+  const tidyStyleAttr = b => { if (!b.getAttribute('style')) b.removeAttribute('style'); };
+  function setBlockStyle(v) {
+    restoreSaved();
+    const isTS = v === 'title' || v === 'subtitle';
+    document.execCommand('formatBlock', false, isTS ? 'p' : v === 'p' ? 'p' : v);
+    blocksInSelection().forEach(b => {
+      b.classList.remove('title', 'subtitle');
+      if (isTS && b.nodeName === 'P') b.classList.add(v);
+      if (!b.getAttribute('class')) b.removeAttribute('class');
+    });
+    queueSave(); syncToolbar();
+  }
+  $('block').onchange = e => setBlockStyle(e.target.value);
+  function mutateBlocks(label, fn) {
+    restoreSaved();
+    const bl = blocksInSelection(); if (!bl.length) { toast('Click in a paragraph first.'); return; }
+    const before = editor.innerHTML; bl.forEach(b => { fn(b); tidyStyleAttr(b); });
+    finishEdit(label, before);
+  }
+  function setLineSpacing(v) { mutateBlocks('Line spacing changed', b => { if (v) b.style.lineHeight = v; else b.style.removeProperty('line-height'); }); }
+  function toggleSpace(side) {
+    const prop = side === 'before' ? 'margin-top' : 'margin-bottom';
+    restoreSaved(); const bl = blocksInSelection(); if (!bl.length) { toast('Click in a paragraph first.'); return; }
+    const has = bl.every(b => b.style.getPropertyValue(prop));
+    mutateBlocks(has ? 'Space ' + side + ' removed' : 'Space ' + side + ' added', b => { if (has) b.style.removeProperty(prop); else b.style.setProperty(prop, '12pt'); });
+  }
+  $('lineSpacing').onchange = e => setLineSpacing(e.target.value);
+  ['spaceBefore', 'spaceAfter'].forEach(id => { $(id).addEventListener('mousedown', e => e.preventDefault()); $(id).onclick = () => toggleSpace(id === 'spaceBefore' ? 'before' : 'after'); });
+  function syncBlockUi() {
+    const bl = blocksInSelection(), b = bl[0]; if (!b) return;
+    if (b.nodeName === 'P') $('block').value = b.classList.contains('title') ? 'title' : b.classList.contains('subtitle') ? 'subtitle' : 'p';
+    const lh = b.style.lineHeight, opts = [...$('lineSpacing').options].map(o => o.value);
+    $('lineSpacing').value = opts.includes(lh) ? lh : '';
+    const on = (id, prop) => { const v = bl.every(x => x.style.getPropertyValue(prop)); $(id).setAttribute('aria-pressed', String(v)); $(id).classList.toggle('active', v); };
+    on('spaceBefore', 'margin-top'); on('spaceAfter', 'margin-bottom');
+  }
+
+  // ---------- star, recent, folders, list views ----------
+  const ICON = d => '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">' + d + '</svg>';
+  const STAR_SVG = ICON('<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>');
+  const FOLDER_SVG = ICON('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>');
+  const CARET_SVG = ICON('<path d="m9 6 6 6-6 6"/>');
+  let listView = PREF.get('listView', 'all'); if (!['all', 'recent', 'starred'].includes(listView)) listView = 'all';
+  let collapsedFolders = {}, recent = {};
+  try { collapsedFolders = JSON.parse(PREF.get('folderCollapsed', '{}')) || {}; } catch (e) {}
+  try { recent = JSON.parse(PREF.get('recent', '{}')) || {}; } catch (e) {}
+  const cleanFolder = s => String(s == null ? '' : s).replace(/\s+/g, ' ').trim().slice(0, 40);
+  let lastTouched = null;
+  function touchRecent(id) {
+    recent[id] = Date.now(); const keys = Object.keys(recent);
+    if (keys.length > 200) keys.sort((a, b) => recent[a] - recent[b]).slice(0, keys.length - 200).forEach(k => delete recent[k]);
+    PREF.set('recent', JSON.stringify(recent));
+  }
+  function syncDocUi() {
+    const d = cur(), b = $('starBtn');
+    b.disabled = !d; b.setAttribute('aria-pressed', String(!!(d && d.starred))); b.classList.toggle('on', !!(d && d.starred));
+    b.title = d && d.starred ? 'Remove star' : 'Star this document'; b.setAttribute('aria-label', b.title);
+    if (d && lastTouched !== d.id) { lastTouched = d.id; touchRecent(d.id); }
+  }
+  function toggleStar(d) {
+    d = d || cur(); if (!d || !ready) return; flush();
+    d.starred = !d.starred; saveDoc(d); renderList(); syncDocUi();
+  }
+  $('starBtn').onclick = () => toggleStar();
+  function allFolders() {
+    const m = new Map(); state.docs.filter(d => !d.deleted && d.folder).forEach(d => m.set(d.folder, (m.get(d.folder) || 0) + 1));
+    return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  }
+  function openFolderModal() {
+    if (!ready || !cur()) return; flush(); const d = cur();
+    openModal('Move to folder', body => {
+      const inp = mk('input'); inp.type = 'text'; inp.value = d.folder || ''; inp.placeholder = 'Folder name'; inp.maxLength = 40; inp.setAttribute('aria-label', 'Folder name');
+      body.append(mk('p', 'mNote', 'Type a new folder name or pick an existing one. A folder disappears when its last document leaves it.'), inp);
+      const known = allFolders();
+      if (known.length) { const row = mk('div', 'chipRow'); known.forEach(x => { const b = mk('button', 'chip', x[0]); b.type = 'button'; b.onclick = () => { inp.value = x[0]; }; row.append(b); }); body.append(row); }
+      const save = mk('button', 'primaryBtn', 'Move here'); save.type = 'button';
+      save.onclick = () => { d.folder = cleanFolder(inp.value); saveDoc(d); closeModal(); renderList(); toast(d.folder ? 'Moved to “' + d.folder + '”.' : 'Removed from its folder.'); };
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); save.click(); } });
+      body.append(save);
+      if (d.folder) { const rm = mk('button', 'plainBtn', 'Remove from folder'); rm.type = 'button'; rm.onclick = () => { inp.value = ''; save.click(); }; body.append(rm); }
+      if (known.length) { const mg = mk('button', 'plainBtn', 'Rename or remove folders…'); mg.type = 'button'; mg.onclick = openFolderManager; body.append(mg); }
+    });
+  }
+  function openFolderManager() {
+    openModal('Folders', body => {
+      const list = allFolders();
+      if (!list.length) body.append(mk('p', 'mNote', 'No folders yet.'));
+      list.forEach(([name, n]) => {
+        const row = mk('div', 'histRow'), top = mk('div', 'histTop');
+        top.append(mk('span', 'histDate', name), mk('span', 'histMeta', n + (n === 1 ? ' document' : ' documents')));
+        const acts = mk('div', 'histActs'), rn = mk('button', null, 'Rename'), rm = mk('button', null, 'Remove folder'); rn.type = rm.type = 'button';
+        rn.onclick = () => {
+          const nn = cleanFolder(prompt('Rename folder', name)); if (!nn || nn === name) return;
+          state.docs.filter(d => d.folder === name).forEach(d => { d.folder = nn; saveDoc(d); }); renderList(); openFolderManager();
+        };
+        rm.onclick = () => {
+          if (!confirm('Remove the folder "' + name + '"? Its documents are kept and move out of the folder.')) return;
+          state.docs.filter(d => d.folder === name).forEach(d => { d.folder = ''; saveDoc(d); }); renderList(); openFolderManager();
+        };
+        acts.append(rn, rm); row.append(top, acts); body.append(row);
+      });
+    });
+  }
+  $('folderBtn').onclick = openFolderModal;
+
+  function renderViewTabs() {
+    const el = $('viewTabs'); el.hidden = trashView; el.innerHTML = '';
+    [['all', 'All'], ['recent', 'Recent'], ['starred', 'Starred']].forEach(([k, label]) => {
+      const b = mk('button', 'chip' + (listView === k ? ' on' : ''), label); b.type = 'button'; b.setAttribute('aria-pressed', String(listView === k));
+      b.onclick = () => { listView = k; PREF.set('listView', k); renderList(); }; el.appendChild(b);
+    });
+  }
+  function mkItem(d, showFolder) {
+    const el = mk('div', 'item' + (d.id === state.current ? ' sel' : ''));
+    el.append(mk('span', 't', d.title || 'Untitled document'), mk('span', 'd', fmtDate(d.updated)));
+    const sub = []; if (showFolder && d.folder) sub.push(d.folder); if (d.tags && d.tags.length) sub.push(d.tags.map(x => '#' + x).join(' '));
+    if (sub.length) el.appendChild(mk('span', 'tg', sub.join(' · ')));
+    const star = mk('button', 'starMini' + (d.starred ? ' on' : '')); star.type = 'button'; star.innerHTML = STAR_SVG;
+    star.setAttribute('aria-pressed', String(!!d.starred)); star.setAttribute('aria-label', (d.starred ? 'Remove star from ' : 'Star ') + (d.title || 'Untitled document'));
+    star.onclick = ev => { ev.stopPropagation(); toggleStar(d); };
+    el.appendChild(star);
+    el.onclick = () => { flush(); state.current = d.id; setCurrentMeta(); render(); $('sidebar').classList.remove('open'); };
+    return el;
+  }
+  function renderList() {
+    const q = $('search').value.trim().toLowerCase();
+    const trashed = state.docs.filter(d => d.deleted);
+    $('trashCount').textContent = trashed.length ? '(' + trashed.length + ')' : '';
+    $('trashBar').hidden = !trashed.length && !trashView;
+    $('trashBtn').classList.toggle('active', trashView);
+    $('trashBtn').setAttribute('aria-pressed', String(trashView));
+    renderViewTabs(); renderTagBar();
+    listEl.innerHTML = '';
+    if (trashView) {
+      const note = mk('div', 'trashNote', trashed.length ? 'Items are deleted forever after ' + TRASH_DAYS + ' days.' : 'Trash is empty.');
+      listEl.appendChild(note);
+      trashed.sort((a, b) => b.deleted - a.deleted).filter(d => !q || (d.title + ' ' + plainText(d)).toLowerCase().includes(q)).forEach(d => {
+        const el = mk('div', 'item'); el.style.cursor = 'default';
+        el.append(mk('span', 't', d.title || 'Untitled document'), mk('span', 'd', fmtDate(d.deleted)));
+        const row = mk('div', 'trashActions'), r = mk('button', null, 'Restore'), x = mk('button', 'danger', 'Delete forever');
+        r.onclick = () => restoreDoc(d.id, false); x.onclick = () => purgeDoc(d.id); row.append(r, x); el.appendChild(row); listEl.appendChild(el);
+      });
+      return;
+    }
+    let docs = live().filter(d => !activeTag || (d.tags || []).includes(activeTag)).filter(d => !q || (d.title + ' ' + plainText(d)).toLowerCase().includes(q));
+    const empty = msg => listEl.appendChild(mk('div', 'trashNote', msg));
+    if (q || listView !== 'all') {
+      if (listView === 'starred') docs = docs.filter(d => d.starred).sort(byUpdated);
+      else if (listView === 'recent') docs = docs.sort((a, b) => (recent[b.id] || b.updated) - (recent[a.id] || a.updated)).slice(0, 15);
+      else docs = docs.sort(byUpdated);
+      if (!docs.length) empty(q ? 'No matches.' : listView === 'starred' ? 'No starred documents yet. Tap the star on a document.' : 'Nothing here yet.');
+      docs.forEach(d => listEl.appendChild(mkItem(d, true)));
+      return;
+    }
+    const groups = new Map(); docs.sort(byUpdated).forEach(d => { const k = d.folder || ''; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(d); });
+    if (!docs.length) empty('No documents.');
+    (groups.get('') || []).forEach(d => listEl.appendChild(mkItem(d, false)));
+    [...groups.keys()].filter(Boolean).sort((a, b) => a.localeCompare(b)).forEach(name => {
+      const collapsed = !!collapsedFolders[name], head = mk('button', 'folderHead' + (collapsed ? '' : ' open')); head.type = 'button';
+      head.setAttribute('aria-expanded', String(!collapsed)); head.insertAdjacentHTML('beforeend', '<span class="fc">' + CARET_SVG + '</span><span class="ff">' + FOLDER_SVG + '</span>');
+      head.append(mk('span', 'fn', name), mk('span', 'fcount', String(groups.get(name).length)));
+      head.onclick = () => { collapsedFolders[name] = !collapsedFolders[name]; PREF.set('folderCollapsed', JSON.stringify(collapsedFolders)); renderList(); };
+      listEl.appendChild(head);
+      if (!collapsed) groups.get(name).forEach(d => { const it = mkItem(d, false); it.classList.add('inFolder'); listEl.appendChild(it); });
+    });
+  }
+
+  // ---------- export buttons ----------
+  $('exportDocx').onclick = exportDocx; $('exportPdf').onclick = exportPdf;
+
+  // ---------- desktop menu bar ----------
+  const sel1 = () => { restoreSaved(); };
+  const MENU_DEFS = [
+    { label: 'File', items: () => [
+      { t: 'New document', k: 'Alt+N', run: newDoc },
+      { t: 'Open documents…', run: () => $('docsBtn').click() },
+      { t: 'Move to folder…', run: openFolderModal },
+      { t: () => (cur() && cur().starred ? 'Remove star' : 'Star this document'), run: () => toggleStar() },
+      { t: 'Version history', run: () => $('historyBtn').click() },
+      { t: 'Import .md, .txt or .html…', run: () => $('importBtn').click() },
+      '-', { h: 'Download as' },
+      { t: 'Word document (.docx)', run: exportDocx },
+      { t: 'PDF document (.pdf)', run: exportPdf },
+      { t: 'Web page (.html)', run: () => $('exportHtml').click() },
+      { t: 'Markdown (.md)', run: () => $('exportMd').click() },
+      '-',
+      { t: 'Back up all documents', run: () => $('backupBtn').click() },
+      { t: 'Encrypted backup…', run: () => $('encBackupBtn').click() },
+      { t: 'Restore from backup…', run: () => $('restoreBtn').click() },
+      '-',
+      { t: 'Print', k: 'Ctrl+P', run: () => $('printBtn').click() },
+      { t: 'Move to Trash', run: deleteDoc }
+    ] },
+    { label: 'Edit', items: () => [
+      { t: 'Undo', k: 'Ctrl+Z', run: () => exec('undo') },
+      { t: 'Redo', k: 'Ctrl+Shift+Z', run: () => exec('redo') },
+      '-',
+      { t: 'Find and replace…', k: 'Ctrl+Shift+F', run: openFind },
+      '-',
+      { t: 'Clear formatting', run: clearFormatting }
+    ] },
+    { label: 'View', items: () => [
+      { t: 'Page view', check: () => pageView, run: togglePageView },
+      { t: 'Page numbers in print and exports', check: () => pageNums, run: togglePageNums },
+      '-',
+      { t: 'Outline', run: () => $('outlineBtn').click() },
+      { t: 'Formatting options panel', run: () => openOptions() }
+    ] },
+    { label: 'Insert', items: () => [
+      { t: 'Link…', k: 'Ctrl+K', run: () => { restoreSaved(); addLink(); } },
+      { t: 'Image…', run: () => { restoreSaved(); $('imgBtn').click(); } },
+      { t: 'Table', run: () => { restoreSaved(); $('tableBtn').click(); } },
+      { t: 'Horizontal line', run: () => { restoreSaved(); exec('insertHorizontalRule'); } }
+    ] },
+    { label: 'Format', items: () => [
+      { t: 'Bold', k: 'Ctrl+B', run: () => { restoreSaved(); exec('bold'); } },
+      { t: 'Italic', k: 'Ctrl+I', run: () => { restoreSaved(); exec('italic'); } },
+      { t: 'Underline', k: 'Ctrl+U', run: () => { restoreSaved(); exec('underline'); } },
+      { t: 'Strikethrough', run: () => { restoreSaved(); exec('strikeThrough'); } },
+      { t: 'Increase font size', run: () => stepSize(1) },
+      { t: 'Decrease font size', run: () => stepSize(-1) },
+      '-', { h: 'Paragraph style' },
+      { t: 'Normal text', run: () => setBlockStyle('p') },
+      { t: 'Title', run: () => setBlockStyle('title') },
+      { t: 'Subtitle', run: () => setBlockStyle('subtitle') },
+      { t: 'Heading 1', run: () => setBlockStyle('h1') },
+      { t: 'Heading 2', run: () => setBlockStyle('h2') },
+      { t: 'Heading 3', run: () => setBlockStyle('h3') },
+      '-', { h: 'Line spacing' },
+      { t: 'Default', run: () => setLineSpacing('') },
+      { t: 'Single', run: () => setLineSpacing('1') },
+      { t: '1.15', run: () => setLineSpacing('1.15') },
+      { t: '1.5', run: () => setLineSpacing('1.5') },
+      { t: 'Double', run: () => setLineSpacing('2') },
+      { t: 'Add or remove space before paragraph', run: () => toggleSpace('before') },
+      { t: 'Add or remove space after paragraph', run: () => toggleSpace('after') },
+      '-', { h: 'Align and lists' },
+      { t: 'Align left', run: () => { restoreSaved(); exec('justifyLeft'); } },
+      { t: 'Center', run: () => { restoreSaved(); exec('justifyCenter'); } },
+      { t: 'Align right', run: () => { restoreSaved(); exec('justifyRight'); } },
+      { t: 'Bulleted list', run: () => { restoreSaved(); exec('insertUnorderedList'); } },
+      { t: 'Numbered list', run: () => { restoreSaved(); exec('insertOrderedList'); } },
+      { t: 'Checklist', run: () => { restoreSaved(); $('checkBtn').click(); } },
+      '-',
+      { t: 'Clear formatting', run: clearFormatting }
+    ] }
+  ];
+  let openMenu = -1;
+  const menuBar = $('menuBar');
+  function closeMenus(refocus) {
+    menuBar.querySelectorAll('.mDrop').forEach(d => { d.hidden = true; });
+    menuBar.querySelectorAll('.mTitle').forEach(b => b.setAttribute('aria-expanded', 'false'));
+    const was = openMenu; openMenu = -1; if (refocus && was >= 0) menuBar.querySelectorAll('.mTitle')[was].focus();
+  }
+  function openMenuAt(mi, focusFirst) {
+    closeMenus();
+    const wrap = menuBar.children[mi], drop = wrap.querySelector('.mDrop'); drop.innerHTML = '';
+    MENU_DEFS[mi].items().forEach(it => {
+      if (it === '-') { drop.appendChild(mk('div', 'mSep')); return; }
+      if (it.h) { drop.appendChild(mk('div', 'mHead', it.h)); return; }
+      const b = mk('button', 'mItem'); b.type = 'button'; b.setAttribute('role', it.check ? 'menuitemcheckbox' : 'menuitem');
+      const on = it.check ? !!it.check() : false; if (it.check) b.setAttribute('aria-checked', String(on));
+      b.append(mk('span', 'mChk', on ? '✓' : ''), mk('span', 'mLbl', typeof it.t === 'function' ? it.t() : it.t)); if (it.k) b.appendChild(mk('span', 'mKey', it.k));
+      b.addEventListener('mousedown', e => e.preventDefault());
+      b.addEventListener('click', () => { closeMenus(); it.run(); });
+      drop.appendChild(b);
+    });
+    drop.hidden = false; wrap.querySelector('.mTitle').setAttribute('aria-expanded', 'true'); openMenu = mi;
+    if (focusFirst) { const f = drop.querySelector('.mItem'); if (f) f.focus(); }
+  }
+  function buildMenuBar() {
+    menuBar.setAttribute('role', 'menubar'); menuBar.setAttribute('aria-label', 'Menu');
+    MENU_DEFS.forEach((m, mi) => {
+      const wrap = mk('div', 'mb'), tb = mk('button', 'mTitle', m.label), drop = mk('div', 'mDrop');
+      tb.type = 'button'; tb.setAttribute('role', 'menuitem'); tb.setAttribute('aria-haspopup', 'true'); tb.setAttribute('aria-expanded', 'false');
+      drop.setAttribute('role', 'menu'); drop.hidden = true; wrap.append(tb, drop); menuBar.appendChild(wrap);
+      tb.addEventListener('mousedown', e => e.preventDefault());
+      tb.addEventListener('click', () => { if (openMenu === mi) closeMenus(); else openMenuAt(mi); });
+      tb.addEventListener('mouseenter', () => { if (openMenu !== -1 && openMenu !== mi) openMenuAt(mi); });
+    });
+  }
+  buildMenuBar();
+  menuBar.addEventListener('keydown', e => {
+    const titles = [...menuBar.querySelectorAll('.mTitle')], items = openMenu >= 0 ? [...menuBar.children[openMenu].querySelectorAll('.mItem')] : [];
+    const onTitle = titles.indexOf(document.activeElement), onItem = items.indexOf(document.activeElement);
+    if (e.key === 'Escape') { e.preventDefault(); const was = openMenu; closeMenus(); if (was >= 0) titles[was].focus(); }
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      const cur0 = onTitle >= 0 ? onTitle : openMenu; if (cur0 < 0) return; e.preventDefault();
+      const n = (cur0 + (e.key === 'ArrowRight' ? 1 : titles.length - 1)) % titles.length;
+      if (openMenu >= 0) openMenuAt(n, onItem >= 0); titles[n].focus(); if (openMenu >= 0 && onItem >= 0) { const f = menuBar.children[n].querySelector('.mItem'); if (f) f.focus(); }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (onTitle >= 0) openMenuAt(onTitle, true); else if (onItem >= 0) items[(onItem + 1) % items.length].focus();
+    } else if (e.key === 'ArrowUp' && onItem >= 0) { e.preventDefault(); items[(onItem + items.length - 1) % items.length].focus(); }
+    else if (e.key === 'Home' && onItem >= 0) { e.preventDefault(); items[0].focus(); }
+    else if (e.key === 'End' && onItem >= 0) { e.preventDefault(); items[items.length - 1].focus(); }
+  });
+  document.addEventListener('pointerdown', e => { if (openMenu >= 0 && !e.target.closest('#menuBar')) closeMenus(); });
+  window.addEventListener('blur', () => closeMenus());
+  document.addEventListener('keydown', e => {              // keys while a menu is open but focus is still in the document
+    if (openMenu < 0 || menuBar.contains(document.activeElement)) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeMenus(); }
+    else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { const its = menuBar.children[openMenu].querySelectorAll('.mItem'); if (its.length) { e.preventDefault(); its[e.key === 'ArrowDown' ? 0 : its.length - 1].focus(); } }
+  });
+
+  // ======================================================================
+  // Export engine: editor DOM -> neutral document model -> .docx / .pdf
+  // No libraries. .docx = hand-written WordprocessingML in a stored zip.
+  // .pdf = hand-written PDF using the standard Helvetica/Times/Courier fonts
+  // with measured widths (so text can be selected and searched).
+  // ======================================================================
+  const BASE_PT = 12;                                   // the editor's default text size (16px)
+  const HEAD_PT = { title: 26, subtitle: 15, h1: 22, h2: 17, h3: 14, h4: 12, h5: 12, h6: 12 };
+  const FAMILY_CLASS = { 'arial': 'sans', 'verdana': 'sans', 'trebuchet ms': 'sans', 'georgia': 'serif', 'times new roman': 'serif', 'courier new': 'mono' };
+  const colorCtx = document.createElement('canvas').getContext('2d');
+  function hexOf(c) {
+    if (!c) return null;
+    colorCtx.fillStyle = '#000000'; colorCtx.fillStyle = String(c);
+    const v = colorCtx.fillStyle;
+    if (v[0] === '#') return v.slice(1).toUpperCase();
+    const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/.exec(v);
+    if (!m || (m[4] !== undefined && parseFloat(m[4]) === 0)) return null;
+    return [m[1], m[2], m[3]].map(n => (+n).toString(16).padStart(2, '0')).join('').toUpperCase();
+  }
+  function lenPt(v, base) {
+    if (!v) return null;
+    const m = /^(-?\d*\.?\d+)(pt|px|em|%)?$/.exec(String(v).trim()); if (!m) return null;
+    const n = parseFloat(m[1]);
+    return m[2] === 'pt' ? n : m[2] === 'px' ? n * 0.75 : m[2] === 'em' ? n * (base || BASE_PT) : m[2] === '%' ? n * (base || BASE_PT) / 100 : null;
+  }
+  const BASE_STATE = { b: false, i: false, u: false, s: false, color: null, bg: null, size: null, font: null, href: null, sup: false, sub: false };
+  function inlineState(el, st) {
+    const s = Object.assign({}, st), t = el.nodeName, css = el.style || {};
+    if (t === 'B' || t === 'STRONG') s.b = true;
+    if (t === 'I' || t === 'EM') s.i = true;
+    if (t === 'U') s.u = true;
+    if (t === 'S' || t === 'STRIKE' || t === 'DEL') s.s = true;
+    if (t === 'SUB') s.sub = true; if (t === 'SUP') s.sup = true;
+    if (t === 'CODE') s.font = 'Courier New';
+    if (t === 'MARK') s.bg = '#fff475';
+    if (t === 'A' && el.getAttribute('href')) { s.href = el.getAttribute('href'); s.u = true; }
+    if (t === 'FONT') {
+      if (el.getAttribute('color')) s.color = el.getAttribute('color');
+      const z = el.getAttribute('size'); if (z) s.size = { 1: 8, 2: 10, 3: 12, 4: 14, 5: 18, 6: 24, 7: 36 }[z] || s.size;
+    }
+    if (css.color) s.color = css.color;
+    if (css.backgroundColor) s.bg = css.backgroundColor;
+    const fw = css.fontWeight; if (fw) s.b = fw === 'bold' || fw === 'bolder' || (/^\d+$/.test(fw) && +fw >= 600);
+    if (css.fontStyle === 'italic') s.i = true; else if (css.fontStyle === 'normal') s.i = false;
+    const deco = (css.textDecorationLine || css.textDecoration || '');
+    if (/underline/.test(deco)) s.u = true; if (/line-through/.test(deco)) s.s = true;
+    if (css.fontSize) { const p = lenPt(css.fontSize, s.size || BASE_PT); if (p) s.size = Math.round(p * 2) / 2; }
+    if (css.fontFamily) { const f = css.fontFamily.split(',')[0].replace(/["']/g, '').trim(); if (FAMILY_CLASS[f.toLowerCase()]) s.font = f; }
+    return s;
+  }
+
+  // ---- DOM -> model ----
+  const isBlk = n => n.nodeType === 1 && /^(P|DIV|H[1-6]|BLOCKQUOTE|PRE|UL|OL|LI|TABLE|HR|THEAD|TBODY|TFOOT|TR|TD|TH|CAPTION)$/.test(n.nodeName);
+  function newPara(style, ctx, el) {
+    const p = { type: 'p', style, runs: [], quote: ctx.quote || 0, list: null, align: ctx.align || '', lh: null, before: null, after: null };
+    if (el) {
+      const css = el.style, a = css.textAlign || el.getAttribute('align'); if (a) p.align = a.toLowerCase();
+      const m = /^(\d*\.?\d+)(%?)$/.exec(css.lineHeight || ''); if (m) p.lh = m[2] ? parseFloat(m[1]) / 100 : parseFloat(m[1]);
+      p.before = lenPt(css.marginTop); p.after = lenPt(css.marginBottom);
+    }
+    return p;
+  }
+  function addText(runs, data, st) {
+    const text = data.replace(/​/g, '').replace(/[\s ]+/g, ' '); if (!text) return;
+    runs.push(Object.assign({ t: 'text', text }, st));
+  }
+  function collectInline(node, st, runs) {
+    for (const c of node.childNodes) {
+      if (c.nodeType === 3) addText(runs, c.data, st);
+      else if (c.nodeType === 1) {
+        if (c.nodeName === 'BR') runs.push({ t: 'br' });
+        else if (c.nodeName === 'IMG') runs.push({ t: 'img', src: c.getAttribute('src') || '', alt: c.getAttribute('alt') || '', w: parseFloat(c.getAttribute('width')) || 0, h: parseFloat(c.getAttribute('height')) || 0 });
+        else collectInline(c, inlineState(c, st), runs);
+      }
+    }
+  }
+  function finishPara(p) {
+    if (p.style === 'code') return p;
+    const r = p.runs;
+    if (r.length && r[r.length - 1].t === 'br') r.pop();               // the placeholder <br> browsers keep in empty lines
+    for (let k = 0; k < r.length; k++) if (r[k].t === 'text' && (k === 0 || r[k - 1].t === 'br')) r[k].text = r[k].text.replace(/^ /, '');
+    while (r.length && r[r.length - 1].t === 'text' && /^ *$/.test(r[r.length - 1].text.replace(/ $/, ''))) { if (r[r.length - 1].text === ' ' || r[r.length - 1].text === '') r.pop(); else break; }
+    if (r.length && r[r.length - 1].t === 'text') r[r.length - 1].text = r[r.length - 1].text.replace(/ $/, '');
+    for (let k = r.length - 1; k >= 0; k--) if (r[k].t === 'text' && r[k].text === '') r.splice(k, 1);
+    return p;
+  }
+  let listSeq = 0;
+  function walkBlocks(parent, ctx, out) {
+    let cur = null;
+    const flushLoose = () => { if (cur) { finishPara(cur); if (cur.runs.length) out.push(cur); cur = null; } };
+    for (const n of parent.childNodes) {
+      if (n.nodeType === 3) { if (/\S/.test(n.data) || cur) { cur = cur || newPara('normal', ctx, null); addText(cur.runs, n.data, BASE_STATE); } continue; }
+      if (n.nodeType !== 1) continue;
+      if (!isBlk(n)) { cur = cur || newPara('normal', ctx, null); if (n.nodeName === 'BR') cur.runs.push({ t: 'br' }); else if (n.nodeName === 'IMG') collectInline({ childNodes: [n] }, BASE_STATE, cur.runs); else collectInline({ childNodes: [n] }, BASE_STATE, cur.runs); continue; }
+      flushLoose();
+      const tag = n.nodeName, cx = Object.assign({}, ctx, { align: (n.style && n.style.textAlign) || n.getAttribute('align') || ctx.align });
+      if (tag === 'P' || tag === 'DIV' || /^H[1-6]$/.test(tag)) {
+        if (tag === 'DIV' && [...n.children].some(isBlk)) { walkBlocks(n, cx, out); continue; }
+        const style = /^H/.test(tag) ? tag.toLowerCase() : n.classList.contains('title') ? 'title' : n.classList.contains('subtitle') ? 'subtitle' : 'normal';
+        const p = newPara(style, ctx, n); collectInline(n, BASE_STATE, p.runs); out.push(finishPara(p));
+      } else if (tag === 'PRE') {
+        const p = newPara('code', ctx, n); p.runs = [{ t: 'text', text: n.textContent.replace(/\n$/, ''), font: 'Courier New', pre: true, b: false, i: false, u: false, s: false, color: null, bg: null, size: null, href: null }]; out.push(p);
+      } else if (tag === 'BLOCKQUOTE') walkBlocks(n, Object.assign({}, cx, { quote: ctx.quote + 1 }), out);
+      else if (tag === 'UL' || tag === 'OL') walkList(n, cx, out);
+      else if (tag === 'TABLE') out.push(buildTable(n, ctx));
+      else if (tag === 'HR') out.push({ type: 'hr', quote: ctx.quote });
+      else walkBlocks(n, cx, out);
+    }
+    flushLoose();
+  }
+  function walkList(ul, ctx, out) {
+    const level = ctx.depth + 1, kind = ul.nodeName === 'OL' ? 'ol' : ul.classList.contains('checklist') ? 'check' : 'ul', id = ++listSeq;
+    let num = kind === 'ol' ? (parseInt(ul.getAttribute('start'), 10) || 1) : 1;
+    for (const li of ul.children) {
+      if (li.nodeName !== 'LI') continue;
+      const mark = out.length;
+      walkBlocks(li, Object.assign({}, ctx, { depth: level, align: (li.style && li.style.textAlign) || ctx.align }), out);
+      if (out.length === mark) out.push(newPara('normal', ctx, null));
+      const first = out[mark];
+      if (first.type === 'p' && !first.list) first.list = { kind, level, n: num, done: li.classList.contains('done'), id };
+      num++;
+    }
+  }
+  function buildTable(t, ctx) {
+    const rows = [...t.rows].map(tr => [...tr.cells].map(c => {
+      const blocks = []; walkBlocks(c, { quote: 0, depth: -1, align: (c.style && c.style.textAlign) || '' }, blocks);
+      if (!blocks.length) blocks.push(newPara('normal', { quote: 0 }, null));
+      return { blocks, header: c.nodeName === 'TH', span: Math.max(1, Math.min(12, parseInt(c.getAttribute('colspan'), 10) || 1)) };
+    }));
+    return { type: 'table', rows: rows.filter(r => r.length), quote: ctx.quote };
+  }
+  function buildModel() {
+    listSeq = 0;
+    const out = []; walkBlocks(editor, { quote: 0, depth: -1, align: '' }, out);
+    const title = titleEl.value.trim();
+    if (title) {
+      const first = out.find(b => b.type === 'p'), ft = first ? first.runs.map(r => r.text || '').join('').trim().toLowerCase() : '';
+      if (ft !== title.toLowerCase()) out.unshift({ type: 'p', style: 'title', runs: [Object.assign({ t: 'text', text: title }, BASE_STATE)], quote: 0, list: null, align: '', lh: null, before: null, after: null });
+    }
+    return out;
+  }
+  function eachPara(blocks, fn) { blocks.forEach(b => { if (b.type === 'p') fn(b); else if (b.type === 'table') b.rows.forEach(r => r.forEach(c => eachPara(c.blocks, fn))); }); }
+
+  // ---- images ----
+  function dataUriBytes(uri) {
+    const i = uri.indexOf(','), meta = uri.slice(0, i), body = uri.slice(i + 1);
+    if (/;base64/i.test(meta)) { const bin = atob(body), u = new Uint8Array(bin.length); for (let k = 0; k < bin.length; k++) u[k] = bin.charCodeAt(k); return u; }
+    return new TextEncoder().encode(decodeURIComponent(body));
+  }
+  function loadImg(src) {
+    return new Promise(res => {
+      if (!/^data:image\//i.test(src)) return res(null);
+      const im = new Image();
+      im.onload = () => {
+        try {
+          const w = im.naturalWidth || 300, h = im.naturalHeight || 150, info = { w, h };
+          const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const g = cv.getContext('2d');
+          const m = /^data:image\/(png|jpe?g)[;,]/i.exec(src);
+          if (m && /;base64/i.test(src.slice(0, 40))) { info.ext = /png/i.test(m[1]) ? 'png' : 'jpeg'; info.bytes = dataUriBytes(src); }
+          else { g.drawImage(im, 0, 0, w, h); info.ext = 'png'; info.bytes = dataUriBytes(cv.toDataURL('image/png')); }
+          g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); g.drawImage(im, 0, 0, w, h); info.jpeg = dataUriBytes(cv.toDataURL('image/jpeg', 0.9));
+          res(info);
+        } catch (e) { res(null); }
+      };
+      im.onerror = () => res(null); im.src = src;
+    });
+  }
+  async function prepareImages(model) {
+    const map = new Map(); eachPara(model, p => p.runs.forEach(r => { if (r.t === 'img') map.set(r.src, null); }));
+    for (const src of [...map.keys()]) map.set(src, await loadImg(src));
+    return map;
+  }
+  function imgSizePx(r, info, maxW) {
+    let w = r.w || info.w, h = r.h || (r.w ? r.w * info.h / info.w : info.h);
+    if (!r.w && r.h) w = r.h * info.w / info.h;
+    if (w > maxW) { h = h * maxW / w; w = maxW; }
+    return { w, h };
+  }
+
+  // ---- zip (stored, no compression) ----
+  const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  const crc32 = u8 => { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  function makeZip(files) {
+    const enc = new TextEncoder(), parts = [], central = []; let pos = 0;
+    const d = new Date(), time = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), date = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+    const u16 = v => [v & 255, (v >> 8) & 255], u32 = v => [v & 255, (v >>> 8) & 255, (v >>> 16) & 255, (v >>> 24) & 255];
+    files.forEach(f => {
+      const name = enc.encode(f.name), data = typeof f.data === 'string' ? enc.encode(f.data) : f.data, crc = crc32(data);
+      const lh = new Uint8Array([0x50, 0x4b, 3, 4, ...u16(20), ...u16(0x0800), ...u16(0), ...u16(time), ...u16(date), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(name.length), ...u16(0)]);
+      parts.push(lh, name, data);
+      central.push({ name, crc, size: data.length, off: pos }); pos += lh.length + name.length + data.length;
+    });
+    const cdStart = pos;
+    central.forEach(c => {
+      const h = new Uint8Array([0x50, 0x4b, 1, 2, ...u16(20), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(time), ...u16(date), ...u32(c.crc), ...u32(c.size), ...u32(c.size), ...u16(c.name.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(c.off)]);
+      parts.push(h, c.name); pos += h.length + c.name.length;
+    });
+    parts.push(new Uint8Array([0x50, 0x4b, 5, 6, 0, 0, 0, 0, ...u16(central.length), ...u16(central.length), ...u32(pos - cdStart), ...u32(cdStart), 0, 0]));
+    const total = parts.reduce((n, p) => n + p.length, 0), out = new Uint8Array(total); let o = 0;
+    parts.forEach(p => { out.set(p, o); o += p.length; });
+    return out;
+  }
+
+  // ======================= .docx =======================
+  const X = s => String(s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F￾￿]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const NS_W = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
+  const twips = pt => Math.round(pt * 20);
+  const DOCX_STYLE = { title: 'Title', subtitle: 'Subtitle', h1: 'Heading1', h2: 'Heading2', h3: 'Heading3', h4: 'Heading4', h5: 'Heading5', h6: 'Heading6', code: 'CodeBlock' };
+  function docxStyles() {
+    const hd = (n, sz, b, before, after, extra) => `<w:style w:type="paragraph" w:styleId="Heading${n}"><w:name w:val="heading ${n}"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:uiPriority w:val="9"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="${before}" w:after="${after}"/><w:outlineLvl w:val="${n - 1}"/></w:pPr><w:rPr>${b ? '<w:b/><w:bCs/>' : ''}${extra || ''}<w:sz w:val="${sz * 2}"/><w:szCs w:val="${sz * 2}"/></w:rPr></w:style>`;
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles ${NS_W}><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:eastAsia="Arial" w:cs="Arial"/><w:sz w:val="${BASE_PT * 2}"/><w:szCs w:val="${BASE_PT * 2}"/><w:lang w:val="en-US" w:eastAsia="en-US" w:bidi="ar-SA"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="160" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>` +
+      `<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>` +
+      `<w:style w:type="character" w:default="1" w:styleId="DefaultParagraphFont"><w:name w:val="Default Paragraph Font"/><w:uiPriority w:val="1"/><w:semiHidden/></w:style>` +
+      `<w:style w:type="table" w:default="1" w:styleId="TableNormal"><w:name w:val="Normal Table"/><w:uiPriority w:val="99"/><w:semiHidden/><w:tblPr><w:tblInd w:w="0" w:type="dxa"/><w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="108" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="108" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style>` +
+      `<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:uiPriority w:val="10"/><w:qFormat/><w:pPr><w:spacing w:after="80" w:line="240" w:lineRule="auto"/></w:pPr><w:rPr><w:sz w:val="52"/><w:szCs w:val="52"/></w:rPr></w:style>` +
+      `<w:style w:type="paragraph" w:styleId="Subtitle"><w:name w:val="Subtitle"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:uiPriority w:val="11"/><w:qFormat/><w:pPr><w:spacing w:after="240"/></w:pPr><w:rPr><w:color w:val="666666"/><w:sz w:val="30"/><w:szCs w:val="30"/></w:rPr></w:style>` +
+      hd(1, HEAD_PT.h1, false, 360, 120) + hd(2, HEAD_PT.h2, false, 320, 100) + hd(3, HEAD_PT.h3, true, 280, 80) + hd(4, 12, true, 240, 80) + hd(5, 12, true, 240, 80) + hd(6, 12, false, 240, 80, '<w:i/><w:iCs/>') +
+      `<w:style w:type="paragraph" w:styleId="Quote"><w:name w:val="Quote"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:uiPriority w:val="29"/><w:qFormat/><w:pPr><w:pBdr><w:left w:val="single" w:sz="18" w:space="8" w:color="BBBBBB"/></w:pBdr></w:pPr><w:rPr><w:color w:val="555555"/></w:rPr></w:style>` +
+      `<w:style w:type="paragraph" w:styleId="CodeBlock"><w:name w:val="Code Block"/><w:basedOn w:val="Normal"/><w:qFormat/><w:pPr><w:shd w:val="clear" w:color="auto" w:fill="F3F3F3"/><w:spacing w:after="0" w:line="240" w:lineRule="auto"/></w:pPr><w:rPr><w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" w:cs="Courier New"/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style>` +
+      `<w:style w:type="character" w:styleId="Hyperlink"><w:name w:val="Hyperlink"/><w:uiPriority w:val="99"/><w:unhideWhenUsed/><w:rPr><w:color w:val="1A55C8"/><w:u w:val="single"/></w:rPr></w:style>` +
+      `<w:style w:type="table" w:styleId="TableGrid"><w:name w:val="Table Grid"/><w:basedOn w:val="TableNormal"/><w:uiPriority w:val="39"/><w:tblPr><w:tblBorders><w:top w:val="single" w:sz="4" w:space="0" w:color="9AA0A6"/><w:left w:val="single" w:sz="4" w:space="0" w:color="9AA0A6"/><w:bottom w:val="single" w:sz="4" w:space="0" w:color="9AA0A6"/><w:right w:val="single" w:sz="4" w:space="0" w:color="9AA0A6"/><w:insideH w:val="single" w:sz="4" w:space="0" w:color="9AA0A6"/><w:insideV w:val="single" w:sz="4" w:space="0" w:color="9AA0A6"/></w:tblBorders></w:tblPr></w:style>` +
+      `<w:style w:type="paragraph" w:styleId="Footer"><w:name w:val="footer"/><w:basedOn w:val="Normal"/><w:uiPriority w:val="99"/><w:pPr><w:spacing w:after="0" w:line="240" w:lineRule="auto"/></w:pPr><w:rPr><w:color w:val="666666"/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style></w:styles>`;
+  }
+  function docxNumbering(numIds) {
+    const bullets = ['•', 'o', '▪'], fmts = ['decimal', 'lowerLetter', 'lowerRoman'];
+    let lv0 = '', lv1 = '';
+    for (let l = 0; l < 9; l++) {
+      const ind = `<w:pPr><w:ind w:left="${720 * (l + 1)}" w:hanging="360"/></w:pPr>`;
+      lv0 += `<w:lvl w:ilvl="${l}"><w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="${bullets[l % 3]}"/><w:lvlJc w:val="left"/>${ind}<w:rPr><w:rFonts w:ascii="${l % 3 === 1 ? 'Courier New' : 'Arial'}" w:hAnsi="${l % 3 === 1 ? 'Courier New' : 'Arial'}" w:cs="Arial" w:hint="default"/></w:rPr></w:lvl>`;
+      lv1 += `<w:lvl w:ilvl="${l}"><w:start w:val="1"/><w:numFmt w:val="${fmts[l % 3]}"/><w:lvlText w:val="%${l + 1}."/><w:lvlJc w:val="left"/>${ind}</w:lvl>`;
+    }
+    let nums = '<w:num w:numId="1"><w:abstractNumId w:val="0"/></w:num>';
+    numIds.forEach((start, id) => { nums += `<w:num w:numId="${id}"><w:abstractNumId w:val="1"/><w:lvlOverride w:ilvl="0"><w:startOverride w:val="${start}"/></w:lvlOverride></w:num>`; });
+    return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:numbering ${NS_W}><w:abstractNum w:abstractNumId="0"><w:multiLevelType w:val="hybridMultilevel"/>${lv0}</w:abstractNum><w:abstractNum w:abstractNumId="1"><w:multiLevelType w:val="hybridMultilevel"/>${lv1}</w:abstractNum>${nums}</w:numbering>`;
+  }
+  async function buildDocx(model, images) {
+    const rels = [], media = [], olIds = new Map(), numStarts = new Map(); let rid = 10, nextNum = 2, picId = 0;
+    const linkRel = new Map();
+    const relFor = href => { if (!linkRel.has(href)) { const id = 'rId' + (++rid); linkRel.set(href, id); rels.push(`<Relationship Id="${id}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${X(href)}" TargetMode="External"/>`); } return linkRel.get(href); };
+    const numFor = l => { if (l.kind === 'ul') return 1; if (!olIds.has(l.id)) { olIds.set(l.id, nextNum); numStarts.set(nextNum, l.n); nextNum++; } return olIds.get(l.id); };
+    const runXml = r => {
+      if (r.t === 'br') return '<w:r><w:br/></w:r>';
+      if (r.t === 'img') {
+        const info = images.get(r.src);
+        if (!info) return `<w:r><w:t xml:space="preserve">${X(r.alt ? '[' + r.alt + ']' : '[image]')}</w:t></w:r>`;
+        const { w, h } = imgSizePx(r, info, 624), cx = Math.round(w * 9525), cy = Math.round(h * 9525), id = ++picId, rId = 'rId' + (++rid), name = `image${id}.${info.ext}`;
+        media.push({ name: 'word/media/' + name, data: info.bytes });
+        rels.push(`<Relationship Id="${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${name}"/>`);
+        return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="Picture ${id}" descr="${X(r.alt)}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${id}" name="${name}"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rId}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
+      }
+      let rpr = '';
+      if (r.href) rpr += '<w:rStyle w:val="Hyperlink"/>';
+      if (r.font) rpr += `<w:rFonts w:ascii="${X(r.font)}" w:hAnsi="${X(r.font)}" w:cs="${X(r.font)}"/>`;
+      if (r.b) rpr += '<w:b/><w:bCs/>'; if (r.i) rpr += '<w:i/><w:iCs/>'; if (r.s) rpr += '<w:strike/>';
+      const col = hexOf(r.color); if (col && !r.href) rpr += `<w:color w:val="${col}"/>`;
+      if (r.size) rpr += `<w:sz w:val="${Math.round(r.size * 2)}"/><w:szCs w:val="${Math.round(r.size * 2)}"/>`;
+      if (r.u && !r.href) rpr += '<w:u w:val="single"/>';
+      const bg = hexOf(r.bg); if (bg) rpr += `<w:shd w:val="clear" w:color="auto" w:fill="${bg}"/>`;
+      if (r.sup) rpr += '<w:vertAlign w:val="superscript"/>'; else if (r.sub) rpr += '<w:vertAlign w:val="subscript"/>';
+      const rp = rpr ? `<w:rPr>${rpr}</w:rPr>` : '';
+      const lines = r.pre ? r.text.split('\n') : [r.text];
+      let x = '';
+      lines.forEach((ln, k) => { if (k) x += `<w:r>${rp}<w:br/></w:r>`; x += `<w:r>${rp}<w:t xml:space="preserve">${X(ln).replace(/\t/g, '    ')}</w:t></w:r>`; });
+      return r.href ? `<w:hyperlink r:id="${relFor(r.href)}" w:history="1">${x}</w:hyperlink>` : x;
+    };
+    const paraXml = p => {
+      let ppr = '', ind = '';
+      const sid = DOCX_STYLE[p.style] || (p.quote ? 'Quote' : null); if (sid) ppr += `<w:pStyle w:val="${sid}"/>`;
+      if (p.list) {
+        const lv = Math.min(8, p.list.level);
+        if (p.list.kind === 'check') ind = `<w:ind w:left="${720 * (lv + 1)}" w:hanging="360"/>`;
+        else ppr += `<w:numPr><w:ilvl w:val="${lv}"/><w:numId w:val="${numFor(p.list)}"/></w:numPr>`;
+      } else if (p.quote) ind = `<w:ind w:left="${720 * p.quote}"/>`;
+      const sp = (p.before != null ? ` w:before="${twips(p.before)}"` : '') + (p.after != null ? ` w:after="${twips(p.after)}"` : '') + (p.lh ? ` w:line="${Math.round(240 * p.lh)}" w:lineRule="auto"` : '');
+      if (sp) ppr += `<w:spacing${sp}/>`;
+      ppr += ind;
+      const jc = { left: 'left', center: 'center', right: 'right', justify: 'both' }[p.align]; if (jc) ppr += `<w:jc w:val="${jc}"/>`;
+      let runs = p.runs.map(runXml).join('');
+      if (p.list && p.list.kind === 'check') runs = `<w:r><w:rPr><w:rFonts w:ascii="Segoe UI Symbol" w:hAnsi="Segoe UI Symbol" w:cs="Segoe UI Symbol"/></w:rPr><w:t xml:space="preserve">${p.list.done ? '☑' : '☐'} </w:t></w:r>` + runs;
+      return `<w:p>${ppr ? `<w:pPr>${ppr}</w:pPr>` : ''}${runs}</w:p>`;
+    };
+    const blocksXml = blocks => blocks.map(b => {
+      if (b.type === 'p') return paraXml(b);
+      if (b.type === 'hr') return '<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="6" w:space="1" w:color="999999"/></w:pBdr><w:spacing w:before="120" w:after="120"/></w:pPr></w:p>';
+      if (b.type === 'table') {
+        const ncol = Math.max(1, ...b.rows.map(r => r.reduce((n, c) => n + c.span, 0))), cw = Math.floor(9360 / ncol);
+        return `<w:tbl><w:tblPr><w:tblStyle w:val="TableGrid"/><w:tblW w:w="9360" w:type="dxa"/><w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid>${'<w:gridCol w:w="' + cw + '"/>'.repeat(ncol)}</w:tblGrid>` +
+          b.rows.map(r => `<w:tr>${r.map(c => `<w:tc><w:tcPr><w:tcW w:w="${cw * c.span}" w:type="dxa"/>${c.span > 1 ? `<w:gridSpan w:val="${c.span}"/>` : ''}${c.header ? '<w:shd w:val="clear" w:color="auto" w:fill="F1F3F4"/>' : ''}</w:tcPr>${blocksXml(c.header ? c.blocks.map(p => p.type === 'p' ? Object.assign({}, p, { runs: p.runs.map(x => x.t === 'text' ? Object.assign({}, x, { b: true }) : x) }) : p) : c.blocks) || '<w:p/>'}</w:tc>`).join('')}</w:tr>`).join('') + '</w:tbl><w:p><w:pPr><w:spacing w:after="0"/></w:pPr></w:p>';
+      }
+      return '';
+    }).join('');
+    const body = blocksXml(model);
+    const pn = pageNums;
+    const sect = `<w:sectPr>${pn ? '<w:footerReference w:type="default" r:id="rId5"/>' : ''}<w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>`;
+    const doc = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ${NS_W}><w:body>${body}${sect}</w:body></w:document>`;
+    const footer = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr ${NS_W}><w:p><w:pPr><w:pStyle w:val="Footer"/><w:jc w:val="center"/></w:pPr><w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGE </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>1</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p></w:ftr>`;
+    const R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+    const docRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${R}/styles" Target="styles.xml"/><Relationship Id="rId2" Type="${R}/numbering" Target="numbering.xml"/>${pn ? `<Relationship Id="rId5" Type="${R}/footer" Target="footer1.xml"/>` : ''}${rels.join('')}</Relationships>`;
+    const types = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Default Extension="jpeg" ContentType="image/jpeg"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>${pn ? '<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>' : ''}<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`;
+    const rootRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${R}/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`;
+    const now = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+    const core = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${X(titleEl.value || 'Untitled')}</dc:title><dc:creator>MyDocs</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`;
+    const files = [{ name: '[Content_Types].xml', data: types }, { name: '_rels/.rels', data: rootRels }, { name: 'docProps/core.xml', data: core }, { name: 'word/document.xml', data: doc }, { name: 'word/_rels/document.xml.rels', data: docRels }, { name: 'word/styles.xml', data: docxStyles() }, { name: 'word/numbering.xml', data: docxNumbering(numStarts) }];
+    if (pn) files.push({ name: 'word/footer1.xml', data: footer });
+    return makeZip(files.concat(media));
+  }
+  async function exportDocx() {
+    if (!ready || !cur()) return; flush();
+    try {
+      toast('Preparing Word file…');
+      const model = buildModel(), images = await prepareImages(model);
+      download(fname('docx'), await buildDocx(model, images), 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      toast('Word file downloaded.');
+    } catch (e) { toast('Could not make the Word file: ' + ((e && e.message) || 'unknown error')); }
+  }
+
+  // ======================= .pdf =======================
+  const PDF_W = {"sr":[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,0,556,0,222,556,333,1000,556,556,333,1000,667,333,1000,0,611,0,0,222,222,333,333,350,556,1000,333,1000,500,333,944,0,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,552,400,549,333,333,333,576,537,333,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,549,611,556,556,556,556,500,556,500],"sb":[278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,0,556,0,278,556,500,1000,556,556,333,1000,667,333,1000,0,611,0,0,278,278,500,500,350,556,1000,333,1000,556,333,944,0,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,552,400,549,333,333,333,576,556,333,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,549,611,611,611,611,611,556,611,556],"tr":[250,333,408,500,500,833,778,180,333,333,500,564,250,333,250,278,500,500,500,500,500,500,500,500,500,500,278,278,564,564,564,444,921,722,667,667,722,611,556,722,722,333,389,722,611,889,722,722,556,722,667,556,611,722,722,944,722,722,611,333,278,333,469,500,333,444,500,444,500,444,333,500,500,278,278,500,278,778,500,500,500,500,333,389,278,500,500,722,500,500,444,480,200,480,541,0,500,0,333,500,444,1000,500,500,333,1000,556,333,889,0,611,0,0,333,333,444,444,350,500,1000,333,980,389,333,722,0,444,722,250,333,500,500,500,500,200,500,333,760,276,500,564,333,760,500,400,549,300,300,333,576,453,333,333,300,310,500,750,750,750,444,722,722,722,722,722,722,889,667,611,611,611,611,333,333,333,333,722,722,722,722,722,722,722,564,722,722,722,722,722,722,556,500,444,444,444,444,444,444,667,444,444,444,444,444,278,278,278,278,500,500,500,500,500,500,500,549,500,500,500,500,500,500,500,500],"tb":[250,333,555,500,500,1000,833,278,333,333,500,570,250,333,250,278,500,500,500,500,500,500,500,500,500,500,333,333,570,570,570,500,930,722,667,722,722,667,611,778,778,389,500,778,667,944,722,778,611,778,722,556,667,722,722,1000,722,722,667,333,278,333,581,500,333,500,556,444,556,444,333,500,556,278,333,556,278,833,556,500,556,556,444,389,333,556,500,722,500,500,444,394,220,394,520,0,500,0,333,500,500,1000,500,500,333,1000,556,333,1000,0,667,0,0,333,333,500,500,350,500,1000,333,1000,389,333,722,0,444,722,250,333,500,500,500,500,220,500,333,747,300,500,570,333,747,500,400,549,300,300,333,576,540,333,333,300,330,500,750,750,750,500,722,722,722,722,722,722,1000,722,667,667,667,667,389,389,389,389,722,722,778,778,778,778,778,570,778,722,722,722,722,722,611,556,500,500,500,500,500,500,722,444,444,444,444,444,278,278,278,278,500,556,500,500,500,500,500,549,500,556,556,556,556,500,556,500],"ti":[250,333,420,500,500,833,778,214,333,333,500,675,250,333,250,278,500,500,500,500,500,500,500,500,500,500,333,333,675,675,675,500,920,611,611,667,722,611,611,722,722,333,444,667,556,833,667,722,611,722,611,500,556,722,611,833,611,556,556,389,278,389,422,500,333,500,500,444,500,444,278,500,500,278,278,444,278,722,500,500,500,500,389,389,278,500,444,667,444,444,389,400,275,400,541,0,500,0,333,500,556,889,500,500,333,1000,500,333,944,0,556,0,0,333,333,556,556,350,500,889,333,980,389,333,667,0,389,556,250,389,500,500,500,500,275,500,333,760,276,500,675,333,760,500,400,549,300,300,333,576,523,250,333,300,310,500,750,750,750,500,611,611,611,611,611,611,889,667,611,611,611,611,333,333,333,333,722,667,722,722,722,722,722,675,722,722,722,722,722,556,611,500,500,500,500,500,500,500,667,444,444,444,444,444,278,278,278,278,500,500,500,500,500,500,500,549,500,500,500,500,500,444,500,444],"tz":[250,389,555,500,500,833,778,278,333,333,500,570,250,333,250,278,500,500,500,500,500,500,500,500,500,500,333,333,570,570,570,500,832,667,667,667,722,667,667,722,778,389,500,667,611,889,722,722,611,722,667,556,611,722,667,889,667,611,611,333,278,333,570,500,333,500,500,444,500,444,333,500,556,278,278,500,278,778,556,500,500,500,389,389,278,556,444,667,500,444,389,348,220,348,570,0,500,0,333,500,500,1000,500,500,333,1000,556,333,944,0,611,0,0,333,333,500,500,350,500,1000,333,1000,389,333,722,0,389,611,250,389,500,500,500,500,220,500,333,747,266,500,606,333,747,500,400,549,300,300,333,576,500,250,333,300,300,500,750,750,750,500,667,667,667,667,667,667,944,667,667,667,667,667,389,389,389,389,722,722,722,722,722,722,722,570,722,722,722,722,722,611,611,500,500,500,500,500,500,500,722,444,444,444,444,444,278,278,278,278,500,556,500,500,500,500,500,549,500,556,556,556,556,444,500,444]};
+  const PW = 612, PH = 792, PM = 72, PCW = PW - 2 * PM, PCH = PH - 2 * PM;
+  const WIN_SPECIAL = { 8364: 128, 8218: 130, 402: 131, 8222: 132, 8230: 133, 8224: 134, 8225: 135, 710: 136, 8240: 137, 352: 138, 8249: 139, 338: 140, 381: 142, 8216: 145, 8217: 146, 8220: 147, 8221: 148, 8226: 149, 8211: 150, 8212: 151, 732: 152, 8482: 153, 353: 154, 8250: 155, 339: 156, 382: 158, 376: 159 };
+  const WIN_SUB = { 8594: '->', 8592: '<-', 8722: '-', 8203: '', 8239: ' ', 8201: ' ', 8202: ' ', 8199: ' ', 8200: ' ', 8195: ' ', 8194: ' ', 10003: 'v', 10004: 'v', 8209: '-', 8210: '-', 8213: '-' };
+  let pdfBad = 0;
+  function winCodes(str) {
+    const out = [];
+    for (const ch of String(str)) {
+      let c = ch.codePointAt(0);
+      if (c === 9 || c === 10 || c === 13) c = 32;
+      if (WIN_SUB[c] !== undefined) { for (const x of WIN_SUB[c]) out.push(x.charCodeAt(0)); continue; }
+      if (c >= 32 && c <= 126) out.push(c);
+      else if (c >= 160 && c <= 255) out.push(c);
+      else if (WIN_SPECIAL[c]) out.push(WIN_SPECIAL[c]);
+      else if (c < 32) continue;
+      else { out.push(63); pdfBad++; }
+    }
+    return out;
+  }
+  const famClass = f => (f && FAMILY_CLASS[String(f).toLowerCase()]) || 'sans';
+  const FAM_IDX = { sans: 0, serif: 1, mono: 2 };
+  const fontIdx = (font, b, i) => FAM_IDX[famClass(font)] * 4 + (b ? 1 : 0) + (i ? 2 : 0);
+  const PDF_FONTS = ['Helvetica', 'Helvetica-Bold', 'Helvetica-Oblique', 'Helvetica-BoldOblique', 'Times-Roman', 'Times-Bold', 'Times-Italic', 'Times-BoldItalic', 'Courier', 'Courier-Bold', 'Courier-Oblique', 'Courier-BoldOblique'];
+  function widthTable(fi) { const f = fi >> 2, v = fi & 3; return f === 0 ? PDF_W[v & 1 ? 'sb' : 'sr'] : f === 1 ? PDF_W[['tr', 'tb', 'ti', 'tz'][v]] : null; }
+  function codesWidth(codes, fi, size) { const T = widthTable(fi); let w = 0; for (const c of codes) w += T ? (T[c - 32] || 0) : 600; return w * size / 1000; }
+  const num2 = n => (Math.round(n * 100) / 100).toString();
+  const rgbOf = (hex, dflt) => { const h = /^[0-9a-f]{6}$/i.test(hex || '') ? hex : (hexOf(hex) || dflt || '000000'); return [0, 2, 4].map(i => num2(parseInt(h.slice(i, i + 2), 16) / 255)).join(' '); };
+  const shiftOp = (o, dx, dy) => { const c = Object.assign({}, o); if (c.x !== undefined) c.x += dx; if (c.y !== undefined) c.y += dy; if (c.x1 !== undefined) { c.x1 += dx; c.x2 += dx; c.y1 += dy; c.y2 += dy; } return c; };
+
+  const STYLE_GAPS = { normal: [0, 8], h1: [18, 6], h2: [16, 6], h3: [14, 4], h4: [12, 4], h5: [12, 4], h6: [12, 4], title: [0, 4], subtitle: [0, 14], code: [0, 0] };
+  function layoutPara(p, avail, env) {
+    const style = p.style, hsz = HEAD_PT[style], bsize = hsz || (style === 'code' ? 10 : BASE_PT);
+    const baseBold = /^h[3-6]$/.test(style) || !!env.forceBold, baseItalic = style === 'h6';
+    const baseColor = style === 'subtitle' ? '666666' : p.quote ? '555555' : null;
+    const indent = p.quote * 18 + (p.list ? (p.list.level + 1) * 20 : 0), W = Math.max(40, avail - indent);
+    const atoms = [];
+    p.runs.forEach(r => {
+      if (r.t === 'br') { atoms.push({ k: 'br' }); return; }
+      if (r.t === 'img') {
+        const info = env.images.get(r.src);
+        if (!info) { const codes = winCodes(r.alt ? '[' + r.alt + ']' : '[image]'); atoms.push({ k: 'w', codes, fi: 0, size: bsize, w: codesWidth(codes, 0, bsize), color: '888888' }); return; }
+        let { w, h } = imgSizePx(r, info, W * 1.333); w *= 0.75; h *= 0.75;                      // px -> pt
+        const maxH = PCH - 20, sc = Math.min(1, W / w, maxH / h); atoms.push({ k: 'img', w: w * sc, h: h * sc, src: r.src, info }); return;
+      }
+      let size = (r.size || bsize); const shift = r.sup ? size * 0.35 : r.sub ? -size * 0.15 : 0; if (r.sup || r.sub) size *= 0.65;
+      const fi = style === 'code' ? 8 : fontIdx(r.font, r.b || baseBold, r.i || baseItalic);
+      const color = r.href ? (r.color || '1A55C8') : (r.color || baseColor);
+      r.text.split(/( )/).forEach(tok => {
+        if (tok === '') return;
+        const codes = winCodes(tok);
+        atoms.push({ k: tok === ' ' ? 'sp' : 'w', codes, fi, size, w: codesWidth(codes, fi, size), color, bg: r.bg, u: r.u || !!r.href, s: r.s, href: r.href, shift });
+      });
+    });
+    // code blocks keep their spacing and line breaks; split them into fixed-width lines
+    let lines = [], line = { atoms: [], w: 0 }, afterBr = false;
+    const pushLine = hard => { line.hard = hard; lines.push(line); line = { atoms: [], w: 0 }; };
+    if (style === 'code') {
+      const maxCh = Math.max(1, Math.floor(W / (bsize * 0.6)));
+      p.runs.map(r => r.text).join('').split('\n').forEach(ln => {
+        const codes = winCodes(ln.replace(/\t/g, '    '));
+        for (let i = 0; i === 0 || i < codes.length; i += maxCh) {
+          const part = codes.slice(i, i + maxCh);
+          lines.push({ atoms: part.length ? [{ k: 'w', codes: part, fi: 8, size: bsize, w: part.length * bsize * 0.6, color: null }] : [], w: part.length * bsize * 0.6, hard: true });
+        }
+      });
+    } else {
+      const splitLong = a => {                      // a single word wider than the line: break it by characters
+        const out = []; let part = [];
+        for (const c of a.codes) { if (codesWidth(part.concat(c), a.fi, a.size) > W && part.length) { out.push(Object.assign({}, a, { codes: part, w: codesWidth(part, a.fi, a.size) })); part = []; } part.push(c); }
+        out.push(Object.assign({}, a, { codes: part, w: codesWidth(part, a.fi, a.size) })); return out;
+      };
+      atoms.forEach(a => {
+        if (a.k === 'br') { pushLine(true); afterBr = true; return; }
+        afterBr = false;
+        if (a.k === 'sp' && !line.atoms.length) return;
+        if (a.k !== 'sp' && line.w + a.w > W + 0.01) {
+          if (line.atoms.length) pushLine(false);
+          if (a.k === 'w' && a.w > W) { const parts = splitLong(a); parts.forEach((pa, k) => { if (k < parts.length - 1) { line.atoms.push(pa); line.w += pa.w; pushLine(false); } else { line.atoms.push(pa); line.w += pa.w; } }); return; }
+        }
+        line.atoms.push(a); line.w += a.w;
+      });
+      if (line.atoms.length || !lines.length || afterBr) pushLine(true);
+    }
+    const [gb, ga] = STYLE_GAPS[style] || [0, 8];
+    const before = p.before != null ? p.before : gb, after = p.after != null ? p.after : (p.list ? 2 : ga);
+    const mult = p.lh || (style === 'code' ? 1.1 : 1.15), items = [];
+    lines.forEach((ln, li) => {
+      while (ln.atoms.length && ln.atoms[ln.atoms.length - 1].k === 'sp') { ln.w -= ln.atoms.pop().w; }
+      const maxSize = Math.max(bsize, ...ln.atoms.filter(a => a.k !== 'img').map(a => a.size || 0)), maxImg = Math.max(0, ...ln.atoms.filter(a => a.k === 'img').map(a => a.h));
+      const asc = Math.max(0.93 * maxSize, maxImg), nat = asc + 0.24 * maxSize, h = nat * mult, base = (h - nat) / 2 + asc;
+      let x = indent, extra = 0; const used = ln.w;
+      if (p.align === 'center') x += (W - used) / 2; else if (p.align === 'right') x += W - used;
+      else if (p.align === 'justify' && !ln.hard && li < lines.length - 1) { const sp = ln.atoms.filter(a => a.k === 'sp').length; if (sp) extra = (W - used) / sp; }
+      const ops = []; let last = null;
+      if (style === 'code') ops.push({ t: 'rect', x: indent, y: 0, w: W, h, fill: 'F3F3F3' });
+      if (p.quote) for (let q = 0; q < p.quote; q++) ops.push({ t: 'rect', x: q * 18 + 4, y: 0, w: 2.5, h, fill: 'C8C8C8' });
+      ln.atoms.forEach(a => {
+        const w = a.w + (a.k === 'sp' ? extra : 0);
+        if (a.k === 'img') { ops.push({ t: 'img', x, y: base - a.h, w: a.w, h: a.h, src: a.src, info: a.info }); x += w; last = null; return; }
+        if (a.bg) { ops.push({ t: 'rect', x, y: base - 0.93 * a.size, w, h: 1.17 * a.size, fill: hexOf(a.bg) }); last = null; }
+        const y = base - (a.shift || 0);
+        if (last && last.fi === a.fi && last.size === a.size && last.color === a.color && last.y === y && Math.abs(last.x + last.w - x) < 0.05) { last.codes = last.codes.concat(a.codes); last.w += w; }
+        else { last = { t: 'text', x, y, fi: a.fi, size: a.size, color: a.color, codes: a.codes.slice(), w }; ops.push(last); }
+        const lw = Math.max(0.5, a.size / 16);
+        if (a.u && a.k !== 'sp') ops.push({ t: 'line', x1: x, y1: y + a.size * 0.12, x2: x + w, y2: y + a.size * 0.12, lw, color: a.color || '000000' });
+        if (a.s && a.k !== 'sp') ops.push({ t: 'line', x1: x, y1: y - a.size * 0.28, x2: x + w, y2: y - a.size * 0.28, lw, color: a.color || '000000' });
+        if (a.href) ops.push({ t: 'link', x, y: base - 0.93 * a.size, w, h: 1.17 * a.size, url: a.href });
+        x += w;
+      });
+      if (li === 0 && p.list) {
+        const L = p.list, mx = indent - 16, ms = bsize;
+        if (L.kind === 'check') {
+          const b = ms * 0.75; ops.push({ t: 'srect', x: mx, y: base - b, w: b, h: b, color: '5F6368', lw: 0.8 });
+          if (L.done) { ops.push({ t: 'line', x1: mx + b * 0.2, y1: base - b * 0.5, x2: mx + b * 0.42, y2: base - b * 0.22, lw: 1.2, color: '188038' }); ops.push({ t: 'line', x1: mx + b * 0.42, y1: base - b * 0.22, x2: mx + b * 0.85, y2: base - b * 0.82, lw: 1.2, color: '188038' }); }
+        } else {
+          const mark = L.kind === 'ul' ? (['•', '-', '•'][L.level % 3] === '•' ? [149] : [45]) : winCodes(L.level % 3 === 0 ? L.n + '.' : L.level % 3 === 1 ? String.fromCharCode(96 + ((L.n - 1) % 26) + 1) + '.' : L.n + '.');
+          const mw = codesWidth(mark, 0, ms); ops.push({ t: 'text', x: indent - 6 - mw, y: base, fi: 0, size: ms, color: null, codes: mark, w: mw });
+        }
+      }
+      items.push({ h, ops, gapBefore: li === 0 ? before : 0, gapAfter: li === lines.length - 1 ? after : 0, keepNext: !!hsz && li === lines.length - 1 && /^h/.test(style) });
+    });
+    return items;
+  }
+  function layoutBlocks(blocks, width, env) {
+    const items = [];
+    blocks.forEach(b => {
+      if (b.type === 'p') items.push(...layoutPara(b, width, env));
+      else if (b.type === 'hr') items.push({ h: 1, ops: [{ t: 'line', x1: 0, y1: 0.5, x2: width, y2: 0.5, lw: 0.8, color: '9AA0A6' }], gapBefore: 8, gapAfter: 8 });
+      else if (b.type === 'table') items.push(...layoutTable(b, width, env));
+    });
+    return items;
+  }
+  function stackItems(items) { let y = 0, prev = 0; const placed = []; items.forEach((it, k) => { const gap = k ? Math.max(prev, it.gapBefore) : 0; y += gap; placed.push({ it, y }); y += it.h; prev = it.gapAfter; }); return { h: y, placed }; }
+  function layoutTable(t, avail, env) {
+    const ncol = Math.max(1, ...t.rows.map(r => r.reduce((n, c) => n + c.span, 0))), colW = avail / ncol, pad = 4, out = [];
+    t.rows.forEach((row, ri) => {
+      let x = 0, rowH = 0; const cells = [];
+      row.forEach(c => { const w = colW * c.span, st = stackItems(layoutBlocks(c.blocks, w - 2 * pad, Object.assign({}, env, { forceBold: c.header }))); cells.push({ x, w, st, header: c.header }); rowH = Math.max(rowH, st.h); x += w; });
+      rowH += 2 * pad; const ops = [];
+      cells.forEach(c => {
+        if (c.header) ops.push({ t: 'rect', x: c.x, y: 0, w: c.w, h: rowH, fill: 'F1F3F4' });
+        ops.push({ t: 'srect', x: c.x, y: 0, w: c.w, h: rowH, color: '9AA0A6', lw: 0.6 });
+        c.st.placed.forEach(pl => pl.it.ops.forEach(o => ops.push(shiftOp(o, c.x + pad, pad + pl.y))));
+      });
+      out.push({ h: rowH, ops, gapBefore: ri === 0 ? 6 : 0, gapAfter: ri === t.rows.length - 1 ? 10 : 0 });
+    });
+    return out;
+  }
+  function paginate(items) {
+    const pages = [{ ops: [] }]; let y = 0, prev = 0;
+    items.forEach((it, k) => {
+      let gap = Math.max(prev, it.gapBefore); if (y === 0) gap = 0;
+      let need = it.h; if (it.keepNext && items[k + 1]) need += it.gapAfter + items[k + 1].h;
+      if (y > 0 && y + gap + need > PCH) { pages.push({ ops: [] }); y = 0; gap = 0; }
+      y += gap; const pg = pages[pages.length - 1];
+      it.ops.forEach(o => pg.ops.push(shiftOp(o, 0, y))); y += it.h; prev = it.gapAfter;
+    });
+    return pages;
+  }
+  const latin1 = s => { const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i) & 255; return u; };
+  function pdfStr(codes) { let s = ''; for (const c of codes) s += (c === 40 || c === 41 || c === 92) ? '\\' + String.fromCharCode(c) : (c < 32 || c > 126) ? '\\' + c.toString(8).padStart(3, '0') : String.fromCharCode(c); return '(' + s + ')'; }
+  function buildPdf(model, images) {
+    pdfBad = 0;
+    const items = layoutBlocks(model, PCW, { images }), pages = paginate(items);
+    const chunks = [], offs = []; let pos = 0, nextId = 1;
+    const put = x => { const b = typeof x === 'string' ? latin1(x) : x; chunks.push(b); pos += b.length; };
+    const obj = (id, body) => { offs[id] = pos; put(id + ' 0 obj\n'); put(body); put('\nendobj\n'); };
+    const stream = (id, dict, data) => { offs[id] = pos; put(id + ' 0 obj\n<< ' + dict + ' /Length ' + data.length + ' >>\nstream\n'); put(data); put('\nendstream\nendobj\n'); };
+    put('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+    nextId = 4; const fontIds = PDF_FONTS.map(n => { const id = nextId++; obj(id, `<< /Type /Font /Subtype /Type1 /BaseFont /${n} /Encoding /WinAnsiEncoding >>`); return id; });
+    const fontRes = '<< ' + fontIds.map((id, i) => `/F${i} ${id} 0 R`).join(' ') + ' >>';
+    const imgIds = new Map(), pageIds = [];
+    pages.forEach((pg, pn) => {
+      const cs = [], links = [], used = new Set(); const Y = d => PH - PM - d;
+      pg.ops.forEach(o => {
+        const X0 = PM + (o.x || 0);
+        if (o.t === 'text') cs.push(`BT /F${o.fi} ${num2(o.size)} Tf ${rgbOf(o.color)} rg ${num2(X0)} ${num2(Y(o.y))} Td ${pdfStr(o.codes)} Tj ET`);
+        else if (o.t === 'rect') cs.push(`${rgbOf(o.fill)} rg ${num2(X0)} ${num2(Y(o.y + o.h))} ${num2(o.w)} ${num2(o.h)} re f`);
+        else if (o.t === 'srect') cs.push(`${rgbOf(o.color)} RG ${num2(o.lw)} w ${num2(X0)} ${num2(Y(o.y + o.h))} ${num2(o.w)} ${num2(o.h)} re S`);
+        else if (o.t === 'line') cs.push(`${rgbOf(o.color)} RG ${num2(o.lw)} w ${num2(PM + o.x1)} ${num2(Y(o.y1))} m ${num2(PM + o.x2)} ${num2(Y(o.y2))} l S`);
+        else if (o.t === 'img') {
+          if (!imgIds.has(o.src)) { const id = nextId++; imgIds.set(o.src, id); stream(id, `/Type /XObject /Subtype /Image /Width ${o.info.w} /Height ${o.info.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode`, o.info.jpeg); }
+          used.add(o.src); cs.push(`q ${num2(o.w)} 0 0 ${num2(o.h)} ${num2(X0)} ${num2(Y(o.y + o.h))} cm /Im${imgIds.get(o.src)} Do Q`);
+        } else if (o.t === 'link') links.push(o);
+      });
+      if (pageNums) { const codes = winCodes(String(pn + 1)), w = codesWidth(codes, 0, 9); cs.push(`BT /F0 9 Tf 0.4 0.4 0.4 rg ${num2((PW - w) / 2)} 36 Td ${pdfStr(codes)} Tj ET`); }
+      const cid = nextId++; stream(cid, '', latin1(cs.join('\n')));
+      const annots = links.map(l => { const id = nextId++; const url = String(l.url).replace(/[^\x21-\x7e]/g, c => encodeURIComponent(c)).replace(/[()\\]/g, c => '%' + c.charCodeAt(0).toString(16)); obj(id, `<< /Type /Annot /Subtype /Link /Rect [${num2(PM + l.x)} ${num2(Y(l.y + l.h))} ${num2(PM + l.x + l.w)} ${num2(Y(l.y))}] /Border [0 0 0] /A << /S /URI /URI (${url}) >> >>`); return id; });
+      const pid = nextId++; pageIds.push(pid);
+      obj(pid, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PW} ${PH}] /Resources << /Font ${fontRes}${used.size ? ' /XObject << ' + [...used].map(s => `/Im${imgIds.get(s)} ${imgIds.get(s)} 0 R`).join(' ') + ' >>' : ''} >> /Contents ${cid} 0 R${annots.length ? ' /Annots [' + annots.map(a => a + ' 0 R').join(' ') + ']' : ''} >>`);
+    });
+    obj(2, `<< /Type /Pages /Kids [${pageIds.map(i => i + ' 0 R').join(' ')}] /Count ${pageIds.length} >>`);
+    obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
+    const t = (titleEl.value || 'Untitled'), hex = '<FEFF' + [...t].map(c => c.charCodeAt(0).toString(16).padStart(4, '0')).join('') + '>', d = new Date(), z = n => String(n).padStart(2, '0');
+    obj(3, `<< /Title ${hex} /Producer (MyDocs) /CreationDate (D:${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}) >>`);
+    const xref = pos; put(`xref\n0 ${nextId}\n0000000000 65535 f \n`);
+    for (let i = 1; i < nextId; i++) put(String(offs[i]).padStart(10, '0') + ' 00000 n \n');
+    put(`trailer\n<< /Size ${nextId} /Root 1 0 R /Info 3 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+    const out = new Uint8Array(pos); let o = 0; chunks.forEach(c => { out.set(c, o); o += c.length; });
+    return { bytes: out, bad: pdfBad, pages: pages.length };
+  }
+  async function exportPdf() {
+    if (!ready || !cur()) return; flush();
+    try {
+      toast('Preparing PDF…');
+      const model = buildModel(), images = await prepareImages(model), r = buildPdf(model, images);
+      download(fname('pdf'), r.bytes, 'application/pdf');
+      toast(r.bad ? 'PDF downloaded. ' + r.bad + ' character' + (r.bad === 1 ? '' : 's') + ' (emoji or non-Latin letters) can\'t be shown in a PDF made this way and became "?". Use Print > Save as PDF to keep them.' : 'PDF downloaded.');
+    } catch (e) { toast('Could not make the PDF: ' + ((e && e.message) || 'unknown error')); }
+  }
 
   // ---------- misc UI ----------
   $('newBtn').onclick = newDoc;

@@ -39,3 +39,13 @@ Quick bar and icon update:
 - A quick formatting bar (undo, bold, italic, underline, bulleted list, numbered list, checklist, link, and a "more" button that opens the full options) stays at the bottom of the screen, and rides above the keyboard on phones, so you don't have to open the options panel for everyday formatting.
 - The text area no longer has a card, border, shadow or coloured frame: the text sits directly on the page in every theme.
 - Emoji icons were replaced with one consistent set of line icons. The list buttons are now icon-only (bullets and numbered).
+
+Docs-style update:
+- Download as Word (.docx) and PDF (.pdf) directly (Options > Share and export, or File > Download as). Made in the browser with no libraries. Word keeps headings, Title/Subtitle, fonts, sizes, colours, highlights, bold/italic/underline/strike, links, bulleted/numbered lists and checklists, tables, images, alignment, spacing, block quotes and code, with page numbers in the footer. The PDF uses the standard Helvetica, Times and Courier fonts, so text can be searched and selected; emoji and non-Latin letters can't be shown in it and become "?" (the app tells you). For those, use Print > Save as PDF. Pages are US Letter with 1 inch margins.
+- Folders (flat, one per document; created by moving a document into a named folder), Starred and Recent views in the document list, a star button next to the title, and folder rename/remove. Folders and stars are included in backups.
+- A menu bar (File, Edit, View, Insert, Format) on desktop, keyboard operable. Phones keep the compact layout.
+- Title and Subtitle paragraph styles; line spacing (single, 1.15, 1.5, double) and space before/after paragraphs, with an Undo button after each change.
+- Font family (Arial, Verdana, Trebuchet MS, Georgia, Times New Roman, Courier New) and a numeric font size box with minus/plus. On desktop they also sit in the floating quick bar.
+- Page view (View menu or Options > Appearance): a white sheet on a grey background. Page breaks shown are approximate; exports paginate exactly.
+- Page numbers for exports and for printing (printing needs a browser that supports page margin boxes, such as recent Chrome).
+- Printing now always uses a white page with black text, whatever theme is selected.
