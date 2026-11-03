@@ -1,4 +1,4 @@
-MyDocs — GitHub Pages deployment
+documents. — GitHub Pages deployment
 
 Upload the contents of this folder directly to the root of your GitHub Pages repository (the same level as index.html). All app and icon files are kept at the root; no enclosing project folder or nested ZIP is needed.
 
@@ -49,3 +49,10 @@ Docs-style update:
 - Page view (View menu or Options > Appearance): a white sheet on a grey background. Page breaks shown are approximate; exports paginate exactly.
 - Page numbers for exports and for printing (printing needs a browser that supports page margin boxes, such as recent Chrome).
 - Printing now always uses a white page with black text, whatever theme is selected.
+
+Tabs and quick-bar update:
+- Renamed to "documents." (all lowercase, with the full stop). The custom Freeday brand font was removed and the name now uses the normal app font, as a placeholder until a final look is chosen. Internal storage names are unchanged, so existing documents and backups still load.
+- A + button now sits at the top of the page, to the right of the star, and starts a new document (Alt+N still works).
+- The quick bar at the bottom has a paragraph-style menu (Normal text, Title, Subtitle, Heading 1–3, Quote, Code block), so everyday heading changes no longer need the options panel.
+- Tabs: a collapsible "Tabs" strip sits above the quick bar. Open it to switch tabs, add one (+ Tab), or use the ⋯ button (or double-click a tab) to rename, move or delete the current tab. Tabs are saved, synced between browser tabs, included in backups, and every tab is included in Word, PDF, HTML and Markdown downloads. Search covers all tabs. Find & replace, outline, word count and Print use the tab you are viewing, and version history covers the first tab only.
+- Delete the old mydocs-app.zip from your repository if it is still there.
