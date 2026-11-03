@@ -6,14 +6,14 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="documents.">
+<meta name="apple-mobile-web-app-title" content="MyDocs">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<title>documents.</title>
+<title>MyDocs</title>
 <style>
   /* Themes: Pure White (sea glass accents), Salted Caramel, Sea Glass, Night */
   :root, :root[data-theme="white"] {
@@ -534,7 +534,7 @@
 
 <aside id="sidebar">
   <header>
-    <strong>documents.</strong>
+    <strong>MyDocs</strong>
     <button id="closeDocs" title="Close document list" aria-label="Close document list">✕</button>
     <button id="newBtn" title="New document (Alt+N)">+ New</button>
   </header>
@@ -1155,8 +1155,8 @@
       if (tabDoc !== d.id) { tabDoc = d.id; activeTab = 0; }
       if (activeTab > (d.tabs || []).length) activeTab = 0;
       editor.innerHTML = tabHtml(d, activeTab);
-      document.title = (d.title || 'Untitled') + ' – documents.';
-    } else { titleEl.value = ''; editor.innerHTML = ''; document.title = 'documents.'; }
+      document.title = (d.title || 'Untitled') + ' – MyDocs';
+    } else { titleEl.value = ''; editor.innerHTML = ''; document.title = 'MyDocs'; }
     dirty = false;
     renderList(); updateCount(); refreshFind(); syncDocUi(); renderTabs();
   }
@@ -1177,7 +1177,7 @@
     $('count').textContent = words + ' words · ' + txt.length + ' characters';
   }
   editor.addEventListener('input', () => { queueSave(); updateCount(); });
-  titleEl.addEventListener('input', () => { queueSave(); document.title = (titleEl.value || 'Untitled') + ' – documents.'; });
+  titleEl.addEventListener('input', () => { queueSave(); document.title = (titleEl.value || 'Untitled') + ' – MyDocs'; });
   window.addEventListener('beforeunload', flush);
   window.addEventListener('pagehide', flush);
   document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); else syncFromStore(); });
@@ -1548,14 +1548,14 @@
     rd.onload = () => {
       if (!ready) return;
       let data;
-      try { data = JSON.parse(rd.result); } catch (err) { alert('That file doesn\'t look like a documents. backup.'); return; }
+      try { data = JSON.parse(rd.result); } catch (err) { alert('That file doesn\'t look like a MyDocs backup.'); return; }
       if (data && data.encrypted) { askDecrypt(data).then(x => { if (x) restoreData(x); }); return; }
       restoreData(data);
     };
     rd.readAsText(f);
   };
   function restoreData(data) {
-      if (!data || !Array.isArray(data.docs)) { alert('That file doesn\'t look like a documents. backup.'); return; }
+      if (!data || !Array.isArray(data.docs)) { alert('That file doesn\'t look like a MyDocs backup.'); return; }
       flush();
       const n = { added: 0, copies: 0, same: 0, bad: 0 };
       data.docs.forEach(raw => {
@@ -1922,7 +1922,7 @@
         } catch (e) { err.textContent = 'Could not encrypt the backup.'; go.disabled = false; go.textContent = 'Create encrypted backup'; }
       };
       b.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go.click(); } });
-      body.append(mk('p', 'mNote', 'The backup file is locked with your passphrase. documents. never stores it, so if you forget it the file cannot be opened by anyone, including us. Your documents in this browser stay as they are.'), a, b, err, go);
+      body.append(mk('p', 'mNote', 'The backup file is locked with your passphrase. MyDocs never stores it, so if you forget it the file cannot be opened by anyone, including us. Your documents in this browser stay as they are.'), a, b, err, go);
     });
   };
 
@@ -3078,8 +3078,8 @@
       state.current = state.docs.some(d => d.id === last && !d.deleted) ? last : pickCurrent();
       ready = true;
       if (!state.docs.length) {
-        const w = { id: uid(), title: 'Welcome to documents.', updated: Date.now(), deleted: 0, rev: 0,
-          html: '<h1>Welcome to documents.</h1><p>This is your private document editor. Everything is saved automatically in this browser.</p><ul><li>Use the toolbar or <b>Ctrl/Cmd+B</b>, <b>I</b>, <b>U</b>, <b>K</b> to format.</li><li>Add tables, images, and links from the toolbar.</li><li>Export to HTML, Markdown, or PDF (via Print) from the top bar.</li><li><b>Backup all</b> regularly: browser storage can be cleared.</li></ul><p>Click <b>+ New</b> to start a document.</p>' };
+        const w = { id: uid(), title: 'Welcome to MyDocs', updated: Date.now(), deleted: 0, rev: 0,
+          html: '<h1>Welcome to MyDocs</h1><p>This is your private document editor. Everything is saved automatically in this browser.</p><ul><li>Use the toolbar or <b>Ctrl/Cmd+B</b>, <b>I</b>, <b>U</b>, <b>K</b> to format.</li><li>Add tables, images, and links from the toolbar.</li><li>Export to HTML, Markdown, or PDF (via Print) from the top bar.</li><li><b>Backup all</b> regularly: browser storage can be cleared.</li></ul><p>Click <b>+ New</b> to start a document.</p>' };
         state.docs.push(w); state.current = w.id; saveDoc(w); setCurrentMeta();
       }
       render();
@@ -3087,7 +3087,7 @@
       ready = false;   // never write anything if we couldn't read what's there
       editor.style.display = 'none'; titleEl.disabled = true;
       const em = $('empty'); em.style.display = 'block';
-      em.textContent = 'documents. could not open your saved documents (' + ((err && err.name) || 'error') + '). Nothing was changed. Reload the page, and avoid clearing site data.';
+      em.textContent = 'MyDocs could not open your saved documents (' + ((err && err.name) || 'error') + '). Nothing was changed. Reload the page, and avoid clearing site data.';
       $('saved').textContent = '⚠ Not saving';
     } finally { document.body.classList.remove('loading'); }
   }

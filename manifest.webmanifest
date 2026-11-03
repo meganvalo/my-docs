@@ -1,6 +1,6 @@
 {
-  "name": "documents.",
-  "short_name": "documents.",
+  "name": "MyDocs",
+  "short_name": "MyDocs",
   "description": "A private, offline document editor.",
   "start_url": "./",
   "scope": "./",
