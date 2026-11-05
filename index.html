@@ -678,6 +678,7 @@
       <button type="button" id="autoThemeBtn" class="autoThemeBtn" aria-pressed="false">☾ Match device appearance <span id="autoThemeState">Off</span></button>
       <button type="button" id="pageViewBtn" class="autoThemeBtn" aria-pressed="false">Page view <span id="pageViewState">Off</span></button>
       <button type="button" id="pageNumBtn" class="autoThemeBtn" aria-pressed="true">Page numbers in print and exports <span id="pageNumState">On</span></button>
+      <button type="button" id="rememberPosBtn" class="autoThemeBtn" aria-pressed="true" title="When on, reopening the app returns you to where you stopped reading or editing">Remember my place when reopening <span id="rememberPosState">On</span></button>
       <p class="panelNote">Choose a theme or automatically follow your device’s light and dark appearance.</p>
     </div>
   </aside>
@@ -1150,15 +1151,18 @@
     editor.style.display = has ? '' : 'none'; $('quickBar').hidden = !has; $('tabDock').hidden = !has; placeQuickBar();
     $('empty').style.display = has ? 'none' : 'block';
     titleEl.disabled = !has;
+    let newDocShown = false;
     if (has) {
       titleEl.value = d.title;
-      if (tabDoc !== d.id) { tabDoc = d.id; activeTab = 0; }
+      newDocShown = tabDoc !== d.id;
+      if (newDocShown) { savePosNow(); tabDoc = d.id; activeTab = savedTabFor(d); }
       if (activeTab > (d.tabs || []).length) activeTab = 0;
       editor.innerHTML = tabHtml(d, activeTab);
       document.title = (d.title || 'Untitled') + ' – MyDocs';
     } else { titleEl.value = ''; editor.innerHTML = ''; document.title = 'MyDocs'; }
     dirty = false;
     renderList(); updateCount(); refreshFind(); syncDocUi(); renderTabs();
+    if (has && newDocShown) { if (!restorePos()) $('scroll').scrollTop = 0; }
   }
 
   // ---------- autosave ----------
@@ -1983,6 +1987,63 @@
   $('pageViewBtn').onclick = togglePageView; $('pageNumBtn').onclick = togglePageNums;
   applyPrefs();
 
+  // ---------- remember where you were (per document and tab, on this device only) ----------
+  let rememberPos = PREF.get('rememberPos', 'true') === 'true';
+  const POS_KEY = 'mydocs.scrollPos';
+  const posRead = () => { try { const o = JSON.parse(localStorage.getItem(POS_KEY) || '{}'); return o && typeof o === 'object' ? o : {}; } catch (e) { return {}; } };
+  const posWrite = o => {
+    try {
+      const ks = Object.keys(o);
+      if (ks.length > 60) ks.sort((a, b) => ((o[a] || {}).t || 0) - ((o[b] || {}).t || 0)).slice(0, ks.length - 60).forEach(k => delete o[k]);
+      localStorage.setItem(POS_KEY, JSON.stringify(o));
+    } catch (e) {}
+  };
+  let posSettling = false, posTimer = 0, posToken = 0;
+  function savePosNow() {
+    clearTimeout(posTimer);
+    if (!rememberPos || !ready || !tabDoc) return;
+    const o = posRead(); let e = o[tabDoc];
+    if (!e || typeof e !== 'object') e = o[tabDoc] = {};
+    if (!e.y || typeof e.y !== 'object') e.y = {};
+    e.tab = activeTab; e.t = Date.now();
+    if (!posSettling) e.y[activeTab] = Math.round($('scroll').scrollTop);   // while restoring, keep the stored value
+    posWrite(o);
+  }
+  function forgetPos(id) { const o = posRead(); if (o[id]) { delete o[id]; posWrite(o); } }
+  function savedTabFor(d) {
+    if (!rememberPos) return 0;
+    const e = posRead()[d.id], t = e ? Number(e.tab) : 0;
+    return t > 0 && t <= (d.tabs || []).length ? t : 0;
+  }
+  // Scrolls back to the saved spot. Images and layout can settle after the text appears, so it re-applies briefly
+  // and stops the moment you touch the page yourself. Returns true if there was a spot to return to.
+  function restorePos() {
+    if (!rememberPos || !tabDoc) return false;
+    const e = posRead()[tabDoc], y = e && e.y ? Number(e.y[activeTab]) : 0;
+    if (!(y > 0)) return false;
+    const sc = $('scroll'), token = ++posToken, evs = ['wheel', 'touchstart', 'keydown', 'mousedown'];
+    let moved = false, done = false;
+    posSettling = true;
+    const end = () => { if (done) return; done = true; evs.forEach(n => window.removeEventListener(n, onUser, true)); if (token === posToken) posSettling = false; };
+    const onUser = () => { moved = true; end(); };
+    const apply = () => { if (!moved && token === posToken) sc.scrollTop = y; };
+    evs.forEach(n => window.addEventListener(n, onUser, { capture: true, passive: true }));
+    apply(); requestAnimationFrame(apply); setTimeout(apply, 250);
+    editor.querySelectorAll('img').forEach(im => { if (!im.complete) im.addEventListener('load', apply, { once: true }); });
+    setTimeout(end, 1200);
+    return true;
+  }
+  $('scroll').addEventListener('scroll', () => { if (!rememberPos || posSettling) return; clearTimeout(posTimer); posTimer = setTimeout(savePosNow, 300); }, { passive: true });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) savePosNow(); });
+  window.addEventListener('pagehide', savePosNow);
+  function syncPosUi() { $('rememberPosBtn').setAttribute('aria-pressed', String(rememberPos)); $('rememberPosState').textContent = rememberPos ? 'On' : 'Off'; }
+  function toggleRememberPos() {
+    rememberPos = !rememberPos; PREF.set('rememberPos', String(rememberPos));
+    if (rememberPos) savePosNow(); else { try { localStorage.removeItem(POS_KEY); } catch (e) {} }
+    syncPosUi();
+  }
+  $('rememberPosBtn').onclick = toggleRememberPos; syncPosUi();
+
   // ---------- keep the editor selection while using inputs / selects ----------
   let savedRange = null, pendingSize = 12;
   document.addEventListener('selectionchange', () => {
@@ -2271,6 +2332,7 @@
     { label: 'View', items: () => [
       { t: 'Page view', check: () => pageView, run: togglePageView },
       { t: 'Page numbers in print and exports', check: () => pageNums, run: togglePageNums },
+      { t: 'Remember my place when reopening', check: () => rememberPos, run: toggleRememberPos },
       '-',
       { t: 'Outline', run: () => $('outlineBtn').click() },
       { t: 'Formatting options panel', run: () => openOptions() }
@@ -2941,22 +3003,23 @@
   }
   function loadTab(d) {
     editor.innerHTML = tabHtml(d, activeTab); dirty = false;
-    $('scroll').scrollTop = 0; updateCount(); refreshFind(); renderTabs();
+    if (!restorePos()) $('scroll').scrollTop = 0;
+    updateCount(); refreshFind(); renderTabs(); savePosNow();
   }
   function switchTab(i) {
     const d = cur(); if (!d || !ready || i === activeTab || i < 0 || i > (d.tabs || []).length) return;
-    flush(); activeTab = i; loadTab(d);
+    savePosNow(); flush(); activeTab = i; loadTab(d);
   }
   function addTab() {
     const d = cur(); if (!d || !ready) return;
     if ((d.tabs || []).length >= 49) { toast('A document can have up to 50 tabs.'); return; }
-    flush(); closeDrawers();
+    savePosNow(); flush(); closeDrawers();
     if (!d.tabs) d.tabs = [];
     d.tabs.push({ title: '', html: '<p><br></p>' }); d.updated = Date.now();
     activeTab = d.tabs.length; saveDoc(d); tabsOpen = true; PREF.set('tabsOpen', 'true'); loadTab(d);
     editor.focus();
   }
-  function applyTabList(d, L) { d.html = L[0].html; d.tabTitle = L[0].title; d.tabs = L.slice(1); d.updated = Date.now(); }
+  function applyTabList(d, L) { forgetPos(d.id); d.html = L[0].html; d.tabTitle = L[0].title; d.tabs = L.slice(1); d.updated = Date.now(); }
   function openTabOptions() {
     const d = cur(); if (!d || !ready) return;
     flush();
