@@ -528,6 +528,11 @@
   @media (max-width: 760px) { #scroll { padding: 6px 0 calc(64px + var(--dockH, 0px)) !important; } }
   @media (min-width: 761px) { #tabDock { left: 50%; right: auto; transform: translateX(-50%); width: min(560px, calc(100vw - 32px)); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 6px 24px rgba(0,0,0,.14); overflow: hidden; } }
   @media print { #tabDock { display: none !important; } }
+
+  /* ---------- dark themes: paint the whole page + native UI dark (fixes the white strip above the iOS keyboard) ---------- */
+  html { background: var(--bg); color-scheme: light; }
+  :root[data-theme="night"], :root[data-theme="cocoa"] { color-scheme: dark; }
+  @media print { html { background: #fff; color-scheme: light; } }
 </style>
 </head>
 <body class="loading">
